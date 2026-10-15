@@ -1,0 +1,1833 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>طراح صفحه تنظیمات عمومی — Metr & Cutter</title>
+  <style>
+    :root {
+      --bg: #0d1623;
+      --panel: #152235;
+      --panel-2: #1b2b42;
+      --line: #31445f;
+      --text: #f4f7fb;
+      --muted: #9badc4;
+      --accent: #25a9e0;
+      --danger: #e53935;
+      --screen-scale: 1.55;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background: var(--bg);
+      font-family: Tahoma, "Segoe UI", sans-serif;
+      font-size: 13px;
+      overflow: hidden;
+    }
+    button, input, select { font: inherit; }
+    button {
+      color: var(--text);
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      min-height: 34px;
+      padding: 0 12px;
+      cursor: pointer;
+    }
+    button:hover { border-color: var(--accent); }
+    button:active { transform: translateY(1px); }
+    button.primary { background: #087ca8; border-color: #25a9e0; }
+    button.danger { color: #ffb3b3; }
+    button.icon { width: 36px; padding: 0; font-size: 17px; }
+    .app { height: 100vh; display: grid; grid-template-rows: 54px 1fr 28px; }
+    .topbar {
+      direction: rtl;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+    }
+    .brand { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+    .brand-mark {
+      width: 34px; height: 34px; display: grid; place-items: center;
+      border: 1px solid #2c9fca; border-radius: 8px; color: #67cef5; font-weight: 800;
+    }
+    .brand b { display: block; font-size: 14px; }
+    .brand small { display: block; color: var(--muted); margin-top: 2px; }
+    .workspace { min-height: 0; display: grid; grid-template-columns: 220px 1fr 250px; direction: ltr; }
+    .sidebar {
+      direction: rtl;
+      background: var(--panel);
+      border-right: 1px solid var(--line);
+      overflow: auto;
+      padding: 14px;
+    }
+    .sidebar.right { border-right: 0; border-left: 1px solid var(--line); }
+    h2 { font-size: 13px; margin: 2px 0 12px; color: #dce7f5; }
+    .help {
+      color: var(--muted); line-height: 1.9; font-size: 11px;
+      padding: 10px; border: 1px solid var(--line); border-radius: 8px; margin-bottom: 14px;
+    }
+    .library { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+    .library button { min-height: 54px; padding: 7px; display: grid; place-items: center; gap: 3px; }
+    .library span:first-child { font-size: 20px; line-height: 1; }
+    .library span:last-child { font-size: 10px; color: var(--muted); }
+    .library svg { width: 23px; height: 23px; fill: currentColor; }
+    .canvas-shell {
+      min-width: 0; overflow: auto; position: relative;
+      background-color: #101b2a;
+      background-image:
+        linear-gradient(#1b2a3d 1px, transparent 1px),
+        linear-gradient(90deg, #1b2a3d 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .canvas-center {
+      min-width: calc(480px * var(--screen-scale) + 100px);
+      min-height: calc(320px * var(--screen-scale) + 100px);
+      display: grid; place-items: center;
+    }
+    .screen-wrap {
+      width: calc(480px * var(--screen-scale));
+      height: calc(320px * var(--screen-scale));
+      position: relative;
+    }
+    #screen {
+      position: absolute; inset: 0 auto auto 0;
+      width: 480px; height: 320px;
+      transform: scale(var(--screen-scale));
+      transform-origin: top left;
+      overflow: hidden;
+      background: #e9eef5;
+      direction: ltr;
+      user-select: none;
+      touch-action: none;
+    }
+    #screen.grid {
+      background-image:
+        linear-gradient(rgba(60,90,120,.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(60,90,120,.08) 1px, transparent 1px);
+      background-size: 8px 8px;
+    }
+    #screen::after {
+      content: "";
+      position: absolute; left: 412px; top: 0; width: 1px; height: 320px;
+      background: rgba(229,57,53,.35); pointer-events: none; z-index: 999;
+    }
+    #screen.exporting::after { display: none; }
+    #screen.preview::after { display: none; }
+    .item {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: move;
+      outline: 0 solid transparent;
+      direction: rtl;
+    }
+    .item.selected {
+      outline: 1.5px solid #ff9800;
+      overflow: visible;
+      z-index: 1000 !important;
+    }
+    .item.locked { cursor: default; }
+    .item.locked.selected { outline-style: dashed; }
+    #screen.preview .item { cursor: pointer; }
+    #screen.preview .item.selected { outline: 0; overflow: hidden; z-index: unset !important; }
+    .selection-marquee {
+      position: absolute; border: 1px solid #ff9800; background: rgba(255,152,0,.12);
+      pointer-events: none; z-index: 3000;
+    }
+    .handle {
+      position: absolute; width: 10px; height: 10px;
+      background: #ff9800; border: 1px solid #fff; border-radius: 2px;
+      z-index: 2000;
+    }
+    .handle.nw { left: -6px; top: -6px; cursor: nwse-resize; }
+    .handle.ne { right: -6px; top: -6px; cursor: nesw-resize; }
+    .handle.sw { left: -6px; bottom: -6px; cursor: nesw-resize; }
+    .handle.se { right: -6px; bottom: -6px; cursor: nwse-resize; }
+    .item > svg { width: 56%; height: 56%; max-width: 28px; max-height: 28px; fill: currentColor; flex: 0 0 auto; pointer-events: none; }
+    .item.has-icon { gap: 5px; }
+    .item.has-icon > span { pointer-events: none; white-space: nowrap; text-align: center; line-height: 1; }
+    .hdr-btn {
+      flex-direction: column !important;
+      gap: 1px !important; padding: 1px !important;
+      justify-content: center !important; align-items: center !important;
+      font-weight: 600 !important; letter-spacing: 0;
+      box-shadow: 0 2px 8px rgba(20,60,100,.18) !important;
+      border: 0 !important;
+    }
+    .hdr-btn > svg { width: 12px !important; height: 12px !important; max-width: 12px !important; max-height: 12px !important; }
+    .hdr-btn > span { font-size: 9px !important; line-height: 1 !important; }
+    .hdr-icon > svg { width: 18px !important; height: 18px !important; max-width: 18px !important; max-height: 18px !important; }
+    .section-title { color: #5b6b7c; font-size: 11px; font-weight: 600; padding: 0 !important; }
+    .fkey {
+      color: #4a5d6e; background: #f7f9fc; border: 0;
+      border-radius: 10px; font: 600 15px Arial;
+      box-shadow: 0 2px 8px rgba(20,40,60,.10);
+    }
+    .fkey.active { color: #0a66c2; background: #dcebff; }
+    .header-box {
+      background: #fff; border: 0; border-radius: 12px;
+      color: #1c2b3a; font-size: 14px;
+      box-shadow: 0 4px 16px rgba(20,40,60,.10);
+    }
+    .home, .save, .lang {
+      background: #0a84ff; border-radius: 10px; color: #fff; border: 0;
+    }
+    .card {
+      background: #fff; border: 0; border-radius: 16px; color: #17384d;
+      box-shadow: 0 8px 24px rgba(20,40,70,.12), 0 1px 0 rgba(255,255,255,.8) inset;
+      overflow: hidden;
+    }
+    .print {
+      background: #f2f6fa; color: #1c5978; border: 0;
+      border-radius: 12px; font-size: 10px; font-weight: 600;
+      box-shadow: 0 2px 8px rgba(20,40,60,.08);
+      flex-direction: row !important; gap: 6px !important;
+      overflow: hidden !important;
+    }
+    .print > svg { width: 18px !important; height: 18px !important; max-width: 18px !important; max-height: 18px !important; }
+    .print > span { font-size: 9px !important; }
+    .value {
+      background: #f4f8fc; color: #0a66c2; border: 0; border-radius: 12px;
+      font: 700 18px Arial; box-shadow: inset 0 0 0 1px rgba(10,102,194,.12);
+    }
+    .estop-block {
+      display: flex !important; flex-direction: column !important;
+      align-items: center !important; justify-content: flex-start !important;
+      gap: 2px !important; padding: 0 !important; background: transparent !important;
+      overflow: hidden !important;
+    }
+    .estop-block img {
+      width: 72px; height: auto; max-height: 70px; object-fit: contain;
+      pointer-events: none; filter: drop-shadow(0 2px 4px rgba(0,0,0,.2));
+    }
+    .item.card { overflow: hidden !important; }
+    .item.mode-focus {
+      outline: 3px solid #ff9800 !important;
+      outline-offset: 2px;
+      z-index: 7000 !important;
+      box-shadow: 0 0 0 4px rgba(255,152,0,.25) !important;
+    }
+    .kb-key.mode-focus {
+      outline: 3px solid #ff9800 !important;
+      outline-offset: 1px;
+      z-index: 2;
+    }
+    .runtime-modal .help-close {
+      position: absolute; top: 10px; right: 10px !important; left: auto !important;
+    }
+    .runtime-dialog {
+      width: 340px; max-height: 250px; overflow: auto; padding: 18px 16px 14px;
+      background: #fff; color: #17384d; border: 2px solid #4fb6df; border-radius: 12px;
+      position: relative;
+    }
+    .hw-panel button.hw-mode.on {
+      box-shadow: 0 0 0 3px #ff9800, 0 4px 0 #0a0e14;
+      color: #ffe082;
+    }
+    .estop-block .ncno {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 48px; padding: 2px 8px; border-radius: 6px;
+      font: 700 9px Arial; letter-spacing: .3px; pointer-events: none; color: #fff;
+    }
+    .estop-block .ncno-desc {
+      font: 700 8px Tahoma; text-align: center; line-height: 1.15; pointer-events: none;
+      padding: 2px 6px; border-radius: 6px; min-width: 60px; color: #fff;
+    }
+    .estop-block.nc .ncno,
+    .estop-block.nc .ncno-desc { background: #e53935 !important; color: #fff !important; }
+    .estop-block.no .ncno,
+    .estop-block.no .ncno-desc { background: #2e7d32 !important; color: #fff !important; }
+    .wifi-apple {
+      display: flex !important; flex-direction: column !important;
+      align-items: center !important; justify-content: center !important;
+      gap: 3px !important; padding: 4px !important;
+      border-radius: 14px !important; border: 0 !important;
+      box-shadow: 0 3px 10px rgba(20,40,60,.12);
+      transition: filter .12s, background .12s, color .12s;
+      pointer-events: auto !important;
+    }
+    .wifi-apple svg { width: 22px !important; height: 22px !important; max-width: 22px !important; max-height: 22px !important; fill: currentColor !important; }
+    .wifi-apple .wifi-label { font: 700 11px Tahoma; pointer-events: none; }
+    .wifi-apple.on { background: #e8f8ec !important; color: #1b9e4a !important; filter: none; }
+    .wifi-apple.off { background: #f3f3f4 !important; color: #d32f2f !important; filter: saturate(.7) brightness(.92); }
+    .print.on { background: #e7f6ea !important; color: #1b9e4a !important; box-shadow: 0 0 0 2px rgba(27,158,74,.25); }
+    .print.off { background: #f0f0f0 !important; color: #9aa3ad !important; filter: brightness(.95); }
+    .value-editing {
+      background: #0a84ff !important; color: #fff !important;
+      box-shadow: 0 0 0 2px rgba(10,132,255,.35) !important;
+    }
+    .value-editing .val { color: #fff !important; }
+    .value-editing .unit-inline { color: rgba(255,255,255,.85) !important; }
+    .value-editing .caret {
+      display: inline-block; width: 2px; height: 18px; margin-left: 2px;
+      background: #fff; animation: caretBlink 1s step-end infinite; vertical-align: middle;
+    }
+    @keyframes caretBlink { 50% { opacity: 0; } }
+    .runtime-dialog { position: relative; }
+    .item.card { pointer-events: none; }
+    .help-close {
+      position: absolute; top: 10px; right: 10px; left: auto;
+      width: 30px; height: 30px; padding: 0;
+      border: 0; border-radius: 50%;
+      background: #f1f3f5 !important; color: #445 !important;
+      cursor: pointer; display: grid; place-items: center;
+      box-shadow: none !important;
+    }
+    .help-close svg { width: 14px; height: 14px; stroke: #334; stroke-width: 2.2; fill: none; }
+    .print-slip {
+      position: absolute; left: 50%; top: 42px; transform: translateX(-50%);
+      width: 160px; min-height: 70px; z-index: 6000; padding: 10px 12px;
+      background: #fffef8; color: #222; border: 1px dashed #9aa;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25); font: 700 16px Tahoma;
+      text-align: center; animation: slipIn .25s ease;
+    }
+    .print-slip small { display: block; margin-top: 6px; color: #777; font: 11px Tahoma; font-weight: 600; }
+    @keyframes slipIn { from { opacity: 0; transform: translate(-50%, -8px);} to { opacity: 1; transform: translate(-50%,0);} }
+    .page-overlay {
+      position: absolute; left: 0; top: 0; bottom: 0; right: 68px; z-index: 4500;
+      display: grid; place-items: center;
+      background: #e9eef5; direction: rtl; text-align: center; padding: 20px;
+    }
+    .page-overlay h2 { margin: 0 0 8px; font-size: 20px; color: #1c2b3a; }
+    .page-overlay p { margin: 0; color: #607080; font-size: 12px; line-height: 1.8; }
+    .page-overlay .back-chip {
+      margin-top: 14px; display: inline-flex; gap: 6px; align-items: center;
+      background: #0a84ff; color: #fff; border-radius: 10px; padding: 8px 14px; font-size: 12px;
+      cursor: pointer; user-select: none;
+    }
+    .kb-off { background: #c5ccd3 !important; color: #fff !important; filter: none !important; opacity: 1 !important; }
+    .kb-on { background: #0a84ff !important; color: #fff !important; opacity: 1 !important; filter: none !important; }
+    .buz-on { background: #0a84ff !important; color: #fff !important; filter: none !important; }
+    .buz-off { background: #dfe3e8 !important; color: #90a4ae !important; filter: grayscale(1) brightness(1.05); }
+    .buz-off::after {
+      content: ""; position: absolute; inset: 6px; border-radius: 50%;
+      background: linear-gradient(135deg, transparent 46%, #c62828 46% 54%, transparent 54%);
+      pointer-events: none;
+    }
+    .tool-chip { position: relative; }
+    .runtime-modal.rtl { direction: rtl; }
+    .runtime-modal.ltr { direction: ltr; }
+    .runtime-modal.rtl .runtime-dialog { text-align: right; direction: rtl; }
+    .runtime-modal.ltr .runtime-dialog { text-align: left; direction: ltr; }
+    .runtime-modal.ltr .runtime-dialog h3 { margin: 0 0 10px 36px; text-align: left; }
+    .runtime-modal.rtl .runtime-dialog h3 { margin: 0 36px 10px 0; text-align: right; }
+    .runtime-modal.ltr .help-close,
+    .runtime-modal.rtl .help-close { right: 10px !important; left: auto !important; }
+    .page-body {
+      position: absolute; left: 8px; top: 48px; width: 400px; bottom: 8px;
+      z-index: 8; border-radius: 14px; background: #fff;
+      box-shadow: 0 8px 24px rgba(20,40,70,.12);
+      padding: 12px 14px; overflow: auto; pointer-events: auto;
+    }
+    .page-body h2 { margin: 0 0 6px; font-size: 16px; color: #1c2b3a; }
+    .page-body p { margin: 0 0 10px; color: #607080; font-size: 12px; line-height: 1.7; }
+    .page-body .row-chip {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: 8px 10px; margin: 6px 0; border-radius: 10px; background: #f4f8fc;
+      font: 600 12px Tahoma; color: #17384d;
+    }
+    .page-body .row-chip.active { background: #dcebff; color: #0a66c2; }
+    .page-body .stat {
+      display: inline-flex; min-width: 64px; justify-content: center;
+      padding: 6px 10px; border-radius: 10px; background: #e8f5fb; color: #0a66c2; font: 700 14px Arial;
+    }
+    .page-body .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .page-body .actions span {
+      background: #0a84ff; color: #fff; border-radius: 10px; padding: 8px 12px; font-size: 11px; cursor: pointer;
+    }
+    .hw-panel {
+      display: none; grid-template-columns: 1fr 1fr; gap: 10px 12px;
+      padding: 12px; border-radius: 16px;
+      background: linear-gradient(160deg, #2a3545, #121820);
+      box-shadow: 0 16px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.1);
+      align-self: center;
+    }
+    .app.run-mode .hw-panel { display: grid; }
+    .hw-panel .hw-col { display: grid; gap: 8px; }
+    .hw-panel button {
+      width: 64px; height: 44px; border-radius: 999px; border: 2px solid #4a5564;
+      background: radial-gradient(circle at 35% 30%, #3a4555, #1c2430);
+      color: #e8eef5; font: 700 11px Arial; letter-spacing: .3px;
+      box-shadow: 0 4px 0 #0a0e14, 0 8px 16px rgba(0,0,0,.35);
+    }
+    .hw-panel button:active { transform: translateY(2px); box-shadow: 0 2px 0 #0a0e14; }
+    .hw-panel button.hw-start { border-color: #2e7d32; color: #b9f6ca; background: radial-gradient(circle at 35% 30%, #2e7d32, #1b4330); }
+    .hw-panel button.hw-stop { border-color: #c62828; color: #ffcdd2; background: radial-gradient(circle at 35% 30%, #c62828, #4a1515); }
+    .hw-panel button.hw-mode { border-color: #f9a825; color: #ffe082; }
+    .hw-panel .hw-cap {
+      grid-column: 1 / -1; text-align: center; color: #9eb3c7; font-size: 10px; margin-top: 2px;
+    }
+    .app.run-mode .canvas-center {
+      /* layout refined below in run-mode block */
+    }
+    .tool-chip {
+      box-shadow: 0 2px 8px rgba(20,40,60,.12) !important; border: 0 !important;
+    }
+    .dirty-save { background-color: #34c759 !important; }
+    .web {
+      flex-direction: column; gap: 10px; background: #126c99; color: #fff;
+      border-radius: 12px; font-weight: 700; line-height: 1.7;
+    }
+    .web svg { width: 28px; height: 28px; fill: currentColor; }
+    .keyboard {
+      display: block !important;
+      padding: 0 !important;
+      background: #243447;
+      border: 0;
+      border-radius: 16px;
+      color: #fff;
+      direction: ltr !important;
+      overflow: hidden !important;
+      box-shadow: 0 10px 28px rgba(20,40,70,.22);
+    }
+    .keyboard .kb-keys {
+      position: absolute;
+      inset: 4px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(4, 1fr) 0.85fr;
+      gap: 5px;
+      pointer-events: none;
+    }
+    .keyboard .kb-key {
+      display: grid; place-items: center; min-width: 0; min-height: 0;
+      background: #f4f9fc; color: #17384d; border-radius: 8px;
+      font: 700 22px Arial; box-shadow: inset 0 -2px 0 rgba(0,0,0,.08);
+    }
+    .value-box {
+      display: flex !important; flex-direction: row !important; gap: 6px !important;
+      justify-content: center !important; align-items: center !important;
+      direction: ltr !important;
+    }
+    .value-box .val { font: 700 20px Arial; color: inherit; }
+    .value-box .unit-inline { font: 700 11px Arial; color: #8a9aab; margin-top: 3px; }
+    .keyboard .kb-key.ok {
+      grid-column: 1 / -1;
+      background: #1c9b67; color: #fff; font-size: 17px;
+    }
+    .keyboard .kb-key.back { background: #e8eef3; font-size: 17px; }
+    #screen.preview .keyboard .kb-keys,
+    #screen.preview .keyboard .kb-key { pointer-events: auto; }
+    .widget-slider { overflow: visible; }
+    .widget-slider .track {
+      position: absolute; left: 8px; right: 8px; top: calc(50% - 3px);
+      height: 6px; border-radius: 4px; background: #c7d8e3; pointer-events: none;
+    }
+    .widget-slider .fill {
+      position: absolute; right: 8px; top: calc(50% - 3px);
+      height: 6px; border-radius: 4px; background: #1976d2; pointer-events: none;
+    }
+    .widget-slider .thumb {
+      position: absolute; top: calc(50% - 10px); width: 20px; height: 20px;
+      border-radius: 50%; background: #1976d2; border: 3px solid #fff; pointer-events: none;
+    }
+    .widget-progress { padding: 4px; background: #dce9f0; border-radius: 8px; justify-content: flex-start !important; }
+    .widget-progress .bar { height: 100%; border-radius: 5px; background: #1976d2; pointer-events: none; }
+    .widget-progress .caption { position: absolute; inset: 0; display: grid; place-items: center; font-size: 10px; color: #17384d; pointer-events: none; }
+    .widget-toggle { padding: 3px; border-radius: 18px; transition: background .15s; }
+    .widget-toggle .knob {
+      position: absolute; top: 3px; width: calc(50% - 4px); height: calc(100% - 6px);
+      border-radius: 50%; background: #fff; pointer-events: none;
+    }
+    .widget-toggle.on .knob { right: 3px; }
+    .widget-toggle.off .knob { left: 3px; }
+    .widget-toggle .state-label { font-size: 9px; color: #fff; pointer-events: none; }
+    .widget-toggle.on .state-label { margin-left: 46%; }
+    .widget-toggle.off .state-label { margin-right: 46%; }
+    .widget-led { border-radius: 50%; border: 4px solid rgba(0,0,0,.18); }
+    .widget-checkbox { gap: 7px; background: transparent !important; justify-content: flex-start !important; padding: 4px; }
+    .widget-checkbox .box {
+      width: 20px; height: 20px; flex: 0 0 20px; display: grid; place-items: center;
+      border: 2px solid #1976d2; border-radius: 4px; color: #fff; background: #1976d2; pointer-events: none;
+    }
+    .widget-number {
+      background: #e8f5fb; border: 1px solid #8dcbe4; border-radius: 8px;
+      color: #075987; font: 700 18px Arial;
+    }
+    .widget-gauge svg { width: 100%; height: 100%; max-width: none; max-height: none; }
+    .widget-image { background: transparent !important; }
+    .widget-image img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+    .runtime-modal {
+      position: absolute; inset: 0; z-index: 5000; display: grid; place-items: center;
+      background: rgba(8,25,38,.55); direction: rtl;
+    }
+    .runtime-dialog {
+      width: 360px; max-height: 270px; overflow: auto; padding: 16px;
+      background: #fff; color: #17384d; border: 2px solid #4fb6df; border-radius: 12px;
+      position: relative;
+    }
+    .runtime-dialog h3 { margin: 0 36px 10px 0; font-size: 15px; }
+    html[lang="en"] .runtime-dialog h3 { margin: 0 0 10px 36px; }
+    .runtime-dialog p { margin: 6px 0; line-height: 1.8; font-size: 11px; }
+    .runtime-dialog button { float: left; background: #1976d2; color: #fff; min-height: 30px; }
+    .dirty-save { background-color: #34c759 !important; }
+    .disabled-control { opacity: .38; }
+    .runtime-hidden { display: none !important; }
+    .app.run-mode .sidebar { display: none !important; }
+    .app.run-mode .workspace { grid-template-columns: 1fr; }
+    .app.run-mode .topbar .brand small { color: #7dffa8; }
+    .app.run-mode #undoBtn,
+    .app.run-mode #redoBtn,
+    .app.run-mode #resetBtn,
+    .app.run-mode #saveBtn,
+    .app.run-mode #exportJsonBtn,
+    .app.run-mode #exportPngBtn { display: none; }
+    .app.run-mode #previewBtn {
+      background: #c62828; border-color: #ef5350; min-width: 140px; font-weight: 700;
+    }
+    .app.run-mode .canvas-shell {
+      background: radial-gradient(circle at 50% 35%, #1b2d44 0%, #0b121c 70%);
+      background-image: none;
+    }
+    .app.run-mode .canvas-center {
+      min-width: 0; min-height: 0; height: 100%;
+      display: grid;
+      grid-template-columns: auto auto;
+      grid-template-rows: auto auto;
+      place-items: center;
+      align-items: center;
+      gap: 14px;
+      padding: 18px;
+    }
+    .app.run-mode .device-frame { grid-column: 1 / -1; }
+    .app.run-mode .run-hint { grid-column: 1 / -1; }
+    .device-frame {
+      display: none; flex-direction: column; align-items: center; gap: 10px;
+    }
+    .app.run-mode .device-frame { display: flex; }
+    .app.run-mode .screen-wrap {
+      width: calc(480px * var(--run-scale));
+      height: calc(320px * var(--run-scale));
+      border-radius: 18px;
+      padding: 10px;
+      background: linear-gradient(160deg, #2a3545, #121820);
+      box-shadow: 0 24px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.12);
+    }
+    .app.run-mode #screen {
+      transform: scale(var(--run-scale));
+      border-radius: 8px;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.25);
+    }
+    .app.run-mode #screen.grid { background-image: none; background-color: #e9eef5; }
+    .app.run-mode #screen::after { display: none; }
+    .run-hud {
+      direction: rtl; display: none; gap: 8px; flex-wrap: wrap; justify-content: center;
+      max-width: 720px;
+    }
+    .app.run-mode .run-hud { display: flex; }
+    .run-chip {
+      background: rgba(255,255,255,.08); color: #d7e6f5; border: 1px solid rgba(255,255,255,.12);
+      border-radius: 999px; padding: 6px 12px; font-size: 12px;
+    }
+    .run-chip.on { color: #9dffb8; border-color: rgba(52,199,89,.45); }
+    .run-chip.warn { color: #ffe082; border-color: rgba(255,193,7,.4); }
+    .run-hint {
+      direction: rtl; color: #9eb3c7; font-size: 12px; text-align: center; line-height: 1.8;
+      max-width: 560px;
+    }
+    #screen.preview .item { cursor: pointer; }
+    #screen.preview .item.pressing { filter: brightness(.92); transform: scale(.985); }
+    :root { --run-scale: 1.7; }
+    .align-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 7px; }
+    .align-buttons button { min-height: 32px; padding: 0; font-size: 15px; }
+    .prop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    label { display: grid; gap: 5px; color: var(--muted); font-size: 11px; }
+    input, select {
+      width: 100%; height: 34px; color: var(--text);
+      background: #0e1928; border: 1px solid var(--line); border-radius: 6px; padding: 0 8px;
+    }
+    input:focus, select:focus { outline: 1px solid var(--accent); border-color: var(--accent); }
+    .row { display: flex; gap: 7px; margin-top: 10px; }
+    .row > * { flex: 1; }
+    hr { border: 0; border-top: 1px solid var(--line); margin: 16px 0; }
+    .selection-name {
+      min-height: 38px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 10px; background: #0f1b2a; border: 1px solid var(--line); border-radius: 7px;
+      margin-bottom: 12px;
+    }
+    .statusbar {
+      direction: rtl; padding: 0 14px; display: flex; align-items: center; gap: 18px;
+      background: #0a121d; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px;
+    }
+    .statusbar span:last-child { margin-left: auto; }
+    .checkbox { display: flex; align-items: center; gap: 7px; margin-top: 10px; color: var(--text); }
+    .checkbox input { width: 15px; height: 15px; }
+    .toast {
+      position: fixed; left: 50%; bottom: 42px; transform: translateX(-50%);
+      background: #eef8ff; color: #12364c; border: 1px solid #4daed4; border-radius: 7px;
+      padding: 9px 16px; z-index: 9999; display: none;
+    }
+    @media (max-width: 1100px) {
+      :root { --screen-scale: 1.25; }
+      .workspace { grid-template-columns: 190px 1fr 220px; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">MC</div>
+      <div><b>طراح F1 متر و کاتر</b><small>LAYOUT-STACK-V12 · ۴۸۰×۳۲۰</small></div>
+    </div>
+    <button id="previewBtn" class="primary">▶ اجرا</button>
+    <button id="undoBtn" class="icon" title="Ctrl+Z">↶</button>
+    <button id="redoBtn" class="icon" title="Ctrl+Y">↷</button>
+    <button id="resetBtn">طرح پیشنهادی</button>
+    <button id="saveBtn">ذخیره در مرورگر</button>
+    <button id="exportJsonBtn">خروجی JSON</button>
+    <button id="exportPngBtn" class="primary">خروجی تصویر PNG</button>
+  </header>
+
+  <main class="workspace">
+    <aside class="sidebar">
+      <h2>افزودن المان</h2>
+      <div class="library">
+        <button data-add="text"><span>آ</span><span>متن</span></button>
+        <button data-add="button"><span>▣</span><span>دکمه</span></button>
+        <button data-add="card"><span>□</span><span>کادر</span></button>
+        <button data-add="keyboard"><span>⌨</span><span>کیبورد مجازی</span></button>
+      </div>
+      <hr>
+      <h2>ویجت‌های صنعتی</h2>
+      <div class="library">
+        <button data-add="slider"><span>━●</span><span>اسلایدر</span></button>
+        <button data-add="toggle"><span>◉</span><span>کلید دوحالته</span></button>
+        <button data-add="progress"><span>▰</span><span>نوار پیشرفت</span></button>
+        <button data-add="led"><span>●</span><span>چراغ LED</span></button>
+        <button data-add="checkbox"><span>☑</span><span>چک‌باکس</span></button>
+        <button data-add="number"><span>123</span><span>نمایشگر عددی</span></button>
+        <button data-add="gauge"><span>◔</span><span>گیج</span></button>
+        <button data-add="image"><span>▧</span><span>عکس / آیکون من</span></button>
+      </div>
+      <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
+      <hr>
+      <h2>کتابخانه آیکون</h2>
+      <div class="library" id="iconLibrary">
+        <button data-icon="home"><span></span><span>خانه</span></button>
+        <button data-icon="volume"><span></span><span>بلندگو</span></button>
+        <button data-icon="printer"><span></span><span>پرینتر</span></button>
+        <button data-icon="wifi"><span></span><span>وای‌فای</span></button>
+        <button data-icon="globe"><span></span><span>وب</span></button>
+        <button data-icon="settings"><span></span><span>تنظیمات</span></button>
+        <button data-icon="save"><span></span><span>ذخیره</span></button>
+        <button data-icon="keyboard"><span></span><span>کیبورد</span></button>
+        <button data-icon="warning"><span></span><span>هشدار</span></button>
+        <button data-icon="stop"><span></span><span>توقف</span></button>
+        <button data-icon="back"><span></span><span>بازگشت</span></button>
+        <button data-icon="info"><span></span><span>اطلاعات</span></button>
+        <button data-icon="lock"><span></span><span>قفل</span></button>
+      </div>
+      <hr>
+      <h2>روش کار</h2>
+      <div class="help">
+        هر چیزی روی نمایشگر را بگیر و جابه‌جا کن.<br>
+        روی فضای خالی بکش: انتخاب چندتایی<br>
+        Shift + کلیک: افزودن به انتخاب<br>
+        چهار مربع نارنجی گوشه‌ها برای تغییر اندازه است.<br>
+        کلیدهای جهت‌دار: حرکت ۱ پیکسل<br>
+        Shift + جهت: حرکت ۱۰ پیکسل<br>
+        Delete: حذف المان انتخابی<br>
+        دوبار کلیک: تغییر حالت کلید، LED و چک‌باکس
+      </div>
+      <label class="checkbox"><input id="gridToggle" type="checkbox" checked> نمایش شبکهٔ ۸ پیکسلی</label>
+      <label class="checkbox"><input id="snapToggle" type="checkbox" checked> چسبیدن به شبکه (۴ پیکسل)</label>
+    </aside>
+
+    <section class="canvas-shell">
+      <div class="canvas-center">
+        <div class="device-frame">
+          <div class="run-hud">
+            <span class="run-chip" id="hudMode">حالت اجرا</span>
+            <span class="run-chip" id="hudWifi">Wi‑Fi</span>
+            <span class="run-chip" id="hudKb">کیبورد</span>
+            <span class="run-chip" id="hudLang">FA</span>
+            <span class="run-chip" id="hudSave">ذخیره شده</span>
+          </div>
+        </div>
+        <div class="screen-wrap"><div id="screen" class="grid"></div></div>
+        <div class="hw-panel" id="hwPanel" aria-label="hardware keys">
+          <div class="hw-col">
+            <button type="button" data-hw="F1">F1</button>
+            <button type="button" data-hw="F2">F2</button>
+            <button type="button" data-hw="F3">F3</button>
+            <button type="button" data-hw="F4">F4</button>
+            <button type="button" data-hw="F5">F5</button>
+          </div>
+          <div class="hw-col">
+            <button type="button" data-hw="SAVE">SAVE</button>
+            <button type="button" data-hw="CANCEL">CANCEL</button>
+            <button type="button" data-hw="MODE" class="hw-mode">MODE</button>
+            <button type="button" data-hw="START" class="hw-start">START</button>
+            <button type="button" data-hw="STOP" class="hw-stop">STOP</button>
+          </div>
+          <div class="hw-cap">کلیدهای سخت‌افزاری کنار صفحه — بدون لمس</div>
+        </div>
+        <div class="run-hint" id="runHint" hidden>
+          کلید MODE = فوکوس نارنجی بین آیتم‌ها (مثل V.1.5.0). START تایید/＋ ، STOP کاهش/⌫ ، CANCEL خروج MODE.<br>
+          آیکون کیبورد را بزن تا روشن شود و پَد باز شود؛ با عوض‌کردن صفحه فقط پَد بسته می‌شود، وضعیت روشن می‌ماند.
+        </div>
+      </div>
+    </section>
+
+    <aside class="sidebar right">
+      <h2>مشخصات المان انتخابی</h2>
+      <div class="selection-name"><span id="selectedName">هیچ المانی انتخاب نشده</span><span id="selectedType">—</span></div>
+      <div class="prop-grid">
+        <label>X<input id="propX" type="number"></label>
+        <label>Y<input id="propY" type="number"></label>
+        <label>عرض W<input id="propW" type="number" min="4"></label>
+        <label>ارتفاع H<input id="propH" type="number" min="4"></label>
+      </div>
+      <label style="margin-top:10px">متن<input id="propText" type="text"></label>
+      <label id="iconPickerWrap" style="margin-top:10px">آیکون
+        <select id="propIcon">
+          <option value="">بدون آیکون</option>
+          <option value="home">خانه</option><option value="volume">بلندگو</option>
+          <option value="printer">پرینتر</option><option value="wifi">وای‌فای</option>
+          <option value="globe">وب</option><option value="settings">تنظیمات</option>
+          <option value="save">ذخیره</option><option value="keyboard">کیبورد</option>
+          <option value="warning">هشدار</option><option value="stop">توقف</option>
+          <option value="back">بازگشت</option><option value="info">اطلاعات</option>
+          <option value="lock">قفل</option>
+        </select>
+      </label>
+      <div class="prop-grid" style="margin-top:10px">
+        <label>رنگ زمینه<input id="propBg" type="color"></label>
+        <label>رنگ متن<input id="propColor" type="color"></label>
+      </div>
+      <div class="prop-grid" style="margin-top:10px">
+        <label>اندازه متن<input id="propFont" type="number" min="7" max="40"></label>
+        <label>گردی گوشه<input id="propRadius" type="number" min="0" max="80"></label>
+      </div>
+      <div class="prop-grid" style="margin-top:10px">
+        <label>چینش افقی
+          <select id="propAlign"><option value="flex-start">راست</option><option value="center">وسط</option><option value="flex-end">چپ</option></select>
+        </label>
+        <label>چینش عمودی
+          <select id="propVAlign"><option value="flex-start">بالا</option><option value="center">وسط</option><option value="flex-end">پایین</option></select>
+        </label>
+      </div>
+      <div class="prop-grid" style="margin-top:10px">
+        <label>ضخامت متن
+          <select id="propWeight"><option value="400">عادی</option><option value="600">نیمه ضخیم</option><option value="700">ضخیم</option></select>
+        </label>
+        <label>جهت متن
+          <select id="propDirection"><option value="rtl">فارسی RTL</option><option value="ltr">لاتین LTR</option></select>
+        </label>
+      </div>
+      <div class="prop-grid" style="margin-top:10px">
+        <label>مقدار ۰ تا ۱۰۰<input id="propValue" type="number" min="0" max="100"></label>
+        <label class="checkbox" style="margin-top:17px"><input id="propState" type="checkbox"> حالت روشن / فعال</label>
+      </div>
+      <h2 style="margin-top:14px">چینش سریع</h2>
+      <div class="align-buttons">
+        <button data-align="right" title="راست‌چین">⇥</button>
+        <button data-align="hcenter" title="وسط افقی">↔</button>
+        <button data-align="left" title="چپ‌چین">⇤</button>
+        <button data-align="top" title="بالا">⇡</button>
+        <button data-align="vcenter" title="وسط عمودی">↕</button>
+        <button data-align="bottom" title="پایین">⇣</button>
+      </div>
+      <label class="checkbox"><input id="propLock" type="checkbox"> قفل کردن المان</label>
+      <div class="row">
+        <button id="frontBtn">بیاور جلو</button>
+        <button id="backBtn">بفرست عقب</button>
+      </div>
+      <div class="row">
+        <button id="duplicateBtn">کپی</button>
+        <button id="deleteBtn" class="danger">حذف</button>
+      </div>
+      <hr>
+      <h2>فایل طرح</h2>
+      <div class="row">
+        <button id="importBtn">ورود JSON</button>
+        <input id="importFile" type="file" accept=".json,application/json" hidden>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="statusbar">
+    <span id="statusSelection">انتخاب: —</span>
+    <span id="statusPos">مختصات: —</span>
+    <span>خط قرمز = مرز امن قبل از کلیدهای F</span>
+    <span>نسخهٔ طراح ۶.۰ — پنل ۱۰ کلید + صفحات کامل</span>
+  </footer>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+(() => {
+  "use strict";
+  const screen = document.getElementById("screen");
+  const $ = id => document.getElementById(id);
+  const props = ["X","Y","W","H","Text","Bg","Color","Font","Radius","Icon","Align","VAlign","Weight","Direction","Value","State"];
+  let items = [];
+  let selectedId = null;
+  let selectedIds = new Set();
+  let history = [];
+  let historyIndex = -1;
+  let drag = null;
+  let nextId = 100;
+  let maxZ = 100;
+  let previewMode = false;
+  let marquee = null;
+  const SCREEN_ORDER = ["main","list","settings","f2","f3","f4","f5"];
+  const CHROME_ROLES = new Set(["home","help","title","language","save"]);
+  const TOOL_LAYOUT = {
+    12:{x:14,y:52,w:80,h:40,z:15},
+    13:{x:14,y:98,w:36,h:34,z:20},
+    14:{x:56,y:98,w:36,h:34,z:20},
+    15:{x:14,y:140,w:80,h:36,z:18},
+    16:{x:14,y:182,w:80,h:118,z:18}
+  };
+  const runtime = {
+    keyboardOpen:false, keyboardEnabled:false, dirty:false, help:false,
+    wifi:true, buzzer:true, printer:false, stopNc:true,
+    activeField:null, replaceOnType:false, screen:"settings", printSlip:false,
+    listPage:1, selectedRow:1, position:"0.0", setpoint:"1200",
+    modeNav:false, focusIndex:0, focusKey:null, running:false
+  };
+
+  const STR = {
+    FA: {
+      home:"خانه", help:"راهنما", save:"ذخیره", title:"تنظیمات عمومی",
+      stock:"طول شاخه", kerf:"عرض تیغه / پرت", print:"پرینتر", ok:"تأیید",
+      wifiOn:"وای‌فای روشن", wifiOff:"وای‌فای خاموش", wifiLabel:"وای‌فای",
+      kbOn:"کیبورد مجازی روشن", kbOff:"کیبورد مجازی خاموش",
+      buzOn:"بازر روشن", buzOff:"بازر خاموش",
+      printOn:"پرینتر فعال", printOff:"پرینتر خاموش",
+      saved:"ذخیره شد", unsaved:"ذخیره‌نشده",
+      nc:"N.C", no:"N.O", ncDesc:"عادی بسته", noDesc:"عادی باز",
+      helpTitle:"راهنمای تنظیمات عمومی",
+      helpBody:[
+        "<b>وای‌فای:</b> قطع و وصل ارتباط بی‌سیم.",
+        "<b>کیبورد مجازی:</b> آیکون را بزن تا روشن شود و کیبورد باز شود. خاموش = ورود با USB.",
+        "<b>کادر عددی:</b> فقط با کیبورد مجازی روشن: انتخاب آبی و رقم اول جایگزین.",
+        "<b>استاپ:</b> عادی بسته = قرمز؛ عادی باز = سبز.",
+        "<b>پرینتر:</b> فعال/غیرفعال؛ با فعال شدن برچسب هافلر چاپ می‌شود.",
+        "<b>خانه:</b> صفحه اصلی.",
+        "<b>MODE:</b> چرخش فوکوس بین آیتم‌های صفحه؛ START تایید/افزایش؛ STOP کاهش؛ CANCEL خروج از MODE.",
+        "<b>F1..F5:</b> رفتن مستقیم به تب‌ها."
+      ],
+      mainTitle:"صفحه اصلی", mainBody:"موقعیت فعلی و setpoint. جوگ با کلید سخت‌افزاری یا لمس.",
+      listTitle:"لیست برش", listBody:"۱۰ ردیف در هر صفحه — سایز و تعداد.",
+      titleF2:"تنظیمات موتور", titleF3:"سنسور و IO", titleF4:"شبکه / وب", titleF5:"سیستم",
+      bodyF2:"شتاب، سرعت برش، زمان راه‌اندازی و جوگ.",
+      bodyF3:"سنسور ابتدا/انتها، قطبیت ورودی‌ها و استاپ.",
+      bodyF4:"پورتال وب، OTA و وضعیت AP.",
+      bodyF5:"نسخه، ریست کارخانه، شمارنده برش.",
+      tabTitle:"تب ", backSettings:"بازگشت به تنظیمات (F1)",
+      goMain:"صفحه اصلی", goList:"لیست سایز/تعداد",
+      needKb:"کیبورد مجازی خاموش است — از USB استفاده کن یا آیکون کیبورد را روشن کن",
+      valueOk:"مقدار اعمال شد",
+      estop:"حالت استاپ تغییر کرد", slip:"چاپ شد: هافلر",
+      pos:"موقعیت", sp:"Setpoint", mm:"mm", page:"صفحه",
+      row:"ردیف", size:"سایز", count:"تعداد", cut:"انتخاب برای برش",
+      modeCycle:"MODE فوکوس → ", started:"START", stopped:"STOP",
+      cancelled:"CANCEL", kbUsbHint:"ورود با USB فعال است",
+      modeOn:"MODE روشن", modeOff:"MODE خاموش", modeHint:"MODE: فوکوس | START: تایید | STOP: کاهش"
+    },
+    EN: {
+      home:"Home", help:"Help", save:"Save", title:"General Settings",
+      stock:"Stock length", kerf:"Kerf / blade", print:"Printer", ok:"OK",
+      wifiOn:"Wi‑Fi On", wifiOff:"Wi‑Fi Off", wifiLabel:"Wi‑Fi",
+      kbOn:"Virtual KB On", kbOff:"Virtual KB Off",
+      buzOn:"Buzzer On", buzOff  const ICONS = {
+    home: `<path d="M3 11.2 12 3l9 8.2v9.3a.5.5 0 0 1-.5.5H15v-6H9v6H3.5a.5.5 0 0 1-.5-.5v-9.3Z"/>`,
+    volume: `<path d="M3 9v6h4l5 4V5L7 9H3Zm12.5-.5a5 5 0 0 1 0 7l1.5 1.5a7 7 0 0 0 0-10l-1.5 1.5Zm3-3a9 9 0 0 1 0 13l1.5 1.5a11 11 0 0 0 0-16l-1.5 1.5Z"/>`,
+    printer: `<path d="M6 3h12v5H6V3Zm12 12v6H6v-6h12Zm2-6H4a3 3 0 0 0-3 3v5h4v-4h14v4h4v-5a3 3 0 0 0-3-3Zm-1.5 2.2a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/>`,
+    wifi: `<path d="M12 18.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm0-5a9 9 0 0 0-6.4 2.7l2 2a6.2 6.2 0 0 1 8.8 0l2-2a9 9 0 0 0-6.4-2.7Zm0-5.2a14.2 14.2 0 0 0-10 4.2l2 2a11.3 11.3 0 0 1 16 0l2-2a14.2 14.2 0 0 0-10-4.2Zm0-5.3A19.5 19.5 0 0 0-1.8 8.8l2 2a16.7 16.7 0 0 1 23.6 0l2-2A19.5 19.5 0 0 0 12 3Z"/>`,
+    globe: `<path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.9 6h-3a15 15 0 0 0-1.4-3.4A8 8 0 0 1 18.9 8ZM12 4c.9 1.1 1.6 2.4 1.9 4h-3.8c.3-1.6 1-2.9 1.9-4ZM4.3 14a8 8 0 0 1 0-4h3.5a17 17 0 0 0 0 4H4.3Zm.8 2h3a15 15 0 0 0 1.4 3.4A8 8 0 0 1 5.1 16Zm3-8h-3a8 8 0 0 1 4.4-3.4A15 15 0 0 0 8.1 8Zm3.9 12c-.9-1.1-1.6-2.4-1.9-4h3.8c-.3 1.6-1 2.9-1.9 4Zm2.3-6H9.7a15 15 0 0 1 0-4h4.6a15 15 0 0 1 0 4Zm.2 5.4a15 15 0 0 0 1.4-3.4h3a8 8 0 0 1-4.4 3.4Zm1.7-5.4a17 17 0 0 0 0-4h3.5a8 8 0 0 1 0 4h-3.5Z"/>`,
+    settings: `<path d="m19.4 13 .1-1-.1-1 2.1-1.6-2-3.4-2.5 1a8 8 0 0 0-1.7-1L15 3.3h-4L10.7 6A8 8 0 0 0 9 7L6.5 6l-2 3.4L6.6 11l-.1 1 .1 1-2.1 1.6 2 3.4L9 17a8 8 0 0 0 1.7 1l.3 2.7h4l.3-2.7a8 8 0 0 0 1.7-1l2.5 1 2-3.4L19.4 13ZM13 15.5A3.5 3.5 0 1 1 13 8a3.5 3.5 0 0 1 0 7.5Z"/>`,
+    save: `<path d="M4 3h14l3 3v15H3V3h1Zm3 2v6h10V5H7Zm0 10v4h10v-4H7Zm7-9h2v4h-2V6Z"/>`,
+    keyboard: `<path d="M3 5h18a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Zm1 3v2h2V8H4Zm4 0v2h2V8H8Zm4 0v2h2V8h-2Zm4 0v2h2V8h-2ZM4 12v2h2v-2H4Zm4 0v2h2v-2H8Zm4 0v2h2v-2h-2Zm4 0v2h2v-2h-2ZM6 16v1h12v-1H6Z"/>`,
+    warning: `<path d="M12 2 1 21h22L12 2Zm1 15h-2v-2h2v2Zm0-4h-2V8h2v5Z"/>`,
+    stop: `<path d="m7 2-5 5v10l5 5h10l5-5V7l-5-5H7Zm1.5 6h7v8h-7V8Z"/>`,
+    back: `<path d="M20 11H7.8l5.6-5.6L12 4l-8 8 8 8 1.4-1.4L7.8 13H20v-2Z"/>`,
+    info: `<path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 16h-2v-7h2v7Zm0-9h-2V6h2v3Z"/>`,
+    lock: `<path d="M17 8h-1V6a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2Zm-7-2a2 2 0 0 1 4 0v2h-4V6Zm3 10.7V19h-2v-2.3a2 2 0 1 1 2 0Z"/>`
+  };
+  const iconSvg = name => ICONS[name] ? `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[name]}</svg>` : "";
+  const estopHtml = () => {
+    const nc = !!runtime.stopNc;
+    return `<img src="assets/estop-button.png" alt="E-STOP"><span class="ncno">${nc ? t("nc") : t("no")}</span><span class="ncno-desc">${nc ? t("ncDesc") : t("noDesc")}</span>`;
+  };
+  const wifiHtml = () => `${iconSvg("wifi")}<span class="wifi-label">${t("wifiLabel")}</span>`;
+  const keyboardHtml = () => {
+    const keys = [
+      ["1","1",""],["2","2",""],["3","3",""],
+      ["4","4",""],["5","5",""],["6","6",""],
+      ["7","7",""],["8","8",""],["9","9",""],
+      [".",".",""],["0","0",""],["⌫","back","back"],
+      [t("ok"),"ok","ok"]
+    ];
+    const focus = runtime.modeNav ? currentFocus() : null;
+    return `<div class="kb-keys">${keys.map(([label,code,c])=>{
+      const on = focus && focus.kind==="kb" && focus.code===code;
+      return `<span class="kb-key ${c}${on?" mode-focus":""}" data-key="${code}">${label}</span>`;
+    }).join("")}</div>`;
+  };
+  function applyI18n() {
+    const titles = {
+      settings: t("title"),
+      main: t("mainTitle"),
+      list: t("listTitle"),
+      f2: t("titleF2"),
+      f3: t("titleF3"),
+      f4: t("titleF4"),
+      f5: t("titleF5")
+    };
+    items.forEach(it => {
+      if (it.role === "home") it.text = t("home");
+      if (it.role === "help") it.text = t("help");
+      if (it.role === "save") it.text = t("save");
+      if (it.role === "title") it.text = titles[runtime.screen] || t("title");
+      if (it.role === "stock-label") it.text = t("stock");
+      if (it.role === "kerf-label") it.text = t("kerf");
+      if (it.role === "printer") it.text = t("print");
+    });
+  }
+  const widgetHtml = item => {
+    const value=clamp(Number(item.value)||0,0,100);
+    if(item.type==="slider"){
+      const usable=Math.max(0,item.w-16), pos=Math.round(usable*value/100);
+      return `<span class="track"></span><span class="fill" style="width:${pos}px"></span><span class="thumb" style="right:${Math.max(-2,pos-2)}px"></span>`;
+    }
+    if(item.type==="progress")return `<span class="bar" style="width:${value}%"></span><span class="caption">${value}%</span>`;
+    if(item.type==="toggle")return `<span class="knob"></span><span class="state-label">${item.state?"ON":"OFF"}</span>`;
+    if(item.type==="checkbox")return `<span class="box">${item.state?"✓":""}</span><span>${item.text||"گزینه"}</span>`;
+    if(item.type==="number")return `<span>${item.text||value}</span>`;
+    if(item.type==="gauge")return `<svg viewBox="0 0 100 64"><path d="M10 52a40 40 0 0 1 80 0" fill="none" stroke="#cfdae1" stroke-width="10" stroke-linecap="round"/><path d="M10 52a40 40 0 0 1 80 0" fill="none" stroke="#1976d2" stroke-width="10" stroke-linecap="round" pathLength="100" stroke-dasharray="${value} 100"/><text x="50" y="55" text-anchor="middle" font-size="17" font-weight="700" fill="currentColor">${value}</text></svg>`;
+    if(item.type==="image")return item.image?`<img src="${item.image}" alt="">`:"";
+    return "";
+  };
+  // هدر فشرده داخل مرز امن x<412 — عنوان پهن‌تر
+  const HDR_W = 44, HDR_H = 39, HDR_Y = 6;
+  const initial = [
+    {id:1,name:"کلید F1",type:"fkey",x:420,y:8,w:52,h:54,text:"F1",cls:"fkey active",bg:"#dcebff",color:"#0a66c2",font:15,radius:10,z:30,locked:false},
+    {id:2,name:"کلید F2",type:"fkey",x:420,y:69,w:52,h:54,text:"F2",cls:"fkey",bg:"#f7f9fc",color:"#4a5d6e",font:15,radius:10,z:30,locked:false},
+    {id:3,name:"کلید F3",type:"fkey",x:420,y:130,w:52,h:54,text:"F3",cls:"fkey",bg:"#f7f9fc",color:"#4a5d6e",font:15,radius:10,z:30,locked:false},
+    {id:4,name:"کلید F4",type:"fkey",x:420,y:191,w:52,h:54,text:"F4",cls:"fkey",bg:"#f7f9fc",color:"#4a5d6e",font:15,radius:10,z:30,locked:false},
+    {id:5,name:"کلید F5",type:"fkey",x:420,y:252,w:52,h:54,text:"F5",cls:"fkey",bg:"#f7f9fc",color:"#4a5d6e",font:15,radius:10,z:30,locked:false},
+
+    {id:6,name:"خانه",role:"home",type:"icon",icon:"home",x:6,y:HDR_Y,w:HDR_W,h:HDR_H,text:"خانه",cls:"home hdr-btn",bg:"#0a84ff",color:"#ffffff",font:9,radius:10,z:20,locked:false,align:"center",vAlign:"center",weight:"600"},
+    {id:7,name:"راهنما",role:"help",type:"button",icon:"info",x:55,y:HDR_Y,w:HDR_W,h:HDR_H,text:"راهنما",cls:"home hdr-btn",bg:"#0a84ff",color:"#ffffff",font:9,radius:10,z:20,locked:false,align:"center",vAlign:"center",weight:"600"},
+    {id:8,name:"عنوان صفحه",role:"title",type:"text",x:105,y:3,w:205,h:44,text:"تنظیمات عمومی",cls:"header-box",bg:"#ffffff",color:"#1c2b3a",font:13,radius:12,z:20,locked:false,align:"center",vAlign:"center",weight:"700"},
+    {id:9,name:"زبان",role:"language",type:"button",icon:"globe",x:316,y:HDR_Y,w:HDR_W,h:HDR_H,text:"FA",cls:"lang hdr-btn",bg:"#0a84ff",color:"#ffffff",font:9,radius:10,z:20,locked:false,align:"center",vAlign:"center",weight:"600"},
+    {id:10,name:"ذخیره",role:"save",type:"button",icon:"save",x:364,y:HDR_Y,w:HDR_W,h:HDR_H,text:"ذخیره",cls:"save hdr-btn",bg:"#0a84ff",color:"#ffffff",font:9,radius:10,z:20,locked:false,align:"center",vAlign:"center",weight:"600"},
+
+    {id:11,name:"پنل ابزار",type:"card",x:-24,y:19,w:92,h:260,text:"",cls:"card",bg:"#ffffff",color:"#17384d",font:12,radius:16,z:1,locked:false},
+    {id:12,name:"قطع و وصل وای‌فای",role:"wifi-toggle",type:"wifi",x:-18,y:23,w:80,h:28,text:"",cls:"wifi-apple",bg:"#e8f8ec",color:"#1b9e4a",font:11,radius:14,z:15,locked:false,state:true},
+    {id:13,name:"کیبورد مجازی روشن/خاموش",role:"keyboard-toggle",type:"button",icon:"keyboard",x:-18,y:55,w:80,h:26,text:"",cls:"home hdr-icon tool-chip",bg:"#c5ccd3",color:"#ffffff",font:12,radius:10,z:25,locked:false,state:false,align:"center",vAlign:"center"},
+    {id:14,name:"بازر",role:"buzzer-toggle",type:"button",icon:"volume",x:-18,y:85,w:80,h:26,text:"",cls:"home hdr-icon tool-chip",bg:"#0a84ff",color:"#ffffff",font:12,radius:10,z:25,locked:false,state:true,align:"center",vAlign:"center"},
+    {id:15,name:"تست پرینتر",role:"printer",type:"button",icon:"printer",x:-18,y:115,w:80,h:28,text:"پرینتر",cls:"print off",bg:"#f0f0f0",color:"#9aa3ad",font:9,radius:12,z:18,locked:false,state:false,align:"center",vAlign:"center",weight:"600"},
+    {id:16,name:"توقف اضطراری",role:"estop",type:"estop",x:-20,y:147,w:80,h:92,text:"",cls:"estop-block nc",bg:"transparent",color:"#c62828",font:9,radius:0,z:18,locked:false,align:"center",vAlign:"flex-start"},
+
+    {id:17,name:"کارت مقادیر",type:"card",x:76,y:20,w:300,h:82,text:"",cls:"card",bg:"#ffffff",color:"#17384d",font:12,radius:16,z:1,locked:false},
+    {id:18,name:"عنوان طول شاخه",role:"stock-label",type:"text",x:84,y:19,w:136,h:28,text:"طول شاخه",cls:"section-title",bg:"#ffffff",color:"#5b6b7c",font:11,radius:0,z:4,locked:false,align:"center",vAlign:"center",weight:"600"},
+    {id:19,name:"مقدار طول شاخه",role:"value-stock",type:"button",x:84,y:47,w:136,h:46,text:"6000",cls:"value value-box",bg:"#f4f8fc",color:"#0a66c2",font:20,radius:12,z:5,locked:false,align:"center",vAlign:"center",weight:"700"},
+    {id:20,name:"عنوان عرض تیغه",role:"kerf-label",type:"text",x:232,y:19,w:132,h:28,text:"عرض تیغه / پرت",cls:"section-title",bg:"#ffffff",color:"#5b6b7c",font:11,radius:0,z:4,locked:false,align:"center",vAlign:"center",weight:"600"},
+    {id:21,name:"مقدار عرض تیغه",role:"value-kerf",type:"button",x:232,y:47,w:132,h:46,text:"3.0",cls:"value value-box",bg:"#f4f8fc",color:"#0a66c2",font:20,radius:12,z:5,locked:false,align:"center",vAlign:"center",weight:"700"},
+
+    {id:23,name:"کارت سرویس زیر پرینتر",role:"factory-card",type:"card",x:-18,y:147,w:80,h:92,text:"",cls:"card",bg:"#ffffff",color:"#17384d",font:12,radius:14,z:1,locked:true},
+    {id:24,name:"بازنشانی کارخانه",role:"factory-reset",type:"button",icon:"warning",x:0,y:0,w:80,h:36,text:"بازنشانی کارخانه",cls:"button danger",bg:"#fff2f2",color:"#8b1e18",font:15,radius:14,z:8,locked:true,align:"center",vAlign:"center",weight:"600"},
+    {id:25,name:"برش اتوماتیک",role:"factory-reserved",type:"button",x:0,y:42,w:80,h:36,text:"برش اتوماتیک",cls:"button",bg:"#f0f7ff",color:"#0a84ff",font:14,radius:10,z:8,locked:true,align:"center",vAlign:"center",weight:"600"},
+
+    {id:22,name:"کیبورد عددی",role:"numpad",type:"keyboard",x:110,y:144,w:300,h:166,text:"",cls:"keyboard",bg:"#1a3144",color:"#ffffff",font:16,radius:14,z:50,locked:false,runtimeOnly:true,direction:"ltr"}
+  ];
+
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+  function getItem() { return items.find(i => i.id === selectedId); }
+  function snap(v) { return $("snapToggle").checked ? Math.round(v / 4) * 4 : Math.round(v); }
+  function clamp(n,min,max) { return Math.max(min,Math.min(max,n)); }
+  function hexColor(value, fallback) {
+    if (/^#[0-9a-f]{6}$/i.test(value || "")) return value;
+    return fallback;
+  }
+  const FIXED_TOOLS = {
+    "wifi-toggle": {x:-18,y:23,w:80,h:28,z:40,cls:"wifi-apple",type:"wifi"},
+    "keyboard-toggle": {x:-18,y:55,w:80,h:26,z:50,cls:"home hdr-icon tool-chip",type:"button",icon:"keyboard"},
+    "buzzer-toggle": {x:-18,y:85,w:80,h:26,z:50,cls:"home hdr-icon tool-chip",type:"button",icon:"volume"},
+    "printer": {x:-18,y:115,w:80,h:28,z:40,cls:"print",type:"button",icon:"printer"},
+    "estop": {x:-20,y:147,w:80,h:92,z:40,cls:"estop-block",type:"estop"}
+  };
+  function enforceToolLayout(){
+    items = items.filter(it=>!(it.icon && ["volume","keyboard","printer","wifi"].includes(it.icon) && !FIXED_TOOLS[it.role]));
+    ["wifi-toggle","keyboard-toggle","buzzer-toggle","printer","estop"].forEach(role=>{
+      let node=items.find(i=>i.role===role);
+      if(!node){
+        const src=initial.find(i=>i.role===role);
+        if(!src)return;
+        node=clone(src);
+        items.push(node);
+      }
+      Object.assign(node, FIXED_TOOLS[role]);
+      node.x=FIXED_TOOLS[role].x; node.y=FIXED_TOOLS[role].y;
+      node.w=FIXED_TOOLS[role].w; node.h=FIXED_TOOLS[role].h; node.z=FIXED_TOOLS[role].z;
+      if(role==="printer") node.cls = runtime.printer ? "print on" : "print off";
+      if(role==="estop") node.cls = "estop-block " + (runtime.stopNc ? "nc" : "no");
+    });
+    const seen=new Set();
+    items = items.filter(it=>{
+      if(!FIXED_TOOLS[it.role]) return true;
+      if(seen.has(it.role)) return false;
+      seen.add(it.role);
+      return true;
+    });
+    const card=items.find(i=>i.id===11);
+    if(card){card.x=8;card.y=48;card.w=92;card.h=260;card.z=0;card.cls="card";card.type="card";}
+  }
+  function collectFocusables(){
+    if(runtime.help) return [{kind:"help-close"}];
+    if(runtime.keyboardOpen){
+      return ["1","2","3","4","5","6","7","8","9",".","0","back","ok"].map(k=>({kind:"kb",code:k}));
+    }
+    const roles=[];
+    const pushRole=(role)=>{const it=items.find(i=>i.role===role); if(it) roles.push({kind:"item",id:it.id,role});};
+    const pushType=(type)=>{items.filter(i=>i.type===type).forEach(it=>roles.push({kind:"item",id:it.id,role:it.role,type}));};
+    if(runtime.screen==="settings"){
+      ["wifi-toggle","keyboard-toggle","buzzer-toggle","printer","estop","value-stock","value-kerf","home","help","language","save"].forEach(pushRole);
+      pushType("fkey");
+    } else if(runtime.screen==="main"){
+      ["home","help","language","save"].forEach(pushRole);
+      roles.push({kind:"page",action:"setpoint"},{kind:"page",action:"goto-list"},{kind:"page",action:"goto-settings"});
+      pushType("fkey");
+    } else if(runtime.screen==="list"){
+      ["home","help","language","save"].forEach(pushRole);
+      roles.push({kind:"page",action:"list-prev"},{kind:"page",action:"list-next"},{kind:"page",action:"goto-main"});
+      for(let i=1;i<=10;i++) roles.push({kind:"page",action:"row",row:(runtime.listPage-1)*10+i});
+      pushType("fkey");
+    } else {
+      ["home","help","language","save"].forEach(pushRole);
+      roles.push({kind:"page",action:"goto-settings"},{kind:"page",action:"goto-main"});
+      pushType("fkey");
+    }
+    return roles;
+  }
+  function currentFocus(){
+    const list=collectFocusables();
+    if(!list.length) return null;
+    runtime.focusIndex=((runtime.focusIndex%list.length)+list.length)%list.length;
+    return list[runtime.focusIndex];
+  }
+  function isChromeItem(item){
+    return item.type==="fkey" || CHROME_ROLES.has(item.role);
+  }
+  function syncFkeyActive(){
+    const map={settings:"F1",f2:"F2",f3:"F3",f4:"F4",f5:"F5"};
+    const active=map[runtime.screen]||"";
+    items.forEach(it=>{
+      if(it.type!=="fkey")return;
+      const on=it.text===active;
+      it.cls=on?"fkey active":"fkey";
+      it.bg=on?"#dcebff":"#f7f9fc";
+      it.color=on?"#0a66c2":"#4a5d6e";
+    });
+  }
+  function render() {
+    enforceToolLayout();
+    applyI18n();
+    syncFkeyActive();
+    screen.innerHTML = "";
+    const showSettings = !previewMode || runtime.screen === "settings";
+    const focus = runtime.modeNav ? currentFocus() : null;
+    items.slice().sort((a,b) => a.z-b.z).forEach(item => {
+      if (previewMode && !showSettings && !isChromeItem(item)) return;
+      const el = document.createElement("div");
+      const isSelected=selectedIds.has(item.id);
+      el.className = "item " + (item.cls || "") + (item.icon ? " has-icon" : "") + (isSelected ? " selected" : "") + (item.locked ? " locked" : "");
+      el.dataset.id = item.id;
+      if(previewMode && item.runtimeOnly && !runtime.keyboardOpen)el.classList.add("runtime-hidden");
+      if(previewMode && item.role==="save" && runtime.dirty)el.classList.add("dirty-save");
+      if(item.role==="keyboard-toggle"){
+        el.classList.remove("kb-on","kb-off","disabled-control");
+        el.classList.add(runtime.keyboardEnabled ? "kb-on" : "kb-off");
+        item.state = runtime.keyboardEnabled;
+      }
+      if(item.role==="buzzer-toggle"){
+        el.classList.remove("buz-on","buz-off");
+        el.classList.add(runtime.buzzer ? "buz-on" : "buz-off");
+        item.state = runtime.buzzer;
+      }
+      if(item.role==="printer"){
+        el.classList.toggle("on", !!runtime.printer);
+        el.classList.toggle("off", !runtime.printer);
+        item.state = runtime.printer;
+      }
+      if(item.role==="estop"){
+        el.classList.toggle("nc", !!runtime.stopNc);
+        el.classList.toggle("no", !runtime.stopNc);
+      }
+      if(focus && focus.kind==="item" && focus.id===item.id) el.classList.add("mode-focus");
+      const fix = FIXED_TOOLS[item.role];
+      const x = fix ? fix.x : item.x, y = fix ? fix.y : item.y, w = fix ? fix.w : item.w, h = fix ? fix.h : item.h;
+      const zBoost = fix ? fix.z : ((previewMode && isChromeItem(item)) ? 5001 : item.z);
+      el.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${h}px;background-color:${item.bg};color:${item.color};font-size:${item.font}px;border-radius:${item.radius}px;z-index:${zBoost}`;
+      el.style.justifyContent = item.align || "center";
+      el.style.alignItems = item.vAlign || "center";
+      el.style.fontWeight = item.weight || "700";
+      el.style.direction = item.type === "keyboard" ? "ltr" : (item.direction || "rtl");
+      if (item.cls && item.cls.includes("hdr-btn")) el.style.fontSize = "9px";
+      if (item.type === "keyboard") { el.style.display = "block"; el.style.padding = "0"; el.style.overflow = "hidden"; }
+      if (item.type === "wifi") {
+        el.classList.add(runtime.wifi ? "on" : "off");
+        item.state = runtime.wifi;
+        el.innerHTML = wifiHtml();
+      } else if (item.type === "estop") {
+        el.innerHTML = estopHtml();
+      } else if (item.type === "toggle") {
+        el.classList.add(item.state ? "on" : "off");
+        el.style.backgroundColor=item.state?"#43b66f":"#778897";
+        el.innerHTML=widgetHtml(item);
+      } else if (item.type === "led") {
+        el.style.backgroundColor=item.state?"#36c56b":"#75828b";
+        el.innerHTML=widgetHtml(item);
+      } else if (["slider","progress","checkbox","number","gauge","image"].includes(item.type)) el.innerHTML=widgetHtml(item);
+      else if (item.type === "keyboard") el.innerHTML = keyboardHtml();
+      else if (item.role === "value-stock" || item.role === "value-kerf") {
+        el.style.direction = "ltr";
+        const editing = previewMode && runtime.activeField === item.role;
+        if (editing) el.classList.add("value-editing");
+        el.innerHTML = `<span class="val">${item.text||"0"}</span>${editing?'<span class="caret"></span>':''}<span class="unit-inline">mm</span>`;
+      }
+      else if (item.icon) el.innerHTML = iconSvg(item.icon) + (item.text ? `<span>${item.text.replace(/</g,"&lt;")}</span>` : "");
+      else el.textContent = item.text || "";
+      if (isSelected && selectedIds.size===1 && !item.locked && (!previewMode || (previewMode && item.role==="numpad" && runtime.keyboardOpen))) {
+        ["nw","ne","sw","se"].forEach(corner => {
+          const handle = document.createElement("i");
+          handle.className = "handle " + corner;
+          handle.dataset.resize = corner;
+          el.appendChild(handle);
+        });
+      }
+      screen.appendChild(el);
+    });
+    if(marquee && !previewMode){
+      const box=document.createElement("div");box.className="selection-marquee";
+      box.style.cssText=`left:${marquee.x}px;top:${marquee.y}px;width:${marquee.w}px;height:${marquee.h}px`;
+      screen.appendChild(box);
+    }
+    if(previewMode && runtime.screen !== "settings") renderPageBody();
+    if(previewMode && runtime.help)renderHelp();
+    if(previewMode && runtime.printSlip) renderPrintSlip();
+    updateInspector();
+    updateRunHud();
+  }
+  function renderPageBody(){
+    const body=document.createElement("div");
+    body.className="page-body";
+    const ltr = currentLang()==="EN";
+    body.style.direction = ltr ? "ltr" : "rtl";
+    body.style.textAlign = ltr ? "left" : "right";
+    const focus = runtime.modeNav ? currentFocus() : null;
+    const mark = (action, extra="") => (focus && focus.kind==="page" && focus.action===action && (extra==="" || focus.row===extra)) ? " mode-focus" : "";
+    const kbState = runtime.keyboardEnabled
+      ? `<span class="stat" style="background:#e8f8ec;color:#1b9e4a">${t("kbOn")}</span>`
+      : `<span class="stat" style="background:#f3f3f4;color:#d32f2f">${t("kbOff")}</span>`;
+    const langState = `<span class="stat">${currentLang()}</span>`;
+    const modeChip = runtime.modeNav ? `<span class="stat" style="background:#fff3e0;color:#ef6c00">${t("modeOn")}</span>` : "";
+    if(runtime.screen==="main"){
+      body.innerHTML=`<h2>${t("mainTitle")}</h2><p>${t("mainBody")}</p>
+        <div class="row-chip"><span>${t("pos")}</span><span class="stat">${runtime.position} ${t("mm")}</span></div>
+        <div class="row-chip${mark("setpoint")}" data-edit-sp><span>${t("sp")}</span><span class="stat">${runtime.setpoint} ${t("mm")}</span></div>
+        <div class="row-chip"><span>${t("wifiLabel")}</span>${runtime.wifi?t("wifiOn"):t("wifiOff")}</div>
+        <div class="row-chip"><span>KB / Lang</span><div style="display:flex;gap:6px;flex-wrap:wrap">${kbState}${langState}${modeChip}</div></div>
+        <div class="actions">
+          <span class="${mark("goto-list")}" data-goto="list">${t("goList")}</span>
+          <span class="${mark("goto-settings")}" data-goto="settings">${t("backSettings")}</span>
+        </div>`;
+    } else if(runtime.screen==="list"){
+      const rows=[1,2,3,4,5,6,7,8,9,10].map(i=>{
+        const n=(runtime.listPage-1)*10+i;
+        const active=n===runtime.selectedRow?" active":"";
+        const mf = (focus && focus.kind==="page" && focus.action==="row" && focus.row===n) ? " mode-focus" : "";
+        return `<div class="row-chip${active}${mf}" data-row="${n}"><span>${t("row")} ${n}</span><span>${t("size")} ${1000+n*50} · ${t("count")} ${i}</span></div>`;
+      }).join("");
+      body.innerHTML=`<h2>${t("listTitle")}</h2><p>${t("listBody")} — ${t("page")} ${runtime.listPage}/5</p>
+        <div class="row-chip"><span>KB / Lang</span><div style="display:flex;gap:6px;flex-wrap:wrap">${kbState}${langState}${modeChip}</div></div>
+        ${rows}
+        <div class="actions">
+          <span class="${mark("list-prev")}" data-list-page="-1">◀</span>
+          <span class="${mark("list-next")}" data-list-page="1">▶</span>
+          <span class="${mark("goto-main")}" data-goto="main">${t("goMain")}</span>
+        </div>`;
+    } else {
+      const key=String(runtime.screen);
+      const titleKey="title"+key.toUpperCase();
+      const bodyKey="body"+key.toUpperCase();
+      const fields = key==="f2"
+        ? [["شتاب / Accel","1200"],["سرعت برش","85%"],["Jog","40%"]]
+        : key==="f3"
+        ? [["سنسور ابتدا","OK"],["سنسور انتها","OK"],["Stop",runtime.stopNc?t("ncDesc"):t("noDesc")]]
+        : key==="f4"
+        ? [["AP",runtime.wifi?"ESP32-UPLOAD":"—"],["Portal",runtime.wifi?"192.168.4.1":"off"],["OTA","ready"]]
+        : [["FW","1.5.x"],["Cuts","12840"],["Factory","—"]];
+      body.innerHTML=`<h2>${t(titleKey)||t("tabTitle")+key.toUpperCase()}</h2>
+        <p>${t(bodyKey)||""}</p>
+        ${fields.map(([a,b])=>`<div class="row-chip"><span>${a}</span><span class="stat">${b}</span></div>`).join("")}
+        <div class="row-chip"><span>KB / Lang</span><div style="display:flex;gap:6px;flex-wrap:wrap">${kbState}${langState}${modeChip}</div></div>
+        <div class="actions">
+          <span class="${mark("goto-settings")}" data-goto="settings">${t("backSettings")}</span>
+          <span class="${mark("goto-main")}" data-goto="main">${t("goMain")}</span>
+        </div>`;
+    }
+    // mode-focus class on page-body children needs CSS
+    body.querySelectorAll(".mode-focus").forEach(el=>{
+      el.style.outline="3px solid #ff9800";
+      el.style.outlineOffset="2px";
+    });
+    screen.appendChild(body);
+  }
+  function renderPrintSlip(){
+    const slip=document.createElement("div");
+    slip.className="print-slip";
+    slip.innerHTML=`هافلر<small>Haffler · Print OK</small>`;
+    screen.appendChild(slip);
+  }
+  function updateRunHud(){
+    const hudWifi=$("hudWifi"), hudKb=$("hudKb"), hudLang=$("hudLang"), hudSave=$("hudSave"), hint=$("runHint"), hudMode=$("hudMode");
+    if(!hudWifi)return;
+    const lang=currentLang();
+    document.documentElement.lang = lang === "EN" ? "en" : "fa";
+    document.documentElement.dir = lang === "EN" ? "ltr" : "rtl";
+    if(hudMode) hudMode.textContent = (runtime.modeNav?"MODE·":"")+String(runtime.screen).toUpperCase()+(runtime.keyboardEnabled?"·KB":"");
+    hudWifi.textContent = runtime.wifi ? t("wifiOn") : t("wifiOff");
+    hudWifi.className = "run-chip" + (runtime.wifi ? " on" : "");
+    hudKb.textContent = runtime.keyboardEnabled ? (runtime.keyboardOpen ? (lang==="EN"?"KB open":"کیبورد باز") : t("kbOn")) : t("kbOff");
+    hudKb.className = "run-chip" + (runtime.keyboardEnabled ? " on" : "");
+    const modeBtn=document.querySelector('.hw-panel button[data-hw="MODE"]');
+    if(modeBtn) modeBtn.classList.toggle("on", !!runtime.modeNav);
+    hudLang.textContent = lang;
+    hudSave.textContent = runtime.dirty ? t("unsaved") : t("saved");
+    hudSave.className = "run-chip" + (runtime.dirty ? " warn" : " on");
+    if(hint) hint.hidden = !previewMode;
+  }
+  function select(id, additive=false) {
+    if(id==null){selectedIds.clear();selectedId=null;}
+    else if(additive){
+      if(selectedIds.has(id))selectedIds.delete(id);else selectedIds.add(id);
+      selectedId=selectedIds.has(id)?id:(selectedIds.size?[...selectedIds].at(-1):null);
+    } else {selectedIds=new Set([id]);selectedId=id;}
+    render();
+  }
+  function updateInspector() {
+    const item = getItem();
+    const count=selectedIds.size;
+    $("selectedName").textContent = count>1 ? `${count} المان انتخاب شده` : item ? item.name : "هیچ المانی انتخاب نشده";
+    $("selectedType").textContent = count>1 ? "گروه" : item ? item.type : "—";
+    $("statusSelection").textContent = "انتخاب: " + (count>1?`${count} المان`:item ? item.name : "—");
+    $("statusPos").textContent = item ? `مختصات: ${item.x}, ${item.y}  |  ${item.w}×${item.h}` : "مختصات: —";
+    props.forEach(p => $("prop"+p).disabled = !item);
+    ["propLock","frontBtn","backBtn","duplicateBtn","deleteBtn"].forEach(id => $(id).disabled = !item);
+    if (!item) return;
+    $("propX").value=item.x; $("propY").value=item.y; $("propW").value=item.w; $("propH").value=item.h;
+    $("propText").value=item.text || ""; $("propBg").value=hexColor(item.bg,"#ffffff");
+    $("propColor").value=hexColor(item.color,"#000000"); $("propFont").value=item.font;
+    $("propRadius").value=item.radius; $("propLock").checked=!!item.locked;
+    $("propIcon").value=item.icon || "";
+    $("propAlign").value=item.align || "center";
+    $("propVAlign").value=item.vAlign || "center";
+    $("propWeight").value=String(item.weight || "400");
+    $("propDirection").value=item.direction || "rtl";
+    $("propValue").value=item.value ?? 0;
+    $("propState").checked=!!item.state;
+  }
+  function snapshot(force=false) {
+    const state = JSON.stringify(items);
+    if (!force && history[historyIndex] === state) return;
+    history = history.slice(0, historyIndex + 1);
+    history.push(state);
+    if (history.length > 80) history.shift();
+    historyIndex = history.length - 1;
+  }
+  function restore(index) {
+    if (index < 0 || index >= history.length) return;
+    historyIndex = index; items = JSON.parse(history[index]);
+    if (!getItem()) {selectedId = null;selectedIds.clear();}
+    render();
+  }
+  function reset() {
+    items = clone(initial); selectedId = null; selectedIds.clear(); nextId = 100; maxZ = 100;
+    snapshot(true); render(); toast("طرح پیشنهادی بارگذاری شد");
+  }
+  function toast(text) {
+    const el=$("toast"); el.textContent=text; el.style.display="block";
+    clearTimeout(toast.timer); toast.timer=setTimeout(()=>el.style.display="none",1800);
+  }
+  function screenPoint(ev) {
+    const r=screen.getBoundingClientRect();
+    return {x:(ev.clientX-r.left)*480/r.width, y:(ev.clientY-r.top)*320/r.height};
+  }
+  function renderHelp(){
+    const lang=currentLang();
+    const body = (t("helpBody") || []).map(p => `<p>${p}</p>`).join("");
+    const modal=document.createElement("div");
+    modal.className="runtime-modal "+(lang==="EN"?"ltr":"rtl");
+    const focusClose = runtime.modeNav && currentFocus()?.kind==="help-close";
+    modal.innerHTML=`<div class="runtime-dialog">
+      <button type="button" class="help-close${focusClose?" mode-focus":""}" data-close-help aria-label="close">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <h3>${t("helpTitle")}</h3>${body}</div>`;
+    screen.appendChild(modal);
+  }
+  function openNumpad(fieldRole){
+    if(!runtime.keyboardEnabled){toast(t("needKb"));return;}
+    if(runtime.screen!=="settings"){
+      runtime.screen="settings";
+      runtime.help=false;runtime.printSlip=false;runtime.focusIndex=0;
+    }
+    const field=items.find(i=>i.role===fieldRole)||items.find(i=>i.role==="value-stock");
+    if(!field)return;
+    runtime.activeField=field.role;
+    runtime.original=field.text;
+    runtime.buffer=field.text;
+    runtime.replaceOnType=true;
+    runtime.keyboardOpen=true;
+    const pad=items.find(i=>i.role==="numpad");
+    selectedIds=new Set(pad?[pad.id]:[]);
+    selectedId=pad?pad.id:null;
+    render();
+  }
+  function closeKeyboard(cancel=true){
+    if(cancel && runtime.activeField){
+      const field=items.find(i=>i.role===runtime.activeField);
+      if(field && runtime.original!=null)field.text=runtime.original;
+    }
+    runtime.keyboardOpen=false;runtime.activeField=null;runtime.buffer="";runtime.replaceOnType=false;
+    selectedIds.clear();selectedId=null;render();
+  }
+  function commitKeyboard(){
+    const field=items.find(i=>i.role===runtime.activeField);
+    if(field){
+      if(runtime.activeField==="value-stock"){
+        const v=Math.max(10, Math.min(100000, parseInt(runtime.buffer||"0",10)||0));
+        field.text=String(v);
+      } else if(runtime.activeField==="value-kerf"){
+        let v=parseFloat(runtime.buffer||"0"); if(Number.isNaN(v))v=0;
+        v=Math.round(Math.max(0, Math.min(50, v))*10)/10;
+        field.text=v.toFixed(1);
+      }
+    }
+    runtime.keyboardOpen=false;runtime.activeField=null;runtime.buffer="";runtime.replaceOnType=false;
+    runtime.dirty=true;selectedIds.clear();selectedId=null;render();
+    toast(t("valueOk"));
+  }
+  function gotoScreen(name){
+    runtime.screen=name;
+    runtime.help=false;
+    runtime.keyboardOpen=false; // پَد بسته می‌شود ولی keyboardEnabled حفظ می‌شود
+    runtime.activeField=null;runtime.printSlip=false;
+    runtime.focusIndex=0;
+    selectedIds.clear();selectedId=null;render();
+  }
+  function activateFocus(dir){
+    const f=currentFocus();
+    if(!f)return;
+    if(f.kind==="help-close"){runtime.help=false;runtime.modeNav=false;render();return;}
+    if(f.kind==="kb"){
+      const field=items.find(i=>i.role===runtime.activeField);if(!field)return;
+      if(dir<0 || f.code==="back"){
+        if(runtime.replaceOnType){runtime.buffer="";runtime.replaceOnType=false;}
+        else runtime.buffer=runtime.buffer.slice(0,-1);
+        field.text=runtime.buffer||"0";render();return;
+      }
+      if(f.code==="ok"){commitKeyboard();return;}
+      const code=f.code;
+      if(code==="."&&!runtime.replaceOnType&&runtime.buffer.includes("."))return;
+      if(runtime.replaceOnType){runtime.buffer=code==="."?"0.":code;runtime.replaceOnType=false;}
+      else runtime.buffer=(runtime.buffer==="0"&&code!==".")?code:runtime.buffer+code;
+      field.text=runtime.buffer||"0";render();return;
+    }
+    if(f.kind==="page"){
+      if(f.action==="goto-list")gotoScreen("list");
+      else if(f.action==="goto-settings")gotoScreen("settings");
+      else if(f.action==="goto-main")gotoScreen("main");
+      else if(f.action==="list-prev"){runtime.listPage=clamp(runtime.listPage-1,1,5);render();}
+      else if(f.action==="list-next"){runtime.listPage=clamp(runtime.listPage+1,1,5);render();}
+      else if(f.action==="row"){runtime.selectedRow=f.row;toast(t("cut")+" #"+f.row);render();}
+      else if(f.action==="setpoint"){
+        if(dir>0){runtime.setpoint=String(clamp(Number(runtime.setpoint||0)+10,0,100000));runtime.dirty=true;render();}
+        else {runtime.setpoint=String(clamp(Number(runtime.setpoint||0)-10,0,100000));runtime.dirty=true;render();}
+      }
+      return;
+    }
+    if(f.kind==="item"){
+      const item=items.find(i=>i.id===f.id);if(!item)return;
+      if(item.type==="fkey"){
+        const tab=(item.text||"F1").toLowerCase();
+        gotoScreen(tab==="f1"?"settings":tab);return;
+      }
+      if(item.role==="wifi-toggle"){runtime.wifi=!runtime.wifi;runtime.dirty=true;render();toast(runtime.wifi?t("wifiOn"):t("wifiOff"));return;}
+      if(item.role==="keyboard-toggle"){
+        runtime.keyboardEnabled=!runtime.keyboardEnabled;
+        if(runtime.keyboardEnabled) openNumpad("value-stock");
+        else {if(runtime.keyboardOpen)closeKeyboard(false); else render();}
+        toast(runtime.keyboardEnabled?t("kbOn"):t("kbUsbHint"));runtime.dirty=true;return;
+      }
+      if(item.role==="buzzer-toggle"){runtime.buzzer=!runtime.buzzer;runtime.dirty=true;render();toast(runtime.buzzer?t("buzOn"):t("buzOff"));return;}
+      if(item.role==="printer"){
+        runtime.printer=!runtime.printer;runtime.dirty=true;
+        if(runtime.printer){runtime.printSlip=true;setTimeout(()=>{runtime.printSlip=false;if(previewMode)render();},1800);toast(t("slip"));}
+        else toast(t("printOff"));
+        render();return;
+      }
+      if(item.role==="estop"){runtime.stopNc=!runtime.stopNc;runtime.dirty=true;render();toast(t("estop")+": "+(runtime.stopNc?t("ncDesc"):t("noDesc")));return;}
+      if(item.role==="value-stock" || item.role==="value-kerf"){
+        if(dir!==0 && runtime.modeNav && !runtime.keyboardOpen){
+          // START/STOP = inc/dec without opening pad
+          let v=parseFloat(item.text||"0")||0;
+          const step = item.role==="value-kerf" ? 0.1 : 10;
+          v = dir>0 ? v+step : v-step;
+          if(item.role==="value-kerf"){v=Math.round(clamp(v,0,50)*10)/10;item.text=v.toFixed(1);}
+          else {item.text=String(clamp(Math.round(v),10,100000));}
+          runtime.dirty=true;render();return;
+        }
+        openNumpad(item.role);return;
+      }
+      if(item.role==="home"){gotoScreen("main");return;}
+      if(item.role==="help"){runtime.help=true;runtime.focusIndex=0;render();return;}
+      if(item.role==="language"){item.text=item.text==="FA"?"EN":"FA";runtime.dirty=true;render();return;}
+      if(item.role==="save"){runtime.dirty=false;render();toast(t("saved"));return;}
+    }
+  }
+  function handlePreviewPointer(ev){
+    if(ev.target.closest("[data-close-help]")){runtime.help=false;runtime.modeNav=false;render();return;}
+    if(runtime.help){if(ev.target.classList.contains("runtime-modal")){runtime.help=false;render();}return;}
+    if(runtime.printSlip){runtime.printSlip=false;render();return;}
+    const goto=ev.target.closest("[data-goto]");
+    if(goto){gotoScreen(goto.getAttribute("data-goto"));return;}
+    const listPage=ev.target.closest("[data-list-page]");
+    if(listPage){
+      runtime.listPage=clamp(runtime.listPage+Number(listPage.getAttribute("data-list-page")),1,5);
+      render();return;
+    }
+    const row=ev.target.closest("[data-row]");
+    if(row){runtime.selectedRow=Number(row.getAttribute("data-row"));toast(t("cut")+" #"+runtime.selectedRow);render();return;}
+    if(ev.target.closest("[data-edit-sp]")){
+      if(!runtime.keyboardEnabled){toast(t("needKb"));return;}
+      runtime.keyboardEnabled=true;gotoScreen("settings");openNumpad("value-stock");return;
+    }
+    const target=ev.target.closest(".item");
+    const resizeCorner=ev.target.dataset?.resize || "";
+    if(target){
+      const item=items.find(i=>i.id===Number(target.dataset.id));
+      if(item && item.role==="numpad" && runtime.keyboardOpen && (resizeCorner || !ev.target.closest(".kb-key"))){
+        selectedIds=new Set([item.id]);selectedId=item.id;
+        const p=screenPoint(ev);
+        drag={id:item.id,mode:resizeCorner?"resize":"move",corner:resizeCorner,sx:p.x,sy:p.y,x:item.x,y:item.y,w:item.w,h:item.h,group:[{id:item.id,x:item.x,y:item.y,w:item.w,h:item.h}],persistKb:true};
+        screen.setPointerCapture(ev.pointerId);render();return;
+      }
+    }
+    if(!target){
+      if(runtime.keyboardOpen)closeKeyboard(true);
+      return;
+    }
+    const item=items.find(i=>i.id===Number(target.dataset.id));if(!item)return;
+    target.classList.add("pressing");
+    setTimeout(()=>target.classList.remove("pressing"),120);
+    if(item.role==="help"){runtime.help=true;runtime.focusIndex=0;render();return;}
+    if(item.role==="save"){runtime.dirty=false;render();toast(t("saved"));return;}
+    if(item.role==="home"){gotoScreen("main");toast(t("goMain"));return;}
+    if(item.role==="language"){
+      item.text=item.text==="FA"?"EN":"FA";
+      runtime.dirty=true;render();
+      toast(item.text==="FA"?"زبان فارسی":"English");
+      return;
+    }
+    if(item.role==="wifi-toggle"){
+      runtime.wifi=!runtime.wifi;item.state=runtime.wifi;runtime.dirty=true;render();
+      toast(runtime.wifi?t("wifiOn"):t("wifiOff"));return;
+    }
+    if(item.role==="keyboard-toggle"){
+      runtime.keyboardEnabled=!runtime.keyboardEnabled;
+      item.state=runtime.keyboardEnabled;
+      if(runtime.keyboardEnabled){
+        openNumpad("value-stock");
+        toast(t("kbOn"));
+      } else {
+        if(runtime.keyboardOpen)closeKeyboard(false);
+        else render();
+        toast(t("kbUsbHint"));
+      }
+      runtime.dirty=true;return;
+    }
+    if(item.role==="buzzer-toggle"){
+      runtime.buzzer=!runtime.buzzer;item.state=runtime.buzzer;runtime.dirty=true;render();
+      toast(runtime.buzzer?t("buzOn"):t("buzOff"));return;
+    }
+    if(item.role==="printer"){
+      runtime.printer=!runtime.printer;item.state=runtime.printer;runtime.dirty=true;
+      if(runtime.printer){
+        runtime.printSlip=true;
+        clearTimeout(handlePreviewPointer._slipTimer);
+        handlePreviewPointer._slipTimer=setTimeout(()=>{runtime.printSlip=false;if(previewMode)render();},1800);
+        render();toast(t("slip"));
+      } else {runtime.printSlip=false;render();toast(t("printOff"));}
+      return;
+    }
+    if(item.role==="estop"){
+      runtime.stopNc=!runtime.stopNc;runtime.dirty=true;render();
+      toast(t("estop")+": "+(runtime.stopNc?t("ncDesc"):t("noDesc")));
+      return;
+    }
+    if(item.type==="fkey"){
+      const tab=(item.text||"F1").toLowerCase();
+      if(tab==="f1")gotoScreen("settings");
+      else gotoScreen(tab);
+      toast(t("tabTitle")+String(item.text).toUpperCase());
+      return;
+    }
+    if(item.role==="value-kerf" || item.role==="value-stock"){
+      openNumpad(item.role);return;
+    }
+    if(item.role==="numpad"){
+      if(!runtime.keyboardEnabled){toast(t("needKb"));return;}
+      const keyEl=ev.target.closest(".kb-key");if(!keyEl||!runtime.activeField)return;
+      const code=keyEl.dataset.key||"";
+      const field=items.find(i=>i.role===runtime.activeField);if(!field)return;
+      if(code==="ok"){commitKeyboard();return;}
+      if(code==="back"){
+        if(runtime.replaceOnType){runtime.buffer="";runtime.replaceOnType=false;}
+        else runtime.buffer=runtime.buffer.slice(0,-1);
+      } else if(/^[0-9.]$/.test(code)){
+        if(code==="."&&!runtime.replaceOnType&&runtime.buffer.includes("."))return;
+        if(runtime.replaceOnType){runtime.buffer=code==="."?"0.":code;runtime.replaceOnType=false;}
+        else runtime.buffer=(runtime.buffer==="0"&&code!==".")?code:runtime.buffer+code;
+      } else return;
+      field.text=runtime.buffer||"0";render();return;
+    }
+    if(runtime.keyboardOpen && item.role!=="numpad")closeKeyboard(true);
+  }
+
+  function handleHardwareKey(code){
+    if(!previewMode){toast("اول ▶ اجرا را بزن");return;}
+    const key=String(code||"").toUpperCase();
+    // F1..F5 مستقیم صفحه
+    if(key==="F1"){runtime.modeNav=false;gotoScreen("settings");toast("F1");return;}
+    if(key==="F2"){runtime.modeNav=false;gotoScreen("f2");toast("F2");return;}
+    if(key==="F3"){runtime.modeNav=false;gotoScreen("f3");toast("F3");return;}
+    if(key==="F4"){runtime.modeNav=false;gotoScreen("f4");toast("F4");return;}
+    if(key==="F5"){runtime.modeNav=false;gotoScreen("f5");toast("F5");return;}
+    // MODE = ورود/چرخش فوکوس (الگوی V.1.5.0)
+    if(key==="MODE"){
+      if(!runtime.modeNav){runtime.modeNav=true;runtime.focusIndex=0;toast(t("modeOn"));render();}
+      else {
+        const list=collectFocusables();
+        runtime.focusIndex=(runtime.focusIndex+1)%Math.max(list.length,1);
+        const f=currentFocus();
+        toast(t("modeCycle")+(f?.role||f?.action||f?.code||f?.kind||"?"));
+        render();
+      }
+      const modeBtn=document.querySelector('.hw-panel button[data-hw="MODE"]');
+      if(modeBtn) modeBtn.classList.toggle("on", runtime.modeNav);
+      return;
+    }
+    if(key==="SAVE"){
+      if(runtime.modeNav){activateFocus(1);return;}
+      runtime.dirty=false;render();toast(t("saved"));return;
+    }
+    if(key==="CANCEL"){
+      if(runtime.help){runtime.help=false;render();toast(t("cancelled"));return;}
+      if(runtime.keyboardOpen){closeKeyboard(true);toast(t("cancelled"));return;}
+      if(runtime.modeNav){runtime.modeNav=false;render();toast(t("modeOff"));return;}
+      if(runtime.screen!=="main")gotoScreen("main");
+      toast(t("cancelled"));return;
+    }
+    if(key==="START"){
+      if(runtime.modeNav || runtime.keyboardOpen || runtime.help){activateFocus(1);return;}
+      runtime.running=true;toast(t("started"));return;
+    }
+    if(key==="STOP"){
+      if(runtime.modeNav || runtime.keyboardOpen || runtime.help){activateFocus(-1);return;}
+      runtime.running=false;toast(t("stopped"));return;
+    }
+  }
+
+  screen.addEventListener("pointerdown", ev => {
+    if(previewMode){handlePreviewPointer(ev);return;}
+    const target=ev.target.closest(".item");
+    const p=screenPoint(ev);
+    if (!target) {
+      if(!ev.shiftKey){selectedIds.clear();selectedId=null;}
+      marquee={x:p.x,y:p.y,w:0,h:0,sx:p.x,sy:p.y,additive:ev.shiftKey};
+      drag={mode:"marquee"};
+      screen.setPointerCapture(ev.pointerId);render();return;
+    }
+    const id=Number(target.dataset.id), item=items.find(i=>i.id===id);
+    const resizeCorner=ev.target.dataset.resize || "";
+    if(ev.shiftKey){select(id,true);return;}
+    if(!selectedIds.has(id)){selectedIds=new Set([id]);selectedId=id;}else selectedId=id;
+    render();
+    if (!item || item.locked) return;
+    const group=[...selectedIds].map(sid=>items.find(i=>i.id===sid)).filter(i=>i&&!i.locked).map(i=>({id:i.id,x:i.x,y:i.y,w:i.w,h:i.h}));
+    drag={id,mode:resizeCorner?"resize":"move",corner:resizeCorner,sx:p.x,sy:p.y,x:item.x,y:item.y,w:item.w,h:item.h,group};
+    screen.setPointerCapture(ev.pointerId);
+    ev.preventDefault();
+  });
+  screen.addEventListener("pointermove", ev => {
+    if (!drag) return;
+    if (previewMode && !drag.persistKb) return;
+    const p=screenPoint(ev);
+    if(drag.mode==="marquee"){
+      marquee.x=Math.min(marquee.sx,p.x);marquee.y=Math.min(marquee.sy,p.y);
+      marquee.w=Math.abs(p.x-marquee.sx);marquee.h=Math.abs(p.y-marquee.sy);render();return;
+    }
+    const item=items.find(i=>i.id===drag.id);
+    if (drag.mode==="move") {
+      let dx=snap(p.x-drag.sx),dy=snap(p.y-drag.sy);
+      const minX=Math.min(...drag.group.map(i=>i.x)),maxX=Math.max(...drag.group.map(i=>i.x+i.w));
+      const minY=Math.min(...drag.group.map(i=>i.y)),maxY=Math.max(...drag.group.map(i=>i.y+i.h));
+      dx=clamp(dx,-minX,480-maxX);dy=clamp(dy,-minY,320-maxY);
+      drag.group.forEach(g=>{const current=items.find(i=>i.id===g.id);current.x=g.x+dx;current.y=g.y+dy;});
+    } else {
+      const dx=p.x-drag.sx, dy=p.y-drag.sy;
+      const right=drag.x+drag.w, bottom=drag.y+drag.h;
+      const minW = drag.persistKb ? 120 : 12, minH = drag.persistKb ? 100 : 12;
+      if (drag.corner.includes("e")) item.w=clamp(snap(drag.w+dx),minW,480-drag.x);
+      if (drag.corner.includes("s")) item.h=clamp(snap(drag.h+dy),minH,320-drag.y);
+      if (drag.corner.includes("w")) {
+        item.x=clamp(snap(drag.x+dx),0,right-minW);
+        item.w=right-item.x;
+      }
+      if (drag.corner.includes("n")) {
+        item.y=clamp(snap(drag.y+dy),0,bottom-minH);
+        item.h=bottom-item.y;
+      }
+    }
+    render();
+  });
+  screen.addEventListener("pointerup", () => {
+    if(!drag)return;
+    if(drag.mode==="marquee"){
+      const selected=items.filter(i=>i.x<marquee.x+marquee.w&&i.x+i.w>marquee.x&&i.y<marquee.y+marquee.h&&i.y+i.h>marquee.y).map(i=>i.id);
+      if(!marquee.additive)selectedIds.clear();
+      selected.forEach(id=>selectedIds.add(id));selectedId=selected.length?selected.at(-1):(selectedIds.size?[...selectedIds].at(-1):null);
+      marquee=null;drag=null;render();return;
+    }
+    const persistKb=drag.persistKb;
+    drag=null;snapshot();
+    if(persistKb){
+      localStorage.setItem("metr-cutter-f1-layout-v10",JSON.stringify(items));
+      toast(currentLang()==="EN"?"Keyboard position saved":"محل کیبورد ذخیره شد");
+    }
+  });
+  screen.addEventListener("pointercancel", () => { drag=null; });
+  screen.addEventListener("dblclick",ev=>{
+    const target=ev.target.closest(".item");if(!target)return;
+    const item=items.find(i=>i.id===Number(target.dataset.id));
+    if(item && ["toggle","led","checkbox"].includes(item.type)){
+      item.state=!item.state;snapshot();render();toast(item.state?"حالت روشن":"حالت خاموش");
+    }
+  });
+
+  [["X","x"],["Y","y"],["W","w"],["H","h"],["Font","font"],["Radius","radius"]].forEach(([P,key]) => {
+    $("prop"+P).addEventListener("change", e => {
+      const item=getItem(); if(!item)return;
+      let v=Number(e.target.value);
+      if(key==="x")v=clamp(v,0,480-item.w);
+      if(key==="y")v=clamp(v,0,320-item.h);
+      if(key==="w")v=clamp(v,4,480-item.x);
+      if(key==="h")v=clamp(v,4,320-item.y);
+      if(key==="font")v=clamp(v,7,40);
+      if(key==="radius")v=clamp(v,0,80);
+      item[key]=v; snapshot(); render();
+    });
+  });
+  $("propText").addEventListener("change", e=>{const i=getItem();if(i){i.text=e.target.value;i.html=null;snapshot();render();}});
+  $("propIcon").addEventListener("change", e=>{const i=getItem();if(i){i.icon=e.target.value;i.html=null;snapshot();render();}});
+  $("propValue").addEventListener("change",e=>{const i=getItem();if(i){i.value=clamp(Number(e.target.value)||0,0,100);snapshot();render();}});
+  $("propState").addEventListener("change",e=>{const i=getItem();if(i){i.state=e.target.checked;snapshot();render();}});
+  [["propAlign","align"],["propVAlign","vAlign"],["propWeight","weight"],["propDirection","direction"]].forEach(([id,key])=>{
+    $(id).addEventListener("change",e=>{const i=getItem();if(i){i[key]=e.target.value;snapshot();render();}});
+  });
+  $("propBg").addEventListener("input", e=>{const i=getItem();if(i){i.bg=e.target.value;render();}});
+  $("propBg").addEventListener("change", snapshot);
+  $("propColor").addEventListener("input", e=>{const i=getItem();if(i){i.color=e.target.value;render();}});
+  $("propColor").addEventListener("change", snapshot);
+  $("propLock").addEventListener("change", e=>{const i=getItem();if(i){i.locked=e.target.checked;snapshot();render();}});
+
+  $("frontBtn").onclick=()=>{const i=getItem();if(i){i.z=++maxZ;snapshot();render();}};
+  $("backBtn").onclick=()=>{const i=getItem();if(i){i.z=0;snapshot();render();}};
+  $("deleteBtn").onclick=()=>{if(selectedIds.size){items=items.filter(i=>!selectedIds.has(i.id));selectedIds.clear();selectedId=null;snapshot();render();}};
+  $("duplicateBtn").onclick=()=>{
+    if(!selectedIds.size)return;const newIds=[];
+    [...selectedIds].forEach(id=>{const i=items.find(x=>x.id===id);if(!i)return;const n=clone(i);n.id=nextId++;n.name+=" (کپی)";
+      n.x=clamp(n.x+8,0,480-n.w);n.y=clamp(n.y+8,0,320-n.h);n.z=++maxZ;items.push(n);newIds.push(n.id);});
+    selectedIds=new Set(newIds);selectedId=newIds.at(-1);snapshot();render();
+  };
+  document.querySelectorAll("[data-add]").forEach(btn=>btn.onclick=()=>{
+    const type=btn.dataset.add;
+    if(type==="image"){$("imageInput").click();return;}
+    const base={id:nextId++,name:"المان جدید",type,x:180,y:140,w:80,h:36,text:"متن جدید",cls:"",bg:"#ffffff",color:"#17384d",font:12,radius:7,z:++maxZ,locked:false,align:"center",vAlign:"center",weight:"400",direction:"rtl"};
+    if(type==="card"){base.name="کادر جدید";base.w=120;base.h=80;base.text="";base.cls="card";}
+    if(type==="button"){base.name="دکمه جدید";base.bg="#1976d2";base.color="#ffffff";base.cls="adjust";}
+    if(type==="text"){base.name="متن جدید";base.bg="#ffffff";base.cls="section-title";}
+    if(type==="keyboard"){base.name="کیبورد مجازی";base.x=112;base.y=144;base.w=296;base.h=164;base.text="";base.cls="keyboard";base.bg="#1a3144";base.color="#ffffff";base.radius=12;}
+    if(type==="slider"){base.name="اسلایدر";base.x=140;base.y=145;base.w=180;base.h=30;base.text="";base.cls="widget-slider";base.bg="transparent";base.value=50;}
+    if(type==="toggle"){base.name="کلید دوحالته";base.w=64;base.h=32;base.text="";base.cls="widget-toggle";base.bg="#43b66f";base.state=true;base.radius=18;}
+    if(type==="progress"){base.name="نوار پیشرفت";base.x=140;base.y=145;base.w=180;base.h=24;base.text="";base.cls="widget-progress";base.bg="#dce9f0";base.value=60;}
+    if(type==="led"){base.name="چراغ LED";base.w=36;base.h=36;base.text="";base.cls="widget-led";base.bg="#36c56b";base.state=true;base.radius=50;}
+    if(type==="checkbox"){base.name="چک‌باکس";base.w=110;base.h=32;base.text="گزینه فعال";base.cls="widget-checkbox";base.bg="#ffffff";base.state=true;}
+    if(type==="number"){base.name="نمایشگر عددی";base.w=100;base.h=42;base.text="123.4";base.cls="widget-number";base.bg="#e8f5fb";base.font=18;base.weight="700";}
+    if(type==="gauge"){base.name="گیج";base.w=110;base.h=72;base.text="";base.cls="widget-gauge";base.bg="transparent";base.value=65;}
+    items.push(base);selectedId=base.id;selectedIds=new Set([base.id]);snapshot();render();
+  });
+  $("imageInput").onchange=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=()=>{
+      const base={id:nextId++,name:"عکس "+file.name,type:"image",image:reader.result,x:170,y:110,w:100,h:100,text:"",cls:"widget-image",bg:"transparent",color:"#ffffff",font:12,radius:0,z:++maxZ,locked:false,align:"center",vAlign:"center",weight:"400",direction:"rtl"};
+      items.push(base);selectedId=base.id;selectedIds=new Set([base.id]);snapshot();render();toast("عکس شخصی اضافه شد");
+    };
+    reader.readAsDataURL(file);e.target.value="";
+  };
+  const iconNames={home:"خانه",volume:"بلندگو",printer:"پرینتر",wifi:"وای‌فای",globe:"وب",settings:"تنظیمات",save:"ذخیره",keyboard:"کیبورد",warning:"هشدار",stop:"توقف",back:"بازگشت",info:"اطلاعات",lock:"قفل"};
+  document.querySelectorAll("[data-icon]").forEach(btn=>{
+    btn.querySelector("span").innerHTML=iconSvg(btn.dataset.icon);
+    btn.onclick=()=>{
+      const icon=btn.dataset.icon;
+      const base={id:nextId++,name:"آیکون "+iconNames[icon],type:"icon",icon,x:184,y:140,w:44,h:44,text:"",cls:"home",bg:"#126c99",color:"#ffffff",font:12,radius:8,z:++maxZ,locked:false,align:"center",vAlign:"center",weight:"400",direction:"rtl"};
+      items.push(base);selectedId=base.id;selectedIds=new Set([base.id]);snapshot();render();
+    };
+  });
+  document.querySelectorAll("[data-align]").forEach(btn=>btn.onclick=()=>{
+    const i=getItem();if(!i)return;
+    const mode=btn.dataset.align;
+    if(mode==="right")i.x=412-i.w;
+    if(mode==="hcenter")i.x=Math.round((412-i.w)/2);
+    if(mode==="left")i.x=0;
+    if(mode==="top")i.y=0;
+    if(mode==="vcenter")i.y=Math.round((320-i.h)/2);
+    if(mode==="bottom")i.y=320-i.h;
+    snapshot();render();
+  });
+
+  $("previewBtn").onclick=()=>{
+    previewMode=!previewMode;
+    document.querySelector(".app").classList.toggle("run-mode", previewMode);
+    screen.classList.toggle("preview",previewMode);
+    screen.classList.toggle("grid", !previewMode && $("gridToggle").checked);
+    $("previewBtn").textContent=previewMode?"⏹ توقف اجرا":"▶ اجرا";
+    selectedIds.clear();selectedId=null;
+    runtime.help=false;runtime.keyboardOpen=false;runtime.activeField=null;
+    runtime.printSlip=false;runtime.replaceOnType=false;runtime.screen="settings";
+    runtime.modeNav=false;runtime.focusIndex=0;
+    // keyboardEnabled عمداً حفظ می‌شود
+    drag=null;marquee=null;render();
+    toast(previewMode ? "حالت اجرا — MODE فوکوس | کیبورد با آیکون" : "بازگشت به ویرایش");
+  };
+  const hwPanel=$("hwPanel");
+  if(hwPanel){
+    hwPanel.addEventListener("click", ev=>{
+      const btn=ev.target.closest("[data-hw]");
+      if(btn) handleHardwareKey(btn.getAttribute("data-hw"));
+    });
+  }
+  $("undoBtn").onclick=()=>restore(historyIndex-1);
+  $("redoBtn").onclick=()=>restore(historyIndex+1);
+  $("resetBtn").onclick=()=>{if(confirm("طرح فعلی با طرح پیشنهادی جایگزین شود؟"))reset();};
+  $("gridToggle").onchange=e=>screen.classList.toggle("grid",e.target.checked);
+  $("saveBtn").onclick=()=>{localStorage.setItem("metr-cutter-f1-layout-v10",JSON.stringify(items));toast("طرح در مرورگر ذخیره شد");};
+  $("exportJsonBtn").onclick=()=>download("metr-cutter-f1-layout.json",JSON.stringify({screen:{width:480,height:320},items},null,2),"application/json");
+  $("importBtn").onclick=()=>$("importFile").click();
+  $("importFile").onchange=async e=>{
+    try {
+      const data=JSON.parse(await e.target.files[0].text());
+      items=Array.isArray(data)?data:data.items;
+      if(!Array.isArray(items))throw new Error();
+      selectedId=null;selectedIds.clear();snapshot();render();toast("طرح JSON باز شد");
+    } catch { alert("فایل JSON معتبر نیست."); }
+    e.target.value="";
+  };
+  function download(name,data,type){
+    const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([data],{type}));a.download=name;a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  }
+  $("exportPngBtn").onclick=async()=>{
+    const old=selectedId,oldIds=new Set(selectedIds);selectedId=null;selectedIds.clear();render();
+    const cloneNode=screen.cloneNode(true);
+    cloneNode.classList.remove("grid");
+    cloneNode.classList.add("exporting");
+    cloneNode.style.transform="none";
+    cloneNode.style.position="relative";
+    const css=[...document.styleSheets].flatMap(s=>{try{return [...s.cssRules].map(r=>r.cssText)}catch{return[]}}).join("");
+    const html=`<div xmlns="http://www.w3.org/1999/xhtml"><style>${css}</style>${cloneNode.outerHTML}</div>`;
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="480" height="320"><foreignObject width="480" height="320">${html}</foreignObject></svg>`;
+    const img=new Image();
+    img.onload=()=>{
+      const c=document.createElement("canvas");c.width=480;c.height=320;
+      c.getContext("2d").drawImage(img,0,0);
+      c.toBlob(blob=>download("settings-f1-final.png",blob,"image/png"));
+      URL.revokeObjectURL(img.src);selectedId=old;selectedIds=oldIds;render();toast("تصویر ۴۸۰×۳۲۰ ساخته شد");
+    };
+    img.onerror=()=>{selectedId=old;selectedIds=oldIds;render();alert("مرورگر اجازه ساخت PNG نداد؛ از صفحه اسکرین‌شات بگیرید.");};
+    img.src=URL.createObjectURL(new Blob([svg],{type:"image/svg+xml;charset=utf-8"}));
+  };
+
+  window.addEventListener("keydown",ev=>{
+    if(["INPUT","SELECT"].includes(document.activeElement.tagName))return;
+    if((ev.ctrlKey||ev.metaKey)&&ev.key.toLowerCase()==="z"){ev.preventDefault();restore(historyIndex-1);return;}
+    if((ev.ctrlKey||ev.metaKey)&&ev.key.toLowerCase()==="y"){ev.preventDefault();restore(historyIndex+1);return;}
+    const i=getItem();if(!i||i.locked||previewMode)return;
+    if(ev.key==="Delete"){items=items.filter(x=>!selectedIds.has(x.id));selectedIds.clear();selectedId=null;snapshot();render();return;}
+    const step=ev.shiftKey?10:1;
+    let dx=0,dy=0;
+    if(ev.key==="ArrowLeft")dx=-step;else if(ev.key==="ArrowRight")dx=step;
+    else if(ev.key==="ArrowUp")dy=-step;else if(ev.key==="ArrowDown")dy=step;else return;
+    const group=items.filter(x=>selectedIds.has(x.id)&&!x.locked);
+    const minX=Math.min(...group.map(x=>x.x)),maxX=Math.max(...group.map(x=>x.x+x.w));
+    const minY=Math.min(...group.map(x=>x.y)),maxY=Math.max(...group.map(x=>x.y+x.h));
+    dx=clamp(dx,-minX,480-maxX);dy=clamp(dy,-minY,320-maxY);
+    group.forEach(x=>{x.x+=dx;x.y+=dy;});
+    ev.preventDefault();snapshot();render();
+  });
+
+  function migrateLayout(list){
+    if(!Array.isArray(list))return clone(initial);
+    const byId=Object.fromEntries(list.map(i=>[i.id,i]));
+    initial.forEach(src=>{
+      const cur=byId[src.id];
+      if(!cur){list.push(clone(src));return;}
+      if(src.role && !cur.role)cur.role=src.role;
+      if(TOOL_LAYOUT[src.id]) Object.assign(cur, TOOL_LAYOUT[src.id], {type:src.type,cls:src.cls,role:src.role});
+      if(src.role==="keyboard-toggle")cur.cls=(cur.cls||"").replace(/\bkb-on\b|\bkb-off\b|\bdisabled-control\b/g,"").trim()||src.cls;
+      if(src.role==="printer")cur.text=src.text;
+    });
+    const card=byId[11]; if(card){card.z=1;card.x=8;card.y=48;card.w=92;card.h=260;}
+    return list;
+  }
+  const LAYOUT_KEY="metr-cutter-f1-layout-v11";
+  try{
+    Object.keys(localStorage).filter(k=>k.startsWith("metr-cutter-f1-layout")).forEach(k=>localStorage.removeItem(k));
+  }catch(e){}
+  reset();
+
+  // Agent / shot hook
+  window.__f1Sim = {
+    openKeyboardPreview() {
+      if (!previewMode) { $("previewBtn").click(); }
+      runtime.keyboardOpen = true;
+      runtime.activeField = "stock";
+      runtime.screen = "settings";
+      render();
+    },
+    getScreenBox() {
+      const r = screen.getBoundingClientRect();
+      return {x:r.x,y:r.y,w:r.width,h:r.height,dpr:window.devicePixelRatio||1};
+    }
+  };
+})();
+</script>
+</body>
+</html>
+

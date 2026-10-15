@@ -1,0 +1,89 @@
+--- PAGE 1 ---
+توضیحات اسم پین PLC جنس پایه پایه ی PLC IO ESP32S3 N16R4 اسم پایه داخل شماتیک 
+STOP I6 
+ 
+دیجیتال پین 21  IO3 IN PUT0 
+START I7 
+ 
+دیجیتال پین22  IO7 IN PUT1 
+ I2,I3 آنالوگ پین 17و18  IO5 IN PUT3 
+ I0,I1 آنالوگ  پین 15 و61  IO6 IN PUT2 
+ I4,I5 آنالوگ پین 19و20  IO4 IN PUT4 
+ Q0 دیجیتال پین5  IO16 OUT PUT7 
+ Q1 دیجیتال پین6  IO42 OUT PUT4 
+ Q2 دیجیتال پین7  IO39 OUT PUT5 
+ Q3 دیجیتال پین8  IO48 OUT PUT3 
+ Q4 دیجیتال پین9  IO40 OUT PUT6 
+SSR1 Q5 دیجیتال پین10  IO15 OUT PUT8 
+ Q6 دیجیتال پین11  IO35 OUT PUT2 
+ Q7 دیجیتال پین12  IO36 OUT PUT1 
+SSR2 Q8 دیجیتال پین13  IO38 OUT PUT9 
+ Q9 دیجیتال پین14  IO41 SSR 
+ 
+MAX485 
+ 
+نوع پایه IO ESP32S3 N16R4 اسم پایه داخل شماتیک 
+RXD IO18 RXD2 
+TXD IO17 TXD2 
+Driver, Receiver IO46 IO46 
+ 
+  
+--- PAGE 2 ---
+MAX6675 (1) 
+ 
+اسم پینPLC پایه یPLC IO ESP32S3 N16R4 اسم پایه داخل شماتیک 
+  IO37 MISO 
+  IO12 SCK 
+  IO21 CS1 
+T1+ 25 - T+ 
+COM- 23 - T- 
+ 
+MAX6675 (2) 
+ 
+اسم پینPLC پایه یPLC IO ESP32S3 N16R4 اسم پایه داخل شماتیک 
+  IO37 MISO 
+  IO47 SCK 
+  IO0 CS1 
+T2+ 24 - T+ 
+COM- 23 - T- 
+ 
+KEY PIN 
+ 
+نوع پایه IO ESP32S3 N16R4 اسم پایه داخل شماتیک 
+آنالوگ IO2 ADC_T0 
+آنالوگ IO1 ADC_T1 
+ 
+BUZZER 
+ 
+نوع پایه IO ESP32S3 N16R4 اسم پایه داخل شماتیک 
+- IO45 Buzzer 
+ 
+I2C PIN 
+ 
+نوع پایه IO ESP32S3 N16R4 اسم پایه داخل شماتیک 
+- IO9 SCL 
+- IO8 SDA 
+قطعاتی که روی برد مابا این پروتکل کار میکنه  )LODSELS3231,TOUCH LCD,MPR121,D( 
+--- PAGE 3 ---
+USB PIN 
+ 
+نوع پایه IO ESP32S3 N16R4 اسم پایه داخل شماتیک 
+- IO19 D- 
+- IO20 D+ 
+ 
+LCD PIN 
+ 
+نوع پایه IO ESP32S3 N16R4 اسم پایه داخل شماتیک 
+- IO11 MISO2 
+- IO13 CS3 
+- IO14 DC 
+- IO12 SCK 
+- IO10 MOSI 
+ 
+GSM PIN 
+ 
+نوع پایه IO ESP32S3 N16R4 اسم پایه داخل شماتیک 
+- IO44 RXD 
+- IO43 TXD 
+ 
+ 

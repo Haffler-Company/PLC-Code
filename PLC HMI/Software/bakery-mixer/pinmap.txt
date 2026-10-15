@@ -1,0 +1,77 @@
+===============================================================================
+       HAFFLER AUTOMATION — AUTHORITATIVE HARDWARE PINMAP SPECIFICATION
+       Machine: Commercial Bakery Spiral Dough Mixer (میکسر خمیر نانوایی)
+       Hardware: HAFFLER ETV3A Controller (ESP32-S3-WROOM-1 N16R8)
+===============================================================================
+
+[DIGITAL INPUTS - OPTOCOUPLED 24V INDUSTRIAL (ACTIVE-LOW)]
+-------------------------------------------------------------------------------
+Terminal | MCU GPIO | Signal Type | Functional Assignment
+---------+----------+-------------+--------------------------------------------
+I0       | GPIO 3   | Opto (NC)   | Emergency Stop Mushroom Button (استپ اضطراری)
+I1       | GPIO 7   | Opto (NO)   | Cycle Start Pushbutton / Pedal (استارت فیزیکی)
+I2       | GPIO 5   | Opto (NC)   | Safety Bowl Guard Interlock (توری محافظ کاسه)
+I3       | GPIO 4   | Opto (NC)   | Motor Thermal Overload Relay (بی‌متال موتور)
+I4       | GPIO 6   | Opto (NO)   | Water Flow Meter Pulse Input (دبی‌سنج پالسی)
+I5       | GPIO 21  | Dedicated   | MAX6675 Thermocouple CS1 (پروب دمای آب مخزن)
+I6       | GPIO 37  | Dedicated   | MAX6675 Thermocouple MISO / SO (دیتای سنسور دما)
+I7       | GPIO 47  | Dedicated   | MAX6675 Thermocouple SCK (کلاک سنسور دما)
+
+[RELAY OUTPUTS - ACTIVE-LOW 220V/10A (0 = ENERGIZED / ON, 1 = OFF)]
+-------------------------------------------------------------------------------
+Terminal | MCU GPIO | Output Type | Functional Assignment
+---------+----------+-------------+--------------------------------------------
+Q0       | GPIO 16  | Relay Out   | Main Spiral Hook Motor Contactor (کنتاکتور موتور میکسر)
+Q1       | GPIO 42  | Relay Out   | Motorized Flour Feeder Auger Motor (موتور ماردون آرد)
+Q2       | GPIO 39  | Relay Out   | Rotating Bowl Friction Brake Solenoid (ترمز دیسکی کاسه)
+Q3       | GPIO 48  | Relay Out   | Reserved Auxiliary Output (رزرو)
+Q4       | GPIO 40  | Relay Out   | Water Dosing Solenoid Valve (شیر برقی تزریق آب)
+Q5       | GPIO 15  | SSR / Relay | Water Tank Temperature Regulation Relay (چیلر/المنت)
+Q6       | GPIO 35  | Relay Out   | Bowl Lift Hydraulic Solenoid Valve (جک بالابر)
+Q7       | GPIO 36  | Relay Out   | Flour Dust Extractor Blower Fan (فن مکنده گردوغبار)
+Q8       | GPIO 38  | Relay Out   | Stack Light Green (دکل سبز - در حال کار)
+Q9       | GPIO 41  | Relay Out   | Stack Light Red (دکل قرمز - آلارم / هشدار دما)
+
+[AUXILIARY SOFTWARE-MAPPED CHANNELS (M0..M7)]
+-------------------------------------------------------------------------------
+Channel  | Functional Assignment
+---------+---------------------------------------------------------------------
+M0       | Flour Dust Extraction Vacuum Interlock (اینترلاک مکنده آرد)
+M1       | Water Infeed Booster Pump Relay (پمپ تقویت فشار آب ورودی)
+M2       | Chilled Water Recirculation Cooler Trigger (خنک‌کننده آب)
+M3       | Dough Bowl Tilting Safety Interlock (اینترلاک تخلیه دیگ)
+M4       | Reserved Machine Safety Channel A (رزرو ایمنی الف)
+M5       | Reserved Machine Safety Channel B (رزرو ایمنی ب)
+M6       | Factory External Siren Alert Relay (آژیر بیرونی کارگاه)
+M7       | MES Production Counter Telemetry Pulse (پالس شمارش تولید)
+
+[I2C COMMUNICATION BUS (SDA / SCL)]
+-------------------------------------------------------------------------------
+Function   | MCU GPIO | Description
+-----------+----------+--------------------------------------------------------
+I2C_SDA    | GPIO 8   | Shared I2C0 Data (GT911 Touch + DS3231 RTC)
+I2C_SCL    | GPIO 9   | Shared I2C0 Clock (400 kHz Hardware Pull-Up 4.7k)
+DS3231 RTC | 0x68     | TCXO High-Precision Real-Time Clock with CR1220 Battery
+GT911      | 0x5D     | Capacitive 480x320 Touch Controller
+
+[SPI DISPLAY BUS (TFT LCD ST7796 / ILI9341)]
+-------------------------------------------------------------------------------
+Function   | MCU GPIO | Description
+-----------+----------+--------------------------------------------------------
+LCD_MOSI   | GPIO 10  | SPI2 (FSPI) Display Data
+LCD_MISO   | GPIO 11  | SPI2 Display MISO
+LCD_SCK    | GPIO 12  | SPI2 Display Clock (up to 80 MHz)
+LCD_CS     | GPIO 13  | Display Chip Select
+LCD_DC     | GPIO 14  | Display Data/Command Select
+
+[FRONT KEYPAD RESISTOR LADDER (ADC1 ONLY - IMMUNE TO WI-FI)]
+-------------------------------------------------------------------------------
+Channel    | MCU GPIO | Description
+-----------+----------+--------------------------------------------------------
+KEY_F      | GPIO 1   | Resistor Ladder for Front Tactical Keys F1..F5
+KEY_M      | GPIO 2   | Resistor Ladder for Process Keys (SAVE, CANCEL, START, STOP)
+
+[INTERNAL AUDIO BUZZER]
+-------------------------------------------------------------------------------
+BUZZER     | GPIO 45  | Hardware LEDC PWM Piezo Audio Synthesizer (Excluded from outputs)
+===============================================================================

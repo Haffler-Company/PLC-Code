@@ -1,0 +1,59 @@
+HAFFLER HT-V3A Industrial Double-Glass Argon Gas Filling HMI
+Firmware Version: V1.8.57 (STABLE)
+Date: 2026-09-08
+Hardware: ESP32-S3 DevKitC-1 (8MB Flash, Quad-SPI)
+
+[DISPLAY - ST7796 SPI TFT 480x320 @ 40MHz]
+MOSI = GPIO10
+MISO = GPIO11
+SCLK = GPIO12
+CS   = GPIO13
+DC   = GPIO14
+RST  = -1 (Connected to EN/Hardware Reset)
+
+[TOUCH - Goodix GT911 Capacitive Touch I2C]
+SDA = GPIO8
+SCL = GPIO9
+INT = GPIO40
+RST = GPIO39
+Mapping: X = 479 - raw_y, Y = raw_x
+
+[DIGITAL INPUTS - Optocouplers]
+I0 = کلیدهای تابع F1 تا F5 (کیپد پنل - GPIO1 ADC)
+I1 = کلیدهای اصلی پنل (MODE / START / STOP / SAVE / CANCEL - GPIO2 ADC)
+I2 = پدال استارت پایی اپراتور (GPIO7 - Active LOW optocoupler)
+I3 = استپ اضطراری سخت‌افزاری (GPIO3 - Active LOW optocoupler)
+I4 = تاچ اسکرین خازنی GT911 (I2C)
+I5 = سنسور ورودی شیشه / آماده‌باش
+M0 = ورودی/خروجی کمکی 0
+M1 = ورودی/خروجی کمکی 1
+M2 = ورودی/خروجی کمکی 2
+M3 = ورودی/خروجی کمکی 3
+M4 = ورودی/خروجی کمکی 4
+M5 = ورودی/خروجی کمکی 5
+M6 = ورودی/خروجی کمکی 6
+M7 = ورودی/خروجی کمکی 7
+
+[DIGITAL OUTPUTS - Relays]
+Q0 = رله شیر برقی ۱ تزریق (شیشه ۲ - ایستگاه چپ / GPIO16 - Configurable N.O / N.C)
+Q1 = رله شیر برقی ۲ تزریق (شیشه ۱ - ایستگاه راست / GPIO42 - Configurable N.O / N.C)
+Q2 = خروجی کمکی رله ۲
+Q3 = خروجی کمکی رله ۳
+M0 = ورودی/خروجی کمکی 0
+M1 = ورودی/خروجی کمکی 1
+M2 = ورودی/خروجی کمکی 2
+M3 = ورودی/خروجی کمکی 3
+M4 = ورودی/خروجی کمکی 4
+M5 = ورودی/خروجی کمکی 5
+M6 = ورودی/خروجی کمکی 6
+M7 = ورودی/خروجی کمکی 7
+
+[SAFETY INTERLOCKS]
+Emergency Stop = بلافاصله تمامی خروجی‌های شیر برقی را قطع و ایزوله می‌کند
+Watchdog = قطع خودکار و سخت‌گیرانه تزریق گاز پس از ۱۸۰ ثانیه جهت حفاظت مخزن آرگون
+
+[COMMUNICATION & NETWORK]
+Native USB-CDC Serial Agent = 921600 baud (AUTH, NAV, SHOT, STAT, PERF)
+Industrial SoftAP WiFi      = Haffler-GasFiller-V1.8.57 @ 192.168.4.1
+Web Management Portal       = http://192.168.4.1 (Live Monitor, Stats, CSV Export, OTA)
+Online OTA Update Server    = http://ota.haffler-infi.ir/upvc/gas-filling/

@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Haffler PLC</title>
+	<meta name="theme-color" content="#00878f">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+	<!-- <link rel="stylesheet" type="text/css" href="style.css" /> -->
+	<style>
+.icon,.iconP{margin:0 2px;cursor:pointer}.header,body{font-family:"Times New Roman",Times,serif}.menu ul,.page,.page .middle{overflow-y:scroll}.header,.menu li:hover{background:#f0f0f0}.menu,.modal{position:fixed;top:0}.close-btn,.counter,.header,.menu li{font-weight:700}.header,.input-field,.menu .menuHead,.middle .date,.middle .time,.modal-content{text-align:center}.close-btn,.icon,.iconP,.menu .close,.menu li,.modal-btn{cursor:pointer}body{background:#fff;margin:0;width:100vw;height:100lvh;color:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;user-select:none;overflow:hidden}input[type=number]{direction:ltr!important}input[type=file]{font-size:1.5vh}.flex{flex:1}.rtl{direction:rtl}.ltr{direction:ltr}.page{display:none;align-items:center;flex-direction:column;width:85vw;flex:1;max-height:92lvh;scrollbar-width:none;-ms-overflow-style:none}.icon{width:2.5vh;height:24px}.iconP{width:4.5vh;height:3.5vh}.PlusMinus{padding:1vh}.header{margin-top:3vh;width:85%;border-radius:1vh;display:flex;flex-wrap:wrap;flex:0 0 8lvh;align-items:center;justify-content:space-between;letter-spacing:.05em}.header .icon{width:5lvh;align-self:center;height:100%;display:flex;align-items:center;justify-content:center}.header .icon svg{width:100%;height:100%}.page .middle{flex:1;overflow-x:hidden;display:flex;flex-direction:column;align-items:center;width:100%}.page .footer{flex:0 0 14lvh;width:100%;display:flex;padding:2vh 0;padding-bottom:env(safe-area-inset-bottom,50px);align-content:space-between;align-items:flex-start}.middle .time{font-size:15lvh}.middle .date{font-size:3lvh;margin:1lvh 0}svg{width:3lvh;height:3lvh;line-height:2lvh}@keyframes tick{0%,100%{opacity:0}50%{opacity:1}}#mainTitle{display:flex;justify-content:center;align-items:center}#mainTitle span{font-size:3lvh;animation:3s ease-in-out infinite alternate rainbow;animation-delay:calc(var(--i) * .1s);color:rgba(255,255,255,.1)}@keyframes rainbow{0%,100%{color:#ac7b01}15%{color:#995400}30%{color:#998100}45%{color:#007800}60%{color:#6297ac}75%{color:#386890}90%{color:#925e9e}}.menu{display:none;flex-direction:column;justify-self:center;align-items:center;right:0;width:100%;height:100%;z-index:300;background:#fff}.menu .menuContent{width:100%;flex:1;display:flex;flex-direction:column}.menu .menuHead{display:flex;align-items:center;justify-content:center;font-size:2lvh;height:8lvh;color:gray;padding:4vh 5vh}.menu .icon{width:4lvh;align-items:center;justify-content:center;text-align:start}.browser,.menu a{align-items:center}.menu .close{font-size:6lvh;aspect-ratio:1/1}.menu ul{list-style:none;padding:0 4vh;margin:0;height:100%}.cooler svg,.heater svg{margin-left:4px;width:3.5vh}.menu li{border-bottom:2px dashed #777;font-size:2.2lvh;text-align:right}.menu li:last-child{border-bottom:none}.menu a{display:flex;color:gray;text-decoration:none;padding:3lvh 1lvh}.menu .emoji{margin-right:1lvh;font-size:3lvh}.dashCard{width:99%;display:flex;justify-content:center;border-radius:12px;border:2px dashed gray;margin-bottom:3vh;margin-top:1vh}.slim{height:8vh}.second{color:gray;border-color:#0d8d79}.flex-row{display:flex;flex-direction:row;align-items:center;justify-content:space-between;flex:1;padding:0 2vh}.flex-row label{text-align:right;padding:0 2lvh}.splitter{display:flex;flex-direction:row;align-items:center;justify-content:space-between}.hide,.modal{display:none}.counter{font-size:2.5lvh;color:#555}.m-l{margin-left:1vh}.heater{color:#ff281d}.heater svg{fill:#ff281d}.cooler{color:#0d8d79}.cooler svg{fill:rgb(13,141,121)}.temp{color:#b96900}.temp svg{width:3.5vh;fill:#b96900;margin-left:2vh}.modal{z-index:1000;left:0;width:100%;height:100%;background-color:rgba(66,66,66,.9);justify-content:center;align-items:center}.modal-content{background:#fff;width:85%;max-width:720px;position:relative;max-height:100lvh;overflow:scroll;color:gray;padding:4vh 2vh;border-radius:1.5vh}.close-btn{position:absolute;top:0;right:2vh;font-size:4lvh;color:gray}.input-field,.modal-btn{padding:1.5lvh;font-size:2lvh}.input-field{flex:1;margin:3.5lvh 0;background-color:#f0f0f0;border:1px solid #ccc;border-radius:5px;color:gray;width:92%}.modal-btn{width:100%;background-color:#0d8d79;border:none;color:#fff;border-radius:8px;transition:background .3s}.modal-btn:hover{background-color:#117d90}.show{display:flex}.slider-value{font-size:1.8lvh}.browser,.footer-button button,.footer-button input{font-size:2lvh;color:#fff;padding:2lvh;display:flex;cursor:pointer}.footer-button{display:flex;justify-content:space-between;align-items:center;width:100%}.footer-link{display:flex;justify-content:center;align-items:center;width:100%;margin:1vh 0}.footer-button input{flex:1 0 30%;border:none;border-radius:1lvh;align-items:center;justify-content:center;background:#0d8d79}.footer-button button{flex:1 0 30%;border:none;border-radius:1lvh;align-items:center;justify-content:center;background:#f0f0f0}.browser{margin:0 1vh;border:none;border-radius:1lvh;justify-content:center;background:#e8e8e8}button.orange{background:#96631d}button.green{background:#0d8d79;margin:0 1lvh;border:0}button.red{background:#72110c}button.dark{background:#333}button:hover{background:#117d90}.toggle-button{width:5.5lvh;height:3lvh;display:flex;align-items:center;justify-content:flex-start;background:#5a5a5a;border-radius:2lvh;padding:.5lvh;cursor:pointer;transition:background .2s ease-in-out}.toggle-button .toggle{width:3lvh;height:3lvh;border-radius:50%;background:#fff;transition:transform .2s ease-in-out}.toggle-button.active{background:#0d8d79;justify-content:flex-end}.toggle-button.active .toggle{background:#fff}.toggle-button:active{background:#555}.slider-input{-webkit-appearance:none;width:100%;height:1.5vh;background:#ddd;border-radius:5px;outline:0;cursor:pointer}.slider-input::-webkit-slider-thumb{-webkit-appearance:none;width:2.5vh;height:2.5vh;background:#0d8d79;border-radius:50%;cursor:pointer}.slider-input::-moz-range-thumb{width:2.5vh;height:2.5vh;background:#0d8d79;border-radius:50%;cursor:pointer}.slider-value{font-size:2.5lvh;color:#555}.dropdown,.inputNum{background-color:#eee;text-align:center;font-size:2.3vh;font-weight:700}.dropdown{margin:5px 0;padding:1vh;width:100%;border-radius:8px;border:#ffdead;font-family:sans-serif}.inputNum{border-radius:8px;border:#ffdead;margin:1vh}.w-30{width:30%;justify-content:center}.w-20{width:3.5vh}.dotted-line{flex:1;border-bottom:2px dashed gray;margin:0 2vh}.custom-file-upload{display:inline-block;padding:10px 20px;cursor:pointer;background-color:#0d8d79;color:#fff;border-radius:5px}.form-container{flex:1;font-size:2vh}.form-header{font-size:2vh}.toast{position:fixed;top:3vh;left:50%;transform:translateX(-50%) translateY(-100%);width:85%;height:8vh;background-color:#323232;color:#fff;display:flex;align-items:center;justify-content:center;border-radius:1vh;box-shadow:0 4px 6px rgba(0,0,0,.1);opacity:0;transition:transform .5s,opacity .5s;z-index:1000;font-size:2.6vh}.toast.success{background-color:#4caf4f}.toast.error{background-color:#f44336}.toast.show{transform:translateX(-50%) translateY(0);opacity:1}.questionTitle{font-size:2.3lvh;margin-left:1.5vh;color:#3b3b3b}.selected{border-color:#0d8d79;border-width:4px;width:98%}
+	</style>
+	<script src='jquery.min.js'></script>
+</head>
+
+<body>
+	<div class="menu rtl">
+		<div class="menuContent">
+			<div class="menuHead">
+				<div style="width: 2vh;"></div>
+				<h1 style="flex: 1;"></h1>
+				<div class="close" onclick="document.querySelector('.menu').style.display='none'">&times;</div>
+			</div>
+			<ul>
+				<li>
+					<a href="#" class="time" onclick="showPage('main')">
+						<span class="icon">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+								stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+								<polyline points="9 22 9 12 15 12 15 22"></polyline>
+							</svg>
+						</span>
+						<h id="home">
+							صفحه اصلی
+						</h>
+					</a>
+				</li>
+				<li>
+					<a href="#" class="ring" onclick="showPage('generalSettings')">
+						<span class="icon">
+							<svg aria-hidden="true" data-prefix="fal" data-icon="cog" role="img" viewBox="0 0 540 540"
+								class="svg-inline--fa fa-cog fa-w-16 fa-7x">
+								<path fill="currentColor"
+									d="M482.696 299.276l-32.61-18.827a195.168 195.168 0 0 0 0-48.899l32.61-18.827c9.576-5.528 14.195-16.902 11.046-27.501-11.214-37.749-31.175-71.728-57.535-99.595-7.634-8.07-19.817-9.836-29.437-4.282l-32.562 18.798a194.125 194.125 0 0 0-42.339-24.48V38.049c0-11.13-7.652-20.804-18.484-23.367-37.644-8.909-77.118-8.91-114.77 0-10.831 2.563-18.484 12.236-18.484 23.367v37.614a194.101 194.101 0 0 0-42.339 24.48L105.23 81.345c-9.621-5.554-21.804-3.788-29.437 4.282-26.36 27.867-46.321 61.847-57.535 99.595-3.149 10.599 1.47 21.972 11.046 27.501l32.61 18.827a195.168 195.168 0 0 0 0 48.899l-32.61 18.827c-9.576 5.528-14.195 16.902-11.046 27.501 11.214 37.748 31.175 71.728 57.535 99.595 7.634 8.07 19.817 9.836 29.437 4.283l32.562-18.798a194.08 194.08 0 0 0 42.339 24.479v37.614c0 11.13 7.652 20.804 18.484 23.367 37.645 8.909 77.118 8.91 114.77 0 10.831-2.563 18.484-12.236 18.484-23.367v-37.614a194.138 194.138 0 0 0 42.339-24.479l32.562 18.798c9.62 5.554 21.803 3.788 29.437-4.283 26.36-27.867 46.321-61.847 57.535-99.595 3.149-10.599-1.47-21.972-11.046-27.501zm-65.479 100.461l-46.309-26.74c-26.988 23.071-36.559 28.876-71.039 41.059v53.479a217.145 217.145 0 0 1-87.738 0v-53.479c-33.621-11.879-43.355-17.395-71.039-41.059l-46.309 26.74c-19.71-22.09-34.689-47.989-43.929-75.958l46.329-26.74c-6.535-35.417-6.538-46.644 0-82.079l-46.329-26.74c9.24-27.969 24.22-53.869 43.929-75.969l46.309 26.76c27.377-23.434 37.063-29.065 71.039-41.069V44.464a216.79 216.79 0 0 1 87.738 0v53.479c33.978 12.005 43.665 17.637 71.039 41.069l46.309-26.76c19.709 22.099 34.689 47.999 43.929 75.969l-46.329 26.74c6.536 35.426 6.538 46.644 0 82.079l46.329 26.74c-9.24 27.968-24.219 53.868-43.929 75.957zM256 160c-52.935 0-96 43.065-96 96s43.065 96 96 96 96-43.065 96-96-43.065-96-96-96zm0 160c-35.29 0-64-28.71-64-64s28.71-64 64-64 64 28.71 64 64-28.71 64-64 64z"
+									class=""></path>
+							</svg>
+						</span>
+						<h id="gnral-sett">
+							تنظیمات عمومی
+						</h>
+					</a>
+				</li>
+				<li>
+					<a href="#" class="prayer" onclick="showPage('programSettings')">
+						<span class="icon">
+							<svg aria-hidden="true" data-prefix="fal" data-icon="tire-pressure-warning" role="img"
+								viewBox="0 0 512 512" class="svg-inline--fa fa-tire-pressure-warning fa-w-16 fa-7x">
+								<path fill="currentColor"
+									d="M256 296.02c-13.26 0-24 10.74-24 24 0 13.25 10.74 24 24 24s24-10.75 24-24c0-13.26-10.74-24-24-24zm-7.95-24h15.9c6.87 0 12.61-5.2 13.29-12.03l10.69-149.29c.79-7.87-5.39-14.69-13.29-14.69h-37.28c-7.9 0-14.08 6.82-13.29 14.69l10.69 149.29c.68 6.82 6.43 12.03 13.29 12.03zm223.46-139.11c-11.05-18.29-16.88-37.79-16.88-56.43V40c0-22.06-17.94-40-40-40h-16c-22.06 0-40 17.94-40 40v36.48c0 36.08 10.59 72.72 30.62 105.97 17.5 29.05 26.75 62.42 26.75 96.48 0 38.15-12.41 68.63-41.48 101.94-1.73 1.99-4.34 3.12-7.14 3.12H144.62c-2.81 0-5.41-1.14-7.14-3.12C108.41 347.57 96 317.08 96 278.94c0-34.07 9.25-67.43 26.75-96.47 20.04-33.27 30.62-69.92 30.62-105.99V40c0-22.06-17.94-40-40-40h-16c-22.06 0-40 17.94-40 40v36.48c0 18.63-5.83 38.14-16.87 56.42C14 176.89 0 227.38 0 278.94c0 61.68 20.7 114.12 65.14 165.05 4.48 5.14 9.55 9.62 14.86 13.73V504c0 4.42 3.58 8 8 8h16c4.42 0 8-3.58 8-8v-29.75c10.28 3.34 20.94 5.62 32 5.69V504c0 4.42 3.58 8 8 8h16c4.42 0 8-3.58 8-8v-24h32v24c0 4.42 3.58 8 8 8h16c4.42 0 8-3.58 8-8v-24h32v24c0 4.42 3.58 8 8 8h16c4.42 0 8-3.58 8-8v-24h32v24c0 4.42 3.58 8 8 8h16c4.42 0 8-3.58 8-8v-24.07c11.06-.07 21.72-2.34 32-5.69V504c0 4.42 3.58 8 8 8h16c4.42 0 8-3.58 8-8v-46.28c5.31-4.12 10.39-8.6 14.88-13.75C491.3 393.06 512 340.62 512 278.94c0-51.55-14-102.05-40.49-146.03zm-48.76 290.04C408.88 438.88 388.69 448 367.38 448H144.62c-21.31 0-41.5-9.12-55.38-25.05C50.19 378.19 32 332.42 32 278.94c0-45.72 12.41-90.5 35.91-129.5 14.06-23.3 21.47-48.53 21.47-72.95V40c0-4.42 3.58-8 8-8h16c4.42 0 8 3.58 8 8v36.48c0 30.25-9 61.19-26.03 89.47C74.84 199.97 64 239.05 64 278.94c0 45.92 15.22 83.86 49.38 122.98 7.81 8.95 19.19 14.08 31.25 14.08h222.75c12.06 0 23.44-5.12 31.25-14.08C432.78 362.8 448 324.86 448 278.94c0-39.89-10.84-78.97-31.34-113-17.03-28.27-26.03-59.2-26.03-89.45V40c0-4.42 3.58-8 8-8h16c4.42 0 8 3.58 8 8v36.48c0 24.42 7.41 49.66 21.47 72.94 23.5 39.02 35.91 83.8 35.91 129.52-.01 53.48-18.2 99.25-57.26 144.01z"
+									class=""></path>
+							</svg>
+						</span>
+						<h id="heat-sett">
+							زمان بندی
+							هیتر
+						</h>
+					</a>
+				</li>
+				<li>
+					<a href="#" class="remote" onclick="showPage('motionSettings')">
+						<span class="icon">
+							<svg viewBox="0 0 448 512">
+								<path
+									d="M395.5 177.5c0 33.8-27.5 61-61 61-33.8 0-61-27.3-61-61s27.3-61 61-61c33.5 0 61 27.2 61 61zm52.5.2c0 63-51 113.8-113.7 113.8L225 371.3c-4 43-40.5 76.8-84.5 76.8-40.5 0-74.7-28.8-83-67L0 358V250.7L97.2 290c15.1-9.2 32.2-13.3 52-11.5l71-101.7c.5-62.3 51.5-112.8 114-112.8C397 64 448 115 448 177.7zM203 363c0-34.7-27.8-62.5-62.5-62.5-4.5 0-9 .5-13.5 1.5l26 10.5c25.5 10.2 38 39 27.7 64.5-10.2 25.5-39.2 38-64.7 27.5-10.2-4-20.5-8.3-30.7-12.2 10.5 19.7 31.2 33.2 55.2 33.2 34.7 0 62.5-27.8 62.5-62.5zm207.5-185.3c0-42-34.3-76.2-76.2-76.2-42.3 0-76.5 34.2-76.5 76.2 0 42.2 34.3 76.2 76.5 76.2 41.9.1 76.2-33.9 76.2-76.2z" />
+							</svg>
+						</span>
+						<h id="hyd-sett">
+							زمان بندی
+						</h>
+					</a>
+				</li>
+				<li>
+					<a href="#" class="changePass" onclick="openModal('passwordModal', 'adminSettings')">
+						<span class="icon">
+							<svg aria-hidden="true" data-prefix="fal" data-icon="user-cog" role="img"
+								viewBox="0 0 640 512" class="svg-inline--fa fa-user-cog fa-w-20 fa-7x">
+								<path fill="currentColor"
+									d="M628.3 358.3l-16.5-9.5c.8-8.5.8-17.1 0-25.6l16.6-9.5c9.5-5.5 13.8-16.7 10.5-27-7.2-23.4-19.9-45.4-36.7-63.5-7.4-8.1-19.3-9.9-28.7-4.4l-16.5 9.5c-7-5-14.4-9.3-22.2-12.8v-19c0-11-7.5-20.3-18.2-22.7-23.9-5.4-49.3-5.4-73.2 0-10.7 2.4-18.2 11.8-18.2 22.7v19c-7.8 3.5-15.2 7.8-22.2 12.8l-16.5-9.5c-9.5-5.5-21.3-3.7-28.7 4.4-16.7 18.1-29.4 40.1-36.7 63.4-3.3 10.4 1.2 21.8 10.6 27.2l16.5 9.5c-.8 8.5-.8 17.1 0 25.6l-16.6 9.5c-9.3 5.4-13.8 16.9-10.5 27.1 7.2 23.4 19.9 45.4 36.7 63.5 7.4 8 19.2 9.8 28.7 4.4l16.5-9.5c7 5 14.4 9.3 22.2 12.8v19c0 11 7.5 20.3 18.2 22.7 12 2.7 24.3 4 36.6 4s24.7-1.3 36.6-4c10.7-2.4 18.2-11.8 18.2-22.7v-19c7.8-3.5 15.2-7.8 22.2-12.8l16.5 9.5c9.4 5.4 21.3 3.6 28.7-4.4 16.7-18.1 29.4-40.1 36.7-63.4 3.3-10.4-1.2-21.9-10.6-27.3zm-51.6 7.2l29.4 17c-5.2 14.3-13 27.8-22.8 39.5l-29.4-17c-21.4 18.3-24.5 20.1-51.1 29.5v34c-15.1 2.6-30.6 2.6-45.6 0v-34c-26.9-9.5-30.2-11.7-51.1-29.5l-29.4 17c-9.8-11.8-17.6-25.2-22.8-39.5l29.4-17c-4.9-26.8-5.2-30.6 0-59l-29.4-17c5.2-14.3 13-27.7 22.8-39.5l29.4 17c21.4-18.3 24.5-20.1 51.1-29.5v-34c15.1-2.5 30.7-2.5 45.6 0v34c26.8 9.5 30.2 11.6 51.1 29.5l29.4-17c9.8 11.8 17.6 25.2 22.8 39.5l-29.4 17c4.9 26.8 5.2 30.6 0 59zm-96.7-94c-35.6 0-64.5 29-64.5 64.5s28.9 64.5 64.5 64.5 64.5-29 64.5-64.5-28.9-64.5-64.5-64.5zm0 97c-17.9 0-32.5-14.6-32.5-32.5s14.6-32.5 32.5-32.5 32.5 14.6 32.5 32.5-14.6 32.5-32.5 32.5zM224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm0-224c52.9 0 96 43.1 96 96s-43.1 96-96 96-96-43.1-96-96 43.1-96 96-96zM48 480c-8.8 0-16-7.2-16-16v-41.6C32 365.9 77.9 320 134.4 320c19.6 0 39.1 16 89.6 16 19.2 0 38-3.3 56.5-8.7.5-11.6 1.8-23 4.2-34-8.9 2.7-30.1 10.7-60.7 10.7-47.1 0-60.8-16-89.6-16C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h337c-16-8.6-30.6-19.5-43.5-32H48z"
+									class=""></path>
+							</svg>
+						</span>
+						<h id="timer-sett">
+							تنظیمات مدیر
+						</h>
+					</a>
+				</li>
+				<li>
+					<a href="#" class="changePass" onclick="showPage('OTA')">
+						<span class="icon">
+							<svg aria-hidden="true" data-prefix="fal" data-icon="upload" role="img"
+								viewBox="0 0 512 512" class="svg-inline--fa fa-upload fa-w-16 fa-7x">
+								<path fill="currentColor"
+									d="M452 432c0 11-9 20-20 20s-20-9-20-20 9-20 20-20 20 9 20 20zm-84-20c-11 0-20 9-20 20s9 20 20 20 20-9 20-20-9-20-20-20zm144-48v104c0 24.3-19.7 44-44 44H44c-24.3 0-44-19.7-44-44V364c0-24.3 19.7-44 44-44h124v-99.3h-52.7c-35.6 0-53.4-43.1-28.3-68.3L227.7 11.7c15.6-15.6 40.9-15.6 56.6 0L425 152.4c25.2 25.2 7.3 68.3-28.3 68.3H344V320h124c24.3 0 44 19.7 44 44zM200 188.7V376c0 4.4 3.6 8 8 8h96c4.4 0 8-3.6 8-8V188.7h84.7c7.1 0 10.7-8.6 5.7-13.7L261.7 34.3c-3.1-3.1-8.2-3.1-11.3 0L109.7 175c-5 5-1.5 13.7 5.7 13.7H200zM480 364c0-6.6-5.4-12-12-12H344v24c0 22.1-17.9 40-40 40h-96c-22.1 0-40-17.9-40-40v-24H44c-6.6 0-12 5.4-12 12v104c0 6.6 5.4 12 12 12h424c6.6 0 12-5.4 12-12V364z"
+									class=""></path>
+							</svg>
+						</span>
+						<h id="ota-sett">
+							بروزرسانی برنامه
+						</h>
+					</a>
+				</li>
+				<li>
+					<a href="#" class="changePass" onclick="showPage('support')">
+						<span class="icon">
+							<svg aria-hidden="true" data-prefix="fal" data-icon="headset" role="img"
+								viewBox="0 0 512 512" class="svg-inline--fa fa-headset fa-w-16 fa-7x">
+								<path fill="currentColor"
+									d="M192 224c0-17.67-14.33-32-32-32h-32c-35.35 0-64 28.65-64 64v63.64c0 35.35 28.65 64 64 64h32c17.67 0 32-14.33 32-32V224zm-32 127.64h-32c-17.64 0-32-14.36-32-32V256c0-17.64 14.36-32 32-32h32v127.64zm224 32c35.35 0 64-28.65 64-64V256c0-35.35-28.65-64-64-64h-32c-17.67 0-32 14.33-32 32v127.64c0 17.67 14.33 32 32 32h32zM352 224h32c17.64 0 32 14.36 32 32v63.64c0 17.64-14.36 32-32 32h-32V224zM256 0C113.97 0 3.92 117.82.1 256L0 280c0 4.42 3.58 8 8 8h16c4.42 0 8-3.58 8-8l.09-24C35.43 135.19 131.63 32 256 32c123.5 0 224 100.48 224 224v176c0 26.47-21.53 48-48 48h-82.94c1.79-5.03 2.94-10.36 2.94-16 0-26.51-21.49-48-48-48h-64c-26.51 0-48 21.49-48 48s21.49 48 48 48h192c44.12 0 80-35.89 80-80V256C512 114.85 397.16 0 256 0zm48 480h-64c-8.82 0-16-7.18-16-16s7.18-16 16-16h64c8.82 0 16 7.18 16 16s-7.18 16-16 16z"
+									class=""></path>
+							</svg>
+						</span>
+						<h id="supp-page">
+							پشتیبانی
+						</h>
+					</a>
+				</li>
+			</ul>
+		</div>
+
+
+	</div>
+	<div class="header">
+		<div class="flex-row" style="padding:0 2vh;">
+			<select id="languageSelector" onchange="onSaveLanguage()"
+				style="width: 7.5vh;border: none;background: none;outline: none;font-size: 2.7vh;">
+				<option value="EN">🇬🇧</option>
+				<option value="RU">🇷🇺</option>
+				<option value="TU">🇹🇷</option>
+			</select>
+			<P id="Helpper" onclick="openCurretHelpper()"
+				style="width: 7.5vh;border: none;background: none;outline: none;font-size:3vh; line-height: 2vh; display: none;">
+				📚
+			</P>
+
+			<span id="mainTitle" style="flex: 1;" onclick="scrollToTop()">
+				<span style="--i:1">W</span>
+				<span style="--i:2">E</span>
+				<span style="--i:3">L</span>
+				<span style="--i:4">D</span>
+				<span style="--i:6">I</span>
+				<span style="--i:7">N</span>
+				<span style="--i:8">G</span>
+				<span style="--i:5; color: #ff0000; margin-left: 8px;">&#8203;</span>
+				<span style="--i:9">P</span>
+				<span style="--i:10">L</span>
+				<span style="--i:11">C</span>
+			</span>
+			<div class="icon" onclick="document.querySelector('.menu').style.display='flex'">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+					stroke-linecap="round" stroke-linejoin="round">
+					<line x1="3" y1="12" x2="21" y2="12"></line>
+					<line x1="3" y1="6" x2="21" y2="6"></line>
+					<line x1="3" y1="18" x2="21" y2="18"></line>
+				</svg>
+			</div>
+		</div>
+
+	</div>
+	<div class="page" id="main" style="display: flex;">
+
+		<div id="mainContent" class="middle" style="margin-top: 3vh;">
+
+			<div class="dashCard slim">
+
+				<div class="flex-row">
+					<div class="splitter w-30">
+						<svg aria-hidden="true" data-prefix="far" data-icon="expand" role="img" viewBox="0 0 448 512"
+							class="svg-inline--fa fa-expand fa-w-14 fa-7x">
+							<path fill="currentColor"
+								d="M0 180V56c0-13.3 10.7-24 24-24h124c6.6 0 12 5.4 12 12v24c0 6.6-5.4 12-12 12H48v100c0 6.6-5.4 12-12 12H12c-6.6 0-12-5.4-12-12zM288 44v24c0 6.6 5.4 12 12 12h100v100c0 6.6 5.4 12 12 12h24c6.6 0 12-5.4 12-12V56c0-13.3-10.7-24-24-24H300c-6.6 0-12 5.4-12 12zm148 276h-24c-6.6 0-12 5.4-12 12v100H300c-6.6 0-12 5.4-12 12v24c0 6.6 5.4 12 12 12h124c13.3 0 24-10.7 24-24V332c0-6.6-5.4-12-12-12zM160 468v-24c0-6.6-5.4-12-12-12H48V332c0-6.6-5.4-12-12-12H12c-6.6 0-12 5.4-12 12v124c0 13.3 10.7 24 24 24h124c6.6 0 12-5.4 12-12z"
+								class=""></path>
+						</svg>
+						<p id="WM" class="counter m-l">--</p>
+					</div>
+					<div class="splitter w-30">
+						<svg aria-hidden="true" data-prefix="fal" data-icon="ruler-combined" role="img"
+							viewBox="0 0 512 512" class="svg-inline--fa fa-ruler-combined fa-w-16 fa-7x">
+							<path fill="currentColor"
+								d="M480 320H192V32c0-17.67-14.33-32-32-32H32C14.33 0 0 14.33 0 32v448c0 17.67 14.33 32 32 32h448c17.67 0 32-14.33 32-32V352c0-17.67-14.33-32-32-32zM32 32h128v64h-56c-4.42 0-8 3.58-8 8v16c0 4.42 3.58 8 8 8h56v48h-56c-4.42 0-8 3.58-8 8v16c0 4.42 3.58 8 8 8h56v48h-56c-4.42 0-8 3.58-8 8v16c0 4.42 3.58 8 8 8h56v41.38l-128 128V32zm448 448H54.62l128-128H224v56c0 4.42 3.58 8 8 8h16c4.42 0 8-3.58 8-8v-56h48v56c0 4.42 3.58 8 8 8h16c4.42 0 8-3.58 8-8v-56h48v56c0 4.42 3.58 8 8 8h16c4.42 0 8-3.58 8-8v-56h64v128z"
+								class=""></path>
+						</svg>
+						<p id="PM" class="counter m-l">--</p>
+					</div>
+					<div class="splitter w-30">
+						<svg viewBox="0 0 320 512">
+							<path
+								d="M160 64c-26.5 0-48 21.5-48 48V276.5c0 17.3-7.1 31.9-15.3 42.5C86.2 332.6 80 349.5 80 368c0 44.2 35.8 80 80 80s80-35.8 80-80c0-18.5-6.2-35.4-16.7-48.9c-8.2-10.6-15.3-25.2-15.3-42.5V112c0-26.5-21.5-48-48-48zM48 112C48 50.2 98.1 0 160 0s112 50.1 112 112V276.5c0 .1 .1 .3 .2 .6c.2 .6 .8 1.6 1.7 2.8c18.9 24.4 30.1 55 30.1 88.1c0 79.5-64.5 144-144 144S16 447.5 16 368c0-33.2 11.2-63.8 30.1-88.1c.9-1.2 1.5-2.2 1.7-2.8c.1-.3 .2-.5 .2-.6V112zM208 368c0 26.5-21.5 48-48 48s-48-21.5-48-48c0-20.9 13.4-38.7 32-45.3V200c0-8.8 7.2-16 16-16s16 7.2 16 16V322.7c18.6 6.6 32 24.4 32 45.3z" />
+						</svg>
+						<p id="TM" class="counter m-l">--°</p>
+					</div>
+				</div>
+			</div>
+			<div class="dashCard slim second">
+				<div class="flex-row">
+					<div class="splitter w-30">
+						<svg aria-hidden="true" data-prefix="far" data-icon="expand" role="img" viewBox="0 0 448 512"
+							class="svg-inline--fa fa-expand fa-w-14 fa-7x">
+							<path fill="currentColor"
+								d="M0 180V56c0-13.3 10.7-24 24-24h124c6.6 0 12 5.4 12 12v24c0 6.6-5.4 12-12 12H48v100c0 6.6-5.4 12-12 12H12c-6.6 0-12-5.4-12-12zM288 44v24c0 6.6 5.4 12 12 12h100v100c0 6.6 5.4 12 12 12h24c6.6 0 12-5.4 12-12V56c0-13.3-10.7-24-24-24H300c-6.6 0-12 5.4-12 12zm148 276h-24c-6.6 0-12 5.4-12 12v100H300c-6.6 0-12 5.4-12 12v24c0 6.6 5.4 12 12 12h124c13.3 0 24-10.7 24-24V332c0-6.6-5.4-12-12-12zM160 468v-24c0-6.6-5.4-12-12-12H48V332c0-6.6-5.4-12-12-12H12c-6.6 0-12 5.4-12 12v124c0 13.3 10.7 24 24 24h124c6.6 0 12-5.4 12-12z"
+								class=""></path>
+						</svg>
+						<p id="Ws" class="counter m-l" style="color: #5a5a5a">--</p>
+					</div>
+					<div class="splitter w-30">
+						<svg aria-hidden="true" data-prefix="fal" data-icon="ruler-combined" role="img"
+							viewBox="0 0 512 512" class="svg-inline--fa fa-ruler-combined fa-w-16 fa-7x">
+							<path fill="currentColor"
+								d="M480 320H192V32c0-17.67-14.33-32-32-32H32C14.33 0 0 14.33 0 32v448c0 17.67 14.33 32 32 32h448c17.67 0 32-14.33 32-32V352c0-17.67-14.33-32-32-32zM32 32h128v64h-56c-4.42 0-8 3.58-8 8v16c0 4.42 3.58 8 8 8h56v48h-56c-4.42 0-8 3.58-8 8v16c0 4.42 3.58 8 8 8h56v48h-56c-4.42 0-8 3.58-8 8v16c0 4.42 3.58 8 8 8h56v41.38l-128 128V32zm448 448H54.62l128-128H224v56c0 4.42 3.58 8 8 8h16c4.42 0 8-3.58 8-8v-56h48v56c0 4.42 3.58 8 8 8h16c4.42 0 8-3.58 8-8v-56h48v56c0 4.42 3.58 8 8 8h16c4.42 0 8-3.58 8-8v-56h64v128z"
+								class=""></path>
+						</svg>
+						<p id="Ps" class="counter m-l" style="color: #5a5a5a">--</p>
+					</div>
+					<div class="splitter w-30">
+						<svg viewBox="0 0 448 512" fill="none" stroke="currentColor" stroke-width="32"
+							onclick="onResetCounter()">
+							stroke-linecap="round" stroke-linejoin="round">
+							<path d="M160 400V192"></path>
+							<path d="M224 400V192"></path>
+							<path d="M288 400V192"></path>
+							<path d="M32 128h384"></path>
+							<path d="M96 128l48-64h160l48 64"></path>
+							<rect x="80" y="128" width="288" height="336" rx="24" ry="24"></rect>
+						</svg>
+
+					</div>
+				</div>
+			</div>
+			<div style="flex:1"></div>
+			<div class="dashCard  rtl" style="flex-direction: column; margin-bottom: 0;">
+				<div class="flex-row">
+					<div class="splitter ">
+						<svg viewBox="0 0 320 512">
+							<path
+								d="M32 32H64h96c88.4 0 160 71.6 160 160s-71.6 160-160 160H64v96c0 17.7-14.3 32-32 32s-32-14.3-32-32V352 320 288 64C0 46.3 14.3 32 32 32zM64 288h96c53 0 96-43 96-96s-43-96-96-96H64V288z" />
+						</svg>
+						<p id="active_program" class="counter">برنامه فعال</p>
+					</div>
+					<div class="dotted-line"></div>
+					<div class="splitter">
+						<p id="current_P" class="counter">P1</p>
+					</div>
+				</div>
+				<div class="flex-row">
+					<div class="splitter temp">
+						<svg style="margin:0" viewBox="0 0 320 512">
+							<path
+								d="M160 64c-26.5 0-48 21.5-48 48V276.5c0 17.3-7.1 31.9-15.3 42.5C86.2 332.6 80 349.5 80 368c0 44.2 35.8 80 80 80s80-35.8 80-80c0-18.5-6.2-35.4-16.7-48.9c-8.2-10.6-15.3-25.2-15.3-42.5V112c0-26.5-21.5-48-48-48zM48 112C48 50.2 98.1 0 160 0s112 50.1 112 112V276.5c0 .1 .1 .3 .2 .6c.2 .6 .8 1.6 1.7 2.8c18.9 24.4 30.1 55 30.1 88.1c0 79.5-64.5 144-144 144S16 447.5 16 368c0-33.2 11.2-63.8 30.1-88.1c.9-1.2 1.5-2.2 1.7-2.8c.1-.3 .2-.5 .2-.6V112zM208 368c0 26.5-21.5 48-48 48s-48-21.5-48-48c0-20.9 13.4-38.7 32-45.3V200c0-8.8 7.2-16 16-16s16 7.2 16 16V322.7c18.6 6.6 32 24.4 32 45.3z" />
+						</svg>
+						<p id="iron_temp" class="counter temp">دمای اتو</p>
+					</div>
+					<div class="dotted-line"></div>
+					<div class="splitter">
+						<p id="current_T" class="counter temp">--°</p>
+					</div>
+				</div>
+				<div class="flex-row">
+					<div class="splitter heater">
+						<svg viewBox="0 0 512 512">
+							<path
+								d="M96 112c0-26.5 21.5-48 48-48s48 21.5 48 48V276.5c0 17.3 7.1 31.9 15.3 42.5C217.8 332.6 224 349.5 224 368c0 44.2-35.8 80-80 80s-80-35.8-80-80c0-18.5 6.2-35.4 16.7-48.9C88.9 308.4 96 293.8 96 276.5V112zM144 0C82.1 0 32 50.1 32 112V276.4c0 .1-.1 .3-.2 .6c-.2 .6-.8 1.6-1.7 2.8C11.2 304.2 0 334.8 0 368c0 79.5 64.5 144 144 144s144-64.5 144-144c0-33.2-11.3-63.8-30.1-88.1c-.9-1.2-1.5-2.2-1.7-2.8c-.1-.3-.2-.5-.2-.6V112C256 50.1 205.9 0 144 0zm0 416c26.5 0 48-21.5 48-48c0-20.9-13.4-38.7-32-45.3V112c0-8.8-7.2-16-16-16s-16 7.2-16 16V322.7c-18.6 6.6-32 24.4-32 45.3c0 26.5 21.5 48 48 48zM448 160h32c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-64-64c-12.5-12.5-32.8-12.5-45.3 0l-64 64c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8h32V448c0 17.7 14.3 32 32 32s32-14.3 32-32V160z" />
+						</svg>
+						<p id="melting_time" class="counter heater">زمان ذوب</p>
+					</div>
+					<div class="dotted-line"></div>
+					<div class="splitter">
+						<p id="current_H" class="counter heater">--</p>
+					</div>
+				</div>
+				<div class="flex-row">
+					<div class="splitter cooler">
+						<svg viewBox="0 0 512 512">
+							<path
+								d="M96 112c0-26.5 21.5-48 48-48s48 21.5 48 48V276.5c0 17.3 7.1 31.9 15.3 42.5C217.8 332.6 224 349.5 224 368c0 44.2-35.8 80-80 80s-80-35.8-80-80c0-18.5 6.2-35.4 16.7-48.9C88.9 308.4 96 293.8 96 276.5V112zM144 0C82.1 0 32 50.1 32 112V276.4c0 .1-.1 .3-.2 .6c-.2 .6-.8 1.6-1.7 2.8C11.2 304.2 0 334.8 0 368c0 79.5 64.5 144 144 144s144-64.5 144-144c0-33.2-11.3-63.8-30.1-88.1c-.9-1.2-1.5-2.2-1.7-2.8c-.1-.3-.2-.5-.2-.6V112C256 50.1 205.9 0 144 0zm0 416c26.5 0 48-21.5 48-48c0-20.9-13.4-38.7-32-45.3V272c0-8.8-7.2-16-16-16s-16 7.2-16 16v50.7c-18.6 6.6-32 24.4-32 45.3c0 26.5 21.5 48 48 48zm336-64H448V64c0-17.7-14.3-32-32-32s-32 14.3-32 32V352H352c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l64 64c6 6 14.1 9.4 22.6 9.4s16.6-3.4 22.6-9.4l64-64c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8z" />
+						</svg>
+						<p id="cooling_time" class="counter cooler">زمان خنک سازی</p>
+					</div>
+					<div class="dotted-line"></div>
+					<div class="splitter">
+						<p id="current_L" class="counter cooler">--</p>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<div class="footer">
+			<div class="footer-button">
+				<button id="change_program" class="play green" style="width: 90%;" onclick="openModal('programsModal')">
+					تغییر برنامه کاری
+				</button>
+			</div>
+		</div>
+	</div>
+	<div class="page" id="generalSettings">
+		<div id="deviceStatesContent" class="middle" style="margin-top: 3vh;">
+
+			<div style=" width: 100%; flex-direction: column" id="ModeCard">
+				<div class="dashCard " style="flex-direction: column;">
+					<div class="flex-row rtl">
+						<div class="splitter" style="flex: 1;padding-right: 1vh;">
+							<p id="temp_calib" class="counter" style="flex: 1;">کالیبره دما</p>
+						</div>
+						<div class="splitter">
+							<input type="number" class="inputNum" id="CalibValueTitle" value="0" min="-20"
+								style="font-size: 3vh;margin: 1vh; width: 10vh;"
+								oninput="updateCalibTemp(this.value)" />
+							<p id="CalibSumTitle" style="font-size: 3vh;margin: 1vh; direction: ltr;">--°</p>
+						</div>
+
+					</div>
+
+					<div class="flex-row">
+						<div class="splitter">
+							<p class=" slider-value">-20</p>
+						</div>
+						<div class="splitter" style="flex: 1; padding: 0 2vh;">
+							<input type="range" id="CalibInput" min="-20" max="20" step="1" value="0"
+								class="slider-input" oninput="updateCalibTemp(this.value)">
+						</div>
+						<div class="splitter">
+							<p id="calib_max" class="slider-value">20</p>
+						</div>
+					</div>
+				</div>
+				<div class="dashCard rtl">
+					<div class="flex-row">
+						<div class="splitter flex">
+							<p id="pid_coeff" class="counter">ضریب PID</p>
+						</div>
+						<div class="splitter" style=" flex: 1;">
+							<svg id="minusHeaterIcon" class="icon PlusMinus" viewBox="0 0 24 24"
+								onclick="decrementInput('PID', 1)">
+								<path d="M19 13H5v-2h14v2z" />
+							</svg>
+							<input class="dropdown" inputmode="numeric" type="number" id="PID" placeholder="PID"
+								name="pid" min="1" max="30" />
+							<svg id="plusHeaterIcon" class="icon PlusMinus" viewBox="0 0 24 24"
+								onclick="incrementInput('PID', 1)">
+								<path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+							</svg>
+						</div>
+					</div>
+				</div>
+				<div class="dashCard rtl">
+					<div class="flex-row">
+						<div class="splitter flex">
+							<p id="speaker" class="counter">اسپیکر</p>
+						</div>
+						<div class="splitter" style="margin-right: 2vh; flex: 1;">
+							<p id="speaker_off" class="counter" style="font-size: 2.5vh; font-weight: normal;">غیرفعال
+							</p>
+							<div id="spkToggle" class="toggle-button active" onclick="toggleSpeaker()">
+								<div class="toggle"></div>
+							</div>
+							<p id="speaker_on" class="counter" style="font-size: 2.5vh; font-weight: normal;">فعال</p>
+						</div>
+					</div>
+				</div>
+				<div class="dashCard rtl">
+					<div class="flex-row">
+						<div class="splitter flex">
+							<p id="autostart" class="counter">اتواستارت</p>
+						</div>
+						<div class="splitter" style="margin-right: 2vh; flex: 1;">
+							<p id="autostart_off" class="counter" style="font-size: 2.5vh; font-weight: normal;">غیرفعال
+							</p>
+							<div id="autoStartToggle" class="toggle-button active" onclick="toggleAutoStart()">
+								<div class="toggle"></div>
+							</div>
+							<p id="autostart_on" class="counter" style="font-size: 2.5vh; font-weight: normal;">فعال</p>
+						</div>
+					</div>
+				</div>
+				<div class="dashCard rtl">
+					<div class="flex-row">
+						<div class="splitter flex">
+							<p id="end_mode" class="counter">جک پایانی</p>
+						</div>
+						<div class="splitter" style="margin-right: 2vh; flex: 1;">
+							<p id="end_mode_step" class="counter" style="font-size: 2.5vh; font-weight: normal;">فعال
+							</p>
+							<div id="endModeToggle" class="toggle-button active" onclick="toggleEndMode()">
+								<div class="toggle"></div>
+							</div>
+
+							<p id="end_mode_fast" class="counter" style="font-size: 2.5vh; font-weight: normal;">غیرفعال
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="dashCard rtl">
+					<div class="flex-row">
+						<div class="splitter flex">
+							<p id="temp_limit" class="counter">محدودیت دما</p>
+						</div>
+						<div class="splitter" style="margin-right: 2vh; flex: 1;">
+
+							<p id="temp_limit_off" class="counter" style="font-size: 2.5vh; font-weight: normal;">
+								غیرفعال</p>
+
+							<div id="tLimitToggle" class="toggle-button active" onclick="toggleTLimitter()">
+								<div class="toggle"></div>
+							</div>
+
+							<p id="temp_limit_on" class="counter" style="font-size: 2.5vh; font-weight: normal;">فعال
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="dashCard rtl">
+					<div class="flex-row">
+						<div class="splitter flex">
+							<p id="pedalN" class="counter">تعداد پدال</p>
+						</div>
+						<div class="splitter" style="margin-right: 2vh; flex: 1;">
+
+							<p id="Np3" class="counter" style="font-size: 2.5vh; font-weight: normal;">
+								3</p>
+
+							<div id="pedalToggle" class="toggle-button active" onclick="togglePedal()">
+								<div class="toggle"></div>
+							</div>
+
+							<p id="Np4" class="counter" style="font-size: 2.5vh; font-weight: normal;">4
+							</p>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<div class="footer">
+			<div class="footer-button">
+				<button id="saveStates" class="play green" style="width: 90%;" onclick="onSaveStates()">
+					ثبت وضعیت
+				</button>
+			</div>
+		</div>
+	</div>
+	<div class="page" id="programSettings">
+		<div id="programSettingsContent" class="middle" style="margin-top: 3vh;">
+
+		</div>
+		<div class="footer">
+		</div>
+	</div>
+	<div class="page" id="motionSettings">
+		<div id="motionSettingsContent" class="middle rtl" style="margin-top: 3vh;">
+		</div>
+	</div>
+	<div class="page" id="adminSettings">
+		<div id="adminSettingsContent" class="middle" style="margin-top: 3vh;">
+			<div style=" width: 100%; flex-direction: column" id="adminCard">
+				<div class="dashCard rtl">
+					<div class="flex-row">
+						<div class="splitter flex">
+							<p id="op_mode" class="counter">حالت کار</p>
+						</div>
+						<div class="splitter" style="margin-right: 2vh; flex: 1;">
+							<select id="deviceMode" name="deviceMode" class="dropdown" onchange="onUpdateDVMode();">
+								<option id="op_mode_1" value="1">جوش تک سر</option>
+								<option id="op_mode_2" value="2">جوش دو سر</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="dashCard rtl">
+					<div class="flex-row">
+						<div class="splitter flex">
+							<p id="termo" class="counter">ترموکوبل</p>
+						</div>
+						<div class="splitter" style="margin-right: 2vh; flex: 1;">
+
+							<p class="counter" style="font-size: 2.5vh; font-weight: normal;">J</p>
+
+							<div id="TermoToggle" class="toggle-button active" onclick="onUpdateJKMode()">
+								<div class="toggle"></div>
+							</div>
+							<p class="counter" style="font-size: 2.5vh; font-weight: normal;">K</p>
+						</div>
+					</div>
+				</div>
+				<div class="dashCard rtl">
+					<div class="flex-row">
+						<div class="splitter flex">
+							<p id="emergency" class="counter">امرجنسی</p>
+						</div>
+						<div class="splitter" style="margin-right: 2vh; flex: 1;">
+
+							<p id="emergency_open" class="counter" style="font-size: 2.5vh; font-weight: normal;">عادی
+								باز</p>
+
+							<div id="EmgncyToggle" class="toggle-button active" onclick="onUpdateEmgncy()">
+								<div class="toggle"></div>
+							</div>
+
+							<p id="emergency_closed" class="counter" style="font-size: 2.5vh; font-weight: normal;">بسته
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="dashCard rtl">
+					<div class="flex-row">
+						<div class="splitter flex">
+							<p id="Jsensor" class="counter">سنسور جک</p>
+						</div>
+						<div class="splitter" style="margin-right: 2vh; flex: 1;">
+
+							<p id="Jsensor_off" class="counter" style="font-size: 2.5vh; font-weight: normal;">غیرفعال
+							</p>
+
+							<div id="JsensorToggle" class="toggle-button active" onclick="onUpdateJsensor()">
+								<div class="toggle"></div>
+							</div>
+
+							<p id="Jsensor_on" class="counter" style="font-size: 2.5vh; font-weight: normal;">
+								فعال
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="dashCard " style="flex-direction: column;">
+					<div class="flex-row ">
+						<div class="splitter" style="flex: 1;">
+							<div class="footer-button" style="margin: 2vh 0;">
+								<button id="rst_count" class="play green" style="padding: 1vh;"
+									onclick="onRessetCountersAll()">
+									ریست کردن شمارنده
+								</button>
+							</div>
+						</div>
+						<div class="splitter" style="flex: 1;">
+							<div class="footer-button" style="margin: 2vh 0;">
+								<button id="save_defs" class="play green" style="padding: 1vh;"
+									onclick="onSaveDefaultValues()">
+									ذخیره مقادیر پشتیبان
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="dashCard " style="flex-direction: column;">
+					<div class="flex-row rtl">
+						<div id="TimerToggle" class="toggle-button active" onclick="toggleTimer()">
+							<div class="toggle"></div>
+						</div>
+
+						<div class="splitter" style="flex: 1;padding-right: 1vh;">
+							<p id="KSWCH" class="counter" style="flex: 1;">تایمر معکوس</p>
+						</div>
+						<div class="splitter">
+							<input type="number" class="inputNum" id="TimerValueTitle" value="10" min="1" max="200"
+								style="font-size: 3vh;margin: 1vh;" />
+							<p id="days_label" style="font-size: 2vh;margin: 0;"> روز</p>
+						</div>
+					</div>
+
+					<div class="flex-row">
+						<div class="splitter">
+							<p class=" slider-value">1</p>
+						</div>
+						<div class="splitter" style="flex: 1; padding: 0 2vh;">
+							<input type="range" id="TimerInput" min="1" max="200" step="1" value="145"
+								class="slider-input" oninput="updateTimerTime(this.value)">
+						</div>
+						<div class="splitter">
+							<p class=" slider-value">200</p>
+						</div>
+					</div>
+
+					<div class="footer-button" style="margin: 2vh 0;">
+						<button id="save_timer" class="play green" style="padding: 1vh;" onclick="onUpdateKillSwitch()">
+							ذخیره
+						</button>
+					</div>
+				</div>
+				<div class="dashCard" style="flex-direction: column;">
+					<div class="flex-row rtl">
+						<div class="splitter" style="flex: 1;padding-right: 1vh;">
+							<p id="ch_pass" class="counter" style="flex: 1;">تغییر رمز عبور</p>
+						</div>
+					</div>
+
+					<div class="flex-row rtl" style="padding: 0;">
+						<div class="splitter" style="flex: 1; padding: 0 2vh;">
+							<input type="password" inputmode="numeric" id="changePassInput" class="dropdown"
+								placeholder="رمز جدید" inputmode="numeric" pattern="[0-9]*">
+						</div>
+						<div class="splitter" style="flex: 1; padding: 0 2vh;">
+							<input type="password" inputmode="numeric" id="changePassConfirmInput" class="dropdown"
+								placeholder="تایید رمز" inputmode="numeric" pattern="[0-9]*">
+						</div>
+						<div onclick="togglePasswordVisibilty()">
+							<div class="splitter" style="flex: 1; padding: 0 1vh; font-size: 3vh;">
+								<p>👀</p>
+							</div>
+						</div>
+					</div>
+					<div class="flex-row rtl">
+						<div class="splitter" style="flex: 1;padding-right: 1vh;">
+							<p id="password_hint" class="counter"
+								style="flex: 1; color: #e46666; font-size: 2vh; text-align: center;">رمز
+								انتخابی باید یک عدد ۶
+								رقمی باشد</p>
+						</div>
+					</div>
+					<div class="footer-button" style="margin: 2vh 0;">
+						<button id="sub_pass_ch" class="play green" style="padding: 1vh;" onclick="onchangePass()">
+							تغییر رمز عبور
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<div class="page" id="OTA">
+		<div id="generalContent" class="middle" style="margin-top: 2vh;">
+
+			<div class="dashCard  rtl" style="flex-direction: column;">
+				<div class="flex-row">
+					<div class="splitter">
+						<svg aria-hidden="true" data-prefix="fal" data-icon="calendar-check" role="img"
+							viewBox="0 0 448 512" class="svg-inline--fa fa-calendar-check fa-w-14 fa-7x"
+							style="padding: 0 6px;">
+							<path fill="currentColor"
+								d="M400 64h-48V12c0-6.627-5.373-12-12-12h-8c-6.627 0-12 5.373-12 12v52H128V12c0-6.627-5.373-12-12-12h-8c-6.627 0-12 5.373-12 12v52H48C21.49 64 0 85.49 0 112v352c0 26.51 21.49 48 48 48h352c26.51 0 48-21.49 48-48V112c0-26.51-21.49-48-48-48zM48 96h352c8.822 0 16 7.178 16 16v48H32v-48c0-8.822 7.178-16 16-16zm352 384H48c-8.822 0-16-7.178-16-16V192h384v272c0 8.822-7.178 16-16 16zm-66.467-194.937l-134.791 133.71c-4.7 4.663-12.288 4.642-16.963-.046l-67.358-67.552c-4.683-4.697-4.672-12.301.024-16.985l8.505-8.48c4.697-4.683 12.301-4.672 16.984.024l50.442 50.587 117.782-116.837c4.709-4.671 12.313-4.641 16.985.068l8.458 8.527c4.672 4.709 4.641 12.313-.068 16.984z"
+								class=""></path>
+						</svg>
+
+						<p id="act_date_label" class="counter">تاریخ فعالسازی</p>
+					</div>
+					<div class="dotted-line"></div>
+					<div class="splitter">
+						<p id="activ_date" class="counter">--/--/--</p>
+					</div>
+				</div>
+			</div>
+			<div class="dashCard">
+				<div class="flex-row" style="padding: 2vh;">
+					<form method="POST" enctype="multipart/form-data" id="upload_os_form" class="form-container">
+						<p id="os_updater_label" class="form-header" style="margin: 0 0 2vh;">OS Updater:</p>
+						<input type="file" name="update_os" accept=".bin" id="osFileInput">
+						<div id="prg_os" style="padding: 1vh 0;">progress: 0%</div>
+						<div class="footer-button">
+							<input id="submit_os" type="submit" value="Update OS" class="form-button">
+
+							<div class="browser" style="width: 3vh;" onclick="onUploader();">
+								🌏
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="dashCard">
+				<div class="flex-row" style="padding: 2vh;">
+					<form method="POST" enctype="multipart/form-data" id="upload_html_form" class="form-container">
+						<p id="asset_label" class="form-header" style="margin: 0 0 2vh;">Asset Uploader:</p>
+						<input type="file" name="Choose file" accept=".gz,.html,.ico,.js,.css" id="assetFileInput">
+
+						<div id="prg_html" style="padding: 1vh 0;">progress: 0%</div>
+						<div class="footer-button">
+							<input id="submit_update" class="form-button" type="submit" value="Update Asset"
+								name="submit">
+							<div class="browser" style="width: 3vh;" onclick="onUploader();">
+								🌏
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+
+		</div>
+		<div class="footer">
+			<div class="footer-button">
+				<button id="rst_factory" class="play green" style="width: 90%;" onclick="onRessetFactory()">
+					بازیابی تنظیمات کارخانه
+				</button>
+			</div>
+		</div>
+	</div>
+	</div>
+	<div class="page" id="support">
+		<div id="adminSettingsContent" class="middle" style="margin-top: 3vh;">
+			<div id="supportContent" style=" width: 100%; flex-direction: column">
+			</div>
+		</div>
+	</div>
+	<div id="passwordModal" class="modal hide">
+		<div class="modal-content">
+			<span class="close-btn">&times;</span>
+			<input type="password" id="passwordInput" inputmode="numeric" placeholder="Admin password"
+				class="input-field">
+			<p id="passwordError" class="error"
+				style="display: none; color: red; font-size: 2vh; font-weight: bold; margin:2vh 0;">رمز اشتباه است</p>
+			<button id="conf_pass_butt" class="modal-btn" onclick="submitPassword()">Confirm</button>
+		</div>
+	</div>
+	<div id="jackModal" class="modal rtl">
+		<div class="modal-content">
+			<div class="dashCard slim" style="border: none;">
+				<div class="flex-row">
+					<p id="JackTitle" class="counter" style="width: 100%;">title</p>
+				</div>
+			</div>
+			<div class="dashCard slim">
+				<div class="flex-row">
+					<div class="splitter heater" style="justify-content: flex-start; flex: 1;">
+						<svg viewBox="0 0 384 512">
+							<path
+								d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z" />
+						</svg>
+						<h id="incoming" class="counter heater">dd</h>
+					</div>
+					<div class="splitter" style="flex: 2; margin: 0 auto;">
+						<svg id="minusHeaterIcon" class="icon PlusMinus" viewBox="0 0 24 24"
+							onclick="decrementInput('heaterInput', 100)">
+							<path d="M19 13H5v-2h14v2z" />
+						</svg>
+						<input type="number" inputmode="numeric" step="100" id="heaterInput" class="input-field"
+							min="100" max="6000" value="1" oninput="onJackInputChanged()">
+						<svg id="plusHeaterIcon" class="icon PlusMinus" viewBox="0 0 24 24"
+							onclick="incrementInput('heaterInput', 100)">
+							<path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+						</svg>
+					</div>
+					<svg id="heaterInputPlayIcon" class="iconP" viewBox="0 0 24 24"
+						onclick="playTimer('heaterInput',1)">
+						<path d="M8 5v14l11-7z" />
+					</svg>
+					<svg id="heaterInputStopIcon" class="iconP hide" viewBox="0 0 24 24"
+						onclick="stopTimer('heaterInput',2)">
+						<path d="M6 6h12v12H6z" />
+					</svg>
+				</div>
+			</div>
+			<div class="dashCard slim" id="uloadJack">
+				<div class="flex-row">
+					<div class="splitter cooler" style="justify-content: flex-start; flex: 1;">
+						<svg aria-hidden="true" data-prefix="far" data-icon="arrow-down" role="img"
+							viewBox="0 0 448 512" class="svg-inline--fa fa-arrow-down fa-w-14 fa-7x">
+							<path fill="currentColor"
+								d="M441.9 250.1l-19.8-19.8c-4.7-4.7-12.3-4.7-17 0L250 385.4V44c0-6.6-5.4-12-12-12h-28c-6.6 0-12 5.4-12 12v341.4L42.9 230.3c-4.7-4.7-12.3-4.7-17 0L6.1 250.1c-4.7 4.7-4.7 12.3 0 17l209.4 209.4c4.7 4.7 12.3 4.7 17 0l209.4-209.4c4.7-4.7 4.7-12.3 0-17z"
+								class=""></path>
+						</svg>
+						<p id="outgoing" class="counter cooler">برگشت</p>
+					</div>
+					<div class="splitter" style="flex: 2; margin: 0 auto;">
+						<svg id="minusCoolerIcon" class="icon PlusMinus" viewBox="0 0 24 24"
+							onclick="decrementInput('coolerInput', 100)">
+							<path d="M19 13H5v-2h14v2z" />
+						</svg>
+						<input type="number" inputmode="numeric" step="100" id="coolerInput" class="input-field"
+							min="100" max="6000" value="1" oninput="onJackInputChanged()">
+						<svg id="plusCoolerIcon" class="icon PlusMinus" viewBox="0 0 24 24"
+							onclick="incrementInput('coolerInput', 100)">
+							<path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+						</svg>
+					</div>
+					<svg id="coolerInputPlayIcon" class="iconP PlusMinus hide" viewBox="0 0 24 24"
+						onclick="playTimer('coolerInput',3)">
+						<path d="M8 5v14l11-7z" />
+					</svg>
+					<svg id="coolerInputStopIcon" class="iconP PlusMinus hide" viewBox="0 0 24 24"
+						onclick="stopTimer('coolerInput',4)">
+						<path d="M6 6h12v12H6z" />
+					</svg>
+
+				</div>
+			</div>
+			<button id="submitjack_butt" class="modal-btn" onclick="submitJack()">تایید</button>
+		</div>
+	</div>
+	<div id="programModal" class="modal rtl">
+		<div class="modal-content">
+			<div class="dashCard slim" style="border: none;">
+				<div class="flex-row">
+					<p id="programTitle" class="counter" style="width: 100%;">title</p>
+				</div>
+			</div>
+			<div class="dashCard slim">
+				<div class="flex-row">
+					<div class="splitter heater" style="justify-content: flex-start; flex: 1;">
+						<svg viewBox="0 0 384 512" class="w-20">
+							<path
+								d="M96 112c0-26.5 21.5-48 48-48s48 21.5 48 48V276.5c0 17.3 7.1 31.9 15.3 42.5C217.8 332.6 224 349.5 224 368c0 44.2-35.8 80-80 80s-80-35.8-80-80c0-18.5 6.2-35.4 16.7-48.9C88.9 308.4 96 293.8 96 276.5V112zM144 0C82.1 0 32 50.1 32 112V276.4c0 .1-.1 .3-.2 .6c-.2 .6-.8 1.6-1.7 2.8C11.2 304.2 0 334.8 0 368c0 79.5 64.5 144 144 144s144-64.5 144-144c0-33.2-11.3-63.8-30.1-88.1c-.9-1.2-1.5-2.2-1.7-2.8c-.1-.3-.2-.5-.2-.6V112C256 50.1 205.9 0 144 0zm0 416c26.5 0 48-21.5 48-48c0-20.9-13.4-38.7-32-45.3V112c0-8.8-7.2-16-16-16s-16 7.2-16 16V322.7c-18.6 6.6-32 24.4-32 45.3c0 26.5 21.5 48 48 48zM448 160h32c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-64-64c-12.5-12.5-32.8-12.5-45.3 0l-64 64c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8h32V448c0 17.7 14.3 32 32 32s32-14.3 32-32V160z" />
+						</svg>
+						<p id="heaterTitle" class="counter heater">گرم سازی</p>
+					</div>
+					<div class="splitter" style="flex: 1; margin: 0 auto;">
+						<svg id="minusHeaterIcon" class="icon PlusMinus" viewBox="0 0 24 24"
+							onclick="decrementInput('heaterInput2', 1)">
+							<path d="M19 13H5v-2h14v2z" />
+						</svg>
+						<input type="number" inputmode="numeric" step="1" id="heaterInput2" class="input-field" min="1"
+							max="9999" value="1">
+						<svg id="plusHeaterIcon" class="icon PlusMinus" viewBox="0 0 24 24"
+							onclick="incrementInput('heaterInput2', 1)">
+							<path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+						</svg>
+					</div>
+				</div>
+			</div>
+			<div class="dashCard slim">
+				<div class="flex-row">
+					<div class="splitter cooler" style="justify-content: flex-start; flex: 1;">
+						<svg aria-hidden="true" data-prefix="far" data-icon="arrow-down" role="img"
+							viewBox="0 0 448 512" class="svg-inline--fa fa-arrow-down fa-w-14 fa-7x">
+							<path fill="currentColor"
+								d="M96 112c0-26.5 21.5-48 48-48s48 21.5 48 48V276.5c0 17.3 7.1 31.9 15.3 42.5C217.8 332.6 224 349.5 224 368c0 44.2-35.8 80-80 80s-80-35.8-80-80c0-18.5 6.2-35.4 16.7-48.9C88.9 308.4 96 293.8 96 276.5V112zM144 0C82.1 0 32 50.1 32 112V276.4c0 .1-.1 .3-.2 .6c-.2 .6-.8 1.6-1.7 2.8C11.2 304.2 0 334.8 0 368c0 79.5 64.5 144 144 144s144-64.5 144-144c0-33.2-11.3-63.8-30.1-88.1c-.9-1.2-1.5-2.2-1.7-2.8c-.1-.3-.2-.5-.2-.6V112C256 50.1 205.9 0 144 0zm0 416c26.5 0 48-21.5 48-48c0-20.9-13.4-38.7-32-45.3V272c0-8.8-7.2-16-16-16s-16 7.2-16 16v50.7c-18.6 6.6-32 24.4-32 45.3c0 26.5 21.5 48 48 48zm336-64H448V64c0-17.7-14.3-32-32-32s-32 14.3-32 32V352H352c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l64 64c6 6 14.1 9.4 22.6 9.4s16.6-3.4 22.6-9.4l64-64c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8z"
+								class="w-20"></path>
+						</svg>
+						<p id="coolerTitle" class="counter cooler">خنک سازی</p>
+					</div>
+					<div class="splitter" style="flex: 1; margin: 0 auto;">
+						<svg id="minusCoolerIcon" class="icon PlusMinus" viewBox="0 0 24 24"
+							onclick="decrementInput('coolerInput2', 1)">
+							<path d="M19 13H5v-2h14v2z" />
+						</svg>
+						<input type="number" inputmode="numeric" step="1" id="coolerInput2" class="input-field" min="1"
+							max="9999" value="1">
+						<svg id="plusCoolerIcon" class="icon PlusMinus" viewBox="0 0 24 24"
+							onclick="incrementInput('coolerInput2', 1)">
+							<path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+						</svg>
+					</div>
+
+				</div>
+			</div>
+			<div class="dashCard slim">
+				<div class="flex-row">
+					<div class="splitter temp" style="justify-content: flex-start; flex: 1;">
+						<svg viewBox="0 0 384 512" class="w-20" style="margin: 0;">
+							<path
+								d="M160 64c-26.5 0-48 21.5-48 48V276.5c0 17.3-7.1 31.9-15.3 42.5C86.2 332.6 80 349.5 80 368c0 44.2 35.8 80 80 80s80-35.8 80-80c0-18.5-6.2-35.4-16.7-48.9c-8.2-10.6-15.3-25.2-15.3-42.5V112c0-26.5-21.5-48-48-48zM48 112C48 50.2 98.1 0 160 0s112 50.1 112 112V276.5c0 .1 .1 .3 .2 .6c.2 .6 .8 1.6 1.7 2.8c18.9 24.4 30.1 55 30.1 88.1c0 79.5-64.5 144-144 144S16 447.5 16 368c0-33.2 11.2-63.8 30.1-88.1c.9-1.2 1.5-2.2 1.7-2.8c.1-.3 .2-.5 .2-.6V112zM208 368c0 26.5-21.5 48-48 48s-48-21.5-48-48c0-20.9 13.4-38.7 32-45.3V200c0-8.8 7.2-16 16-16s16 7.2 16 16V322.7c18.6 6.6 32 24.4 32 45.3z" />
+						</svg>
+						<p id="tempTitle" class="counter temp">دمای اتو</p>
+					</div>
+					<div class="splitter" style="flex: 1; margin: 0 auto;">
+						<svg id="minusHeaterIcon" class="icon PlusMinus" viewBox="0 0 24 24"
+							onclick="decrementInput('tempInput2', 1)">
+							<path d="M19 13H5v-2h14v2z" />
+						</svg>
+						<input type="number" inputmode="numeric" step="1" id="tempInput2" class="input-field" min="1"
+							max="9999" value="1">
+						<svg id="plusHeaterIcon" class="icon PlusMinus" viewBox="0 0 24 24"
+							onclick="incrementInput('tempInput2', 1)">
+							<path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+						</svg>
+					</div>
+				</div>
+			</div>
+			<button id="submitProgram_butt" class="modal-btn" onclick="submitProgram()">تایید</button>
+		</div>
+	</div>
+	<div id="programsModal" class="modal">
+		<div class="modal-content" style="height: 85vh;">
+			<span class="close-btn" onclick="closeModal('programsModal')">&times;</span>
+			<div id="programSettingsContent2" class="middle" style="margin-top: 3vh;">
+
+			</div>
+		</div>
+	</div>
+
+	<div id="confirmModal" class="modal">
+		<div class="modal-content">
+			<span class="close-btn" onclick="closeModal('confirmModal')">&times;</span>
+			<div id="confirmContent" class="middle" style="margin-top: 3vh;">
+				<div class="dashCard" style="flex-direction: column;">
+					<p id="confirm_modal_title" class="counter">تایید عملیات</p>
+					<p class="counter" id="confirmText">آیا از انجام عملیات مطمئن هستید؟</p>
+				</div>
+				<div class="footer-button">
+					<button class="play green" style="width: 90%;" id="confirmButton">
+						تایید
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="MessageModal" class="modal">
+		<div class="modal-content">
+			<span class="close-btn" onclick="closeModal('MessageModal')">&times;</span>
+			<div id="MessageContent" class="middle" style="margin-top: 3vh;">
+				<div class="dashCard" style="flex-direction: column;">
+					<p class="counter" id="messageText">آیا از انجام عملیات مطمئن هستید؟</p>
+				</div>
+				<div class="footer-button">
+					<button id="MessageButton" class="play green" style="width: 90%;" id="MessageButton"
+						onclick="closeModal('MessageModal')">
+						باشه
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="HelperModal" class="modal" style="display: flex;">
+		<div class="modal-content">
+			<span class="close-btn" onclick="closeModal('HelperModal')">&times;</span>
+			<div id="HelperContent" class="middle">
+				<div style="padding: 2vh 0;">
+					<img id="HelperImage" style="width: 100%;" src="./logo.png" alt="Help Image" />
+				</div>
+				<div class="footer-button">
+					<button class="play green" style="width: 90%;" id="HelperButton"
+						onclick="closeModal('HelperModal')">
+						باشه
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+<script src="jvs.js">
+</script>
+
+</html>

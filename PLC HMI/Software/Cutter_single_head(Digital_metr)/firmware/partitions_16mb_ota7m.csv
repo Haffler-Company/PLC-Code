@@ -1,0 +1,8 @@
+# 16MiB flash: two equal 7MiB OTA slots, resilient NVS, retained splash storage.
+# Matching physical ESP32-S3 flash layout exactly.
+# Name,    Type, SubType, Offset,   Size,     Flags
+nvs,       data, nvs,     0x9000,   0x5000,
+otadata,   data, ota,     0xE000,   0x2000,
+app0,      app,  ota_0,   0x10000,  0x700000,
+app1,      app,  ota_1,   0x710000, 0x700000,
+spiffs,    data, spiffs,  0xE20000, 0x1E0000,

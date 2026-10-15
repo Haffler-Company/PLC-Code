@@ -1,0 +1,11 @@
+# ESP32-S3 DevKitC-1 — factory flash (16MB, partitions.csv)
+# VERSION 2.0.94  Built 2026-10-14 19:47:41
+#
+esptool.py --chip esp32s3 --port COM17 --baud 921600 write_flash ^
+  0x0      bootloader.bin ^
+  0x8000   partitions.bin ^
+  0x10000  firmware.bin ^
+  0xE20000 spiffs.bin
+#
+# OTA server: upload firmware.bin + pinmap.txt
+# WebApp Filesystem: pio run -t uploadfs (or flash spiffs.bin @ 0xE20000)

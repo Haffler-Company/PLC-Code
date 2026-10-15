@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>هافلر - کنترل تزریق گاز آرگون</title>
+<style>
+:root{--bg:#0b1120;--card:#1e293b;--card-border:#334155;--accent:#0284c7;--accent-glow:rgba(2,132,199,0.35);--green:#16a34a;--red:#dc2626;--amber:#d97706;--text:#f8fafc;--sub:#94a3b8}
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Vazirmatn",Tahoma,sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);padding:12px;display:flex;flex-direction:column;gap:12px;min-height:100vh;max-width:1100px;margin:auto}
+.header{background:linear-gradient(135deg,#1e293b,#0f172a);border:1px solid var(--card-border);border-radius:16px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 20px #0005;gap:10px}
+.brand{font-size:18px;font-weight:900;color:#38bdf8;letter-spacing:0.5px}
+.brand small{display:block;font-size:11px;color:var(--sub);font-weight:normal;margin-top:2px}
+.header-badges{display:flex;align-items:center;gap:8px}
+.conn-badge{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:bold;padding:6px 12px;border-radius:20px;background:#0f172a;border:1px solid var(--card-border)}
+.dot{width:8px;height:8px;border-radius:50%;background:#475569}
+.dot.on{background:#22c55e;box-shadow:0 0 10px #22c55e}
+.wifi-badge{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:bold;padding:6px 12px;border-radius:20px;background:#0f172a;border:1px solid var(--card-border);color:var(--sub)}
+.wifi-badge.on{color:#38bdf8;border-color:#0284c7}
+.nav-tabs{display:flex;overflow-x:auto;gap:6px;background:#1e293b;padding:6px;border-radius:14px;border:1px solid var(--card-border);scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-behavior:smooth}
+.nav-tabs::-webkit-scrollbar{display:none}
+.nav-btn{flex:0 0 auto;min-height:44px;padding:10px 14px;border:none;background:transparent;color:var(--sub);font-size:12px;font-weight:bold;border-radius:10px;cursor:pointer;transition:all .15s ease;text-align:center;white-space:nowrap;display:flex;align-items:center;justify-content:center}
+.nav-btn.active{background:var(--accent);color:#fff;box-shadow:0 2px 10px var(--accent-glow)}
+.page{display:none;flex-direction:column;gap:12px}.page.active{display:flex}
+.page-grid-2{display:flex;flex-direction:column;gap:12px}
+.card{background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 4px 14px #0003}
+.card-title{font-size:14px;color:#38bdf8;font-weight:bold;display:flex;justify-content:space-between;align-items:center}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.kpi{background:#0f172a;border:1px solid var(--card-border);border-radius:12px;padding:12px;text-align:center}
+.kpi-val{font-size:24px;font-weight:900;color:#fff}
+.kpi-lbl{font-size:11px;color:var(--sub);margin-top:2px}
+.pbar-bg{height:12px;background:#0f172a;border:1px solid var(--card-border);border-radius:6px;overflow:hidden}
+.pbar-fill{height:100%;background:linear-gradient(90deg,#0284c7,#38bdf8);width:0%;transition:width .3s}
+.btn{min-height:44px;padding:10px 16px;border:none;border-radius:10px;font-size:13px;font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;color:#fff;transition:transform .1s ease,opacity .15s ease}
+.btn-green{background:var(--green)}.btn-red{background:var(--red)}.btn-blue{background:var(--accent)}.btn-amber{background:var(--amber)}
+.btn:active{transform:scale(.98);opacity:.9}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.form-grp{display:flex;flex-direction:column;gap:4px}
+.form-grp label{font-size:11px;color:var(--sub);font-weight:bold}
+input,select{width:100%;min-height:44px;padding:8px 12px;background:#0f172a;border:1px solid var(--card-border);border-radius:10px;color:#fff;font-size:15px;text-align:center;direction:ltr}
+input:focus,select:focus{outline:2px solid var(--accent);border-color:transparent}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th,td{padding:8px;border:1px solid var(--card-border);text-align:center}
+th{background:#0f172a;color:#38bdf8}
+.badge{padding:4px 10px;border-radius:14px;font-size:11px;font-weight:bold}
+.badge-ok{background:#16a34a33;color:#4ade80;border:1px solid #16a34a}
+.badge-warn{background:#d9770633;color:#fbbf24;border:1px solid #d97706}
+.badge-err{background:#dc262633;color:#f87171;border:1px solid #dc2626}
+.footer{text-align:center;font-size:11px;color:var(--sub);margin-top:auto;padding:8px}
+
+@media (min-width: 768px) {
+  body{padding:16px;gap:14px}
+  .page-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+}
+@media (min-width: 900px) {
+  .nav-tabs{display:grid;grid-template-columns:repeat(8,1fr)}
+  .nav-btn{font-size:12px;padding:10px 4px;white-space:normal}
+}
+.remote-key-btn{min-height:52px;border-radius:12px;font-weight:900;font-size:13px;border:1px solid var(--card-border);cursor:pointer;transition:all .1s ease;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#fff;box-shadow:0 3px 10px #0004}
+.remote-key-btn:active{transform:scale(0.93);filter:brightness(1.2)}
+</style>
+</head>
+<body>
+<header class="header">
+<div>
+  <div class="brand">HAFFLER <span style="font-size:13px;color:#94a3b8">ARGON FILLER</span></div>
+  <small>سامانه هوشمند مانیتورینگ و کنترل صنعتی گاز پرکن</small>
+</div>
+<div class="header-badges">
+  <div class="conn-badge" title="تاخیر شبکه و زمان پاسخگویی دستگاه">
+    <span style="font-size:11px">⚡</span>
+    <span id="txt-ping" style="font-family:monospace;direction:ltr;color:#38bdf8">-- ms</span>
+  </div>
+  <div id="hdr-wifi" class="wifi-badge" title="وضعیت اینترنت وای‌فای">
+    <span id="hdr-wifi-icon">📶</span>
+    <span id="hdr-wifi-txt">وای‌فای...</span>
+  </div>
+  <div class="conn-badge">
+    <span id="dot-conn" class="dot on"></span>
+    <span id="txt-ver">...</span>
+  </div>
+</div>
+</header>
+
+<nav class="nav-tabs">
+<button class="nav-btn active" onclick="tab('t-dash',this)">📊 داشبورد</button>
+<button class="nav-btn" onclick="tab('t-set',this)">⚙️ فرآیند</button>
+<button class="nav-btn" onclick="tab('t-io',this)">🔌 پایه‌ها</button>
+<button class="nav-btn" onclick="tab('t-lock',this)">⏳ روزشمار</button>
+<button class="nav-btn" onclick="tab('t-ota',this)">📶 وای‌فای و ارتقا</button>
+<button class="nav-btn" onclick="tab('t-remote',this)">🎮 کنترل پنل</button>
+<button class="nav-btn" onclick="tab('t-ai',this)">🤖 هوش مصنوعی</button>
+<button class="nav-btn" onclick="tab('t-stats',this);loadStats()">📈 آمار</button>
+</nav>
+
+<!-- TAB 1: DASHBOARD -->
+<main id="t-dash" class="page active">
+  <div class="page-grid-2">
+    <div class="card">
+      <div class="card-title"><span>شیشه شماره ۱ (سمت راست)</span><span id="st-badge1" class="badge badge-ok">آماده</span></div>
+      <div class="grid-2">
+        <div class="kpi"><div class="kpi-val" id="g1-time">0s</div><div class="kpi-lbl">زمان باقیمانده</div></div>
+        <div class="kpi">
+          <div style="font-size:10px;color:#94a3b8;margin-bottom:2px">طول × ارتفاع × ضخامت (mm)</div>
+          <div id="g1-dim" style="font-size:15px;font-weight:900;color:#fff;direction:ltr">--</div>
+        </div>
+      </div>
+      <div class="pbar-bg"><div id="g1-bar" class="pbar-fill"></div></div>
+      <!-- Quick Dimensions & Gas Calculator 1 -->
+      <details style="background:#0f172a;border:1px solid var(--card-border);border-radius:10px;padding:8px">
+        <summary style="font-size:11px;color:#38bdf8;cursor:pointer;font-weight:bold">📐 ابعاد و محاسبه‌گر گاز شیشه ۱</summary>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:8px 0">
+          <div><label style="font-size:10px;color:var(--sub)">طول mm</label><input type="number" id="inp-g1-l" placeholder="طول" oninput="calcGlassGas(1)"></div>
+          <div><label style="font-size:10px;color:var(--sub)">ارتفاع mm</label><input type="number" id="inp-g1-h" placeholder="ارتفاع" oninput="calcGlassGas(1)"></div>
+          <div><label style="font-size:10px;color:var(--sub)">ضخامت mm</label><input type="number" id="inp-g1-d" step="0.5" placeholder="ضخامت" oninput="calcGlassGas(1)"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;background:#1e293b;border-radius:6px;padding:6px 10px;font-size:11px;margin-bottom:6px">
+          <span>حجم گاز: <b id="g1-calc-vol" style="color:#38bdf8">-- L</b></span>
+          <span>زمان تزریق: <b id="g1-calc-sec" style="color:#22c55e">-- s</b></span>
+        </div>
+        <button class="btn btn-blue" style="width:100%;font-size:11px;padding:6px" onclick="applyGlassDims(1)">💾 اعمال ابعاد به شیشه ۱</button>
+      </details>
+      <div class="grid-2">
+        <button class="btn btn-green" onclick="postCmd('/api/start',{station:0})">▶ شروع تزریق ۱</button>
+        <button class="btn btn-red" onclick="postCmd('/api/stop',{station:0})">⏹ توقف ۱</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>شیشه شماره ۲ (سمت چپ)</span><span id="st-badge2" class="badge badge-ok">آماده</span></div>
+      <div class="grid-2">
+        <div class="kpi"><div class="kpi-val" id="g2-time">0s</div><div class="kpi-lbl">زمان باقیمانده</div></div>
+        <div class="kpi">
+          <div style="font-size:10px;color:#94a3b8;margin-bottom:2px">طول × ارتفاع × ضخامت (mm)</div>
+          <div id="g2-dim" style="font-size:15px;font-weight:900;color:#fff;direction:ltr">--</div>
+        </div>
+      </div>
+      <div class="pbar-bg"><div id="g2-bar" class="pbar-fill"></div></div>
+      <!-- Quick Dimensions & Gas Calculator 2 -->
+      <details style="background:#0f172a;border:1px solid var(--card-border);border-radius:10px;padding:8px">
+        <summary style="font-size:11px;color:#38bdf8;cursor:pointer;font-weight:bold">📐 ابعاد و محاسبه‌گر گاز شیشه ۲</summary>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:8px 0">
+          <div><label style="font-size:10px;color:var(--sub)">طول mm</label><input type="number" id="inp-g2-l" placeholder="طول" oninput="calcGlassGas(2)"></div>
+          <div><label style="font-size:10px;color:var(--sub)">ارتفاع mm</label><input type="number" id="inp-g2-h" placeholder="ارتفاع" oninput="calcGlassGas(2)"></div>
+          <div><label style="font-size:10px;color:var(--sub)">ضخامت mm</label><input type="number" id="inp-g2-d" step="0.5" placeholder="ضخامت" oninput="calcGlassGas(2)"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;background:#1e293b;border-radius:6px;padding:6px 10px;font-size:11px;margin-bottom:6px">
+          <span>حجم گاز: <b id="g2-calc-vol" style="color:#38bdf8">-- L</b></span>
+          <span>زمان تزریق: <b id="g2-calc-sec" style="color:#22c55e">-- s</b></span>
+        </div>
+        <button class="btn btn-blue" style="width:100%;font-size:11px;padding:6px" onclick="applyGlassDims(2)">💾 اعمال ابعاد به شیشه ۲</button>
+      </details>
+      <div class="grid-2">
+        <button class="btn btn-green" onclick="postCmd('/api/start',{station:1})">▶ شروع تزریق ۲</button>
+        <button class="btn btn-red" onclick="postCmd('/api/stop',{station:1})">⏹ توقف ۲</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-grid-2">
+    <div class="card">
+      <div class="card-title"><span>آمار تولید شیفت (قطعات پرشده)</span><span class="badge badge-ok">حافظه ماندگار</span></div>
+      <div class="grid-2">
+        <div class="kpi"><div class="kpi-val" id="tot-filled" style="color:#38bdf8">0</div><div class="kpi-lbl">مجموع کل قطعات</div></div>
+        <div class="kpi"><div class="kpi-val"><span id="g1-filled">0</span> / <span id="g2-filled">0</span></div><div class="kpi-lbl">شیشه ۱ (راست) / شیشه ۲ (چپ)</div></div>
+      </div>
+      <a href="/api/export_csv" class="btn btn-blue" style="display:block;text-align:center;text-decoration:none;margin-top:8px">📊 دریافت فایل اکسل/CSV آمار تولید</a>
+    </div>
+
+    <!-- Glass Size Presets Memory Card -->
+    <div class="card">
+      <div class="card-title"><span>📋 حافظه سایزهای شیشه (Presets)</span><span class="badge badge-ok">انتخاب سریع</span></div>
+      <div style="font-size:11px;color:var(--sub);margin-bottom:8px">سایز مورد نظر را انتخاب و بلافاصله روی شیشه ۱ یا ۲ بنشانید:</div>
+      <div id="preset-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px"></div>
+      
+      <!-- Add new preset -->
+      <div style="background:#0f172a;border:1px solid var(--card-border);border-radius:10px;padding:10px">
+        <div style="font-size:11px;color:#38bdf8;font-weight:bold;margin-bottom:6px">➕ افزودن سایز جدید به حافظه:</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px">
+          <input type="number" id="pre-l" placeholder="طول (mm)">
+          <input type="number" id="pre-h" placeholder="ارتفاع (mm)">
+          <input type="number" id="pre-d" placeholder="ضخامت (mm)" step="0.5">
+        </div>
+        <button class="btn btn-blue" style="width:100%;font-size:11px;padding:8px" onclick="addPreset()">💾 ذخیره سایز در حافظه</button>
+      </div>
+    </div>
+  <!-- Quick Touchless Panel Controls -->
+  <div class="card" style="border-color:#0284c755;background:linear-gradient(180deg,#1e293b,#0f172a)">
+    <div class="card-title">
+      <span>🎮 کنترل سریع کلیدهای پنل (Touchless Front Panel)</span>
+      <span class="badge badge-ok" id="remote-toast-quick" style="opacity:0;transition:opacity .3s">اعمال شد ✓</span>
+    </div>
+    <div style="font-size:11px;color:var(--sub);margin-bottom:2px">هدایت و انتخاب روی صفحه نمایش بدون لمس (ویژه کار با دستکش کارگاهی):</div>
+    <div style="display:grid;grid-template-columns:repeat(5, 1fr);gap:6px">
+      <button class="btn" style="background:#0ea5e9;font-size:12px;padding:8px 2px" onclick="sendRemoteKey('MODE',this)" title="حرکت حلقه فوکوس آبی روی المان بعدی">🔄 MODE<br><small style="font-size:9px">حرکت فوکوس</small></button>
+      <button class="btn btn-green" style="font-size:12px;padding:8px 2px" onclick="sendRemoteKey('START',this)" title="تایید / شروع تزریق / افزایش مقدار">▶ START<br><small style="font-size:9px">تایید / شروع</small></button>
+      <button class="btn btn-red" style="font-size:12px;padding:8px 2px" onclick="sendRemoteKey('STOP',this)" title="توقف چرخه / المان قبلی / کاهش مقدار">⏹ STOP<br><small style="font-size:9px">توقف / قبلی</small></button>
+      <button class="btn" style="background:#059669;font-size:12px;padding:8px 2px" onclick="sendRemoteKey('SAVE',this)" title="ذخیره پارامترها و ابعاد">💾 SAVE<br><small style="font-size:9px">ذخیره</small></button>
+      <button class="btn" style="background:#475569;font-size:12px;padding:8px 2px" onclick="sendRemoteKey('CANCEL',this)" title="لغو / انصراف / بستن پنجره">❌ CANCEL<br><small style="font-size:9px">لغو</small></button>
+    </div>
+  </div>
+
+  <button class="btn btn-red" style="font-size:14px;padding:12px" onclick="postCmd('/api/stop',{station:2})">🚨 توقف اضطراری هر دو شیر</button>
+</main>
+
+<!-- TAB 2: PROCESS SETTINGS -->
+<main id="t-set" class="page">
+  <div class="card">
+    <div class="card-title">تنظیمات پارامترهای تزریق گاز</div>
+    <div class="form-grp">
+      <label>دبی جریان گاز آرگون Qs (لیتر بر دقیقه)</label>
+      <input type="number" id="inp-qs" step="0.5" oninput="markDirty()">
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;background:#0f172a;border:1px solid var(--card-border);border-radius:12px;padding:10px 14px;margin-top:4px">
+      <span style="font-size:12px;color:var(--sub);font-weight:bold">هشدار صوتی (بوق)</span>
+      <button id="btn-buzzer-toggle" onclick="toggleBuzzer()" style="background:transparent;border:2px solid #22c55e;border-radius:20px;padding:6px 18px;color:#22c55e;font-size:18px;cursor:pointer;font-weight:bold" title="کلیک برای تغییر وضعیت بوق">🔊</button>
+    </div>
+    <button class="btn" id="btn-save-settings" onclick="saveSettings()" style="background:#16a34a;margin-top:6px">💾 ذخیره تنظیمات</button>
+    <div id="save-hint" style="font-size:11px;text-align:center;color:#22c55e;margin-top:2px">تمام تنظیمات ذخیره شده است ✓</div>
+  </div>
+</main>
+
+<!-- TAB 3: PINOUT & IO -->
+<main id="t-io" class="page">
+  <div class="page-grid-2">
+    <!-- Outputs section -->
+    <div class="card">
+      <div class="card-title">🟢 خروجی‌های صنعتی (Outputs)</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;justify-content:space-between;background:#0f172a;border:1px solid var(--card-border);border-radius:10px;padding:10px 12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div id="led-q0" style="width:14px;height:14px;border-radius:50%;background:#374151;border:2px solid #4b5563;box-shadow:none;transition:.3s"></div>
+            <span style="font-size:14px;font-weight:900;color:#22c55e">Q0</span>
+            <span style="font-size:12px;color:var(--sub)">شیر ۱ (ایستگاه راست)</span>
+          </div>
+          <button class="btn btn-green" style="padding:6px 14px;font-size:11px" onclick="testIoPin('Q0',this)">تست ۳s</button>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;background:#0f172a;border:1px solid var(--card-border);border-radius:10px;padding:10px 12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div id="led-q1" style="width:14px;height:14px;border-radius:50%;background:#374151;border:2px solid #4b5563;transition:.3s"></div>
+            <span style="font-size:14px;font-weight:900;color:#22c55e">Q1</span>
+            <span style="font-size:12px;color:var(--sub)">شیر ۲ (ایستگاه چپ)</span>
+          </div>
+          <button class="btn btn-green" style="padding:6px 14px;font-size:11px" onclick="testIoPin('Q1',this)">تست ۳s</button>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;background:#0f172a;border:1px solid var(--card-border);border-radius:10px;padding:10px 12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div id="led-q2" style="width:14px;height:14px;border-radius:50%;background:#374151;border:2px solid #4b5563;transition:.3s"></div>
+            <span style="font-size:14px;font-weight:900;color:#ea580c">Q2</span>
+            <span style="font-size:12px;color:var(--sub)">آژیر هشدار صوتی</span>
+          </div>
+          <button class="btn btn-amber" style="padding:6px 14px;font-size:11px" onclick="testIoPin('Q2',this)">تست ۳s</button>
+        </div>
+        <div style="display:flex;align-items:center;background:#0f172a;border:1px solid var(--card-border);border-radius:10px;padding:10px 12px;gap:10px">
+          <span class="badge" style="background:#1e293b;color:#94a3b8;border:1px solid #475569;font-weight:900;font-size:12px;padding:3px 8px">⚡ COM</span>
+          <span style="font-size:12px;color:var(--sub)">ترمینال مشترک رله‌ها (پایه تغذیه خروجی / بدون سیگنال سوئیچ)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inputs section -->
+    <div class="card">
+      <div class="card-title">🔵 ورودی‌های صنعتی (Inputs)</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:10px;background:#0f172a;border:1px solid var(--card-border);border-radius:10px;padding:10px 12px">
+          <div id="led-i6" style="width:14px;height:14px;border-radius:50%;background:#374151;border:2px solid #4b5563;transition:.3s"></div>
+          <span style="font-size:14px;font-weight:900;color:#0284c7">I6</span>
+          <span style="font-size:12px;color:var(--sub)">شروع چرخه (پدال / شاسی)</span>
+          <span id="badge-i6" class="badge badge-warn" style="margin-right:auto">OFF</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:#0f172a;border:1px solid var(--card-border);border-radius:10px;padding:10px 12px">
+          <div id="led-i7" style="width:14px;height:14px;border-radius:50%;background:#374151;border:2px solid #4b5563;transition:.3s"></div>
+          <span style="font-size:14px;font-weight:900;color:#dc2626">I7</span>
+          <span style="font-size:12px;color:var(--sub)">توقف اضطراری (E-Stop)</span>
+          <span id="badge-i7" class="badge badge-ok" style="margin-right:auto">آماده</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:#0f172a;border:1px solid var(--card-border);border-radius:10px;padding:10px 12px">
+          <span class="badge" style="background:#3b1219;color:#fca5a5;border:1px solid #dc2626;font-weight:900;font-size:11px;padding:3px 8px">+24V</span>
+          <span style="font-size:12px;color:var(--sub)">تغذیه مثبت مدار صنعتی (DC 24V)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:#0f172a;border:1px solid var(--card-border);border-radius:10px;padding:10px 12px">
+          <span class="badge" style="background:#1e293b;color:#94a3b8;border:1px solid #475569;font-weight:900;font-size:11px;padding:3px 8px">0V GND</span>
+          <span style="font-size:12px;color:var(--sub)">زمین و تغذیه منفی (0V / Common)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- TAB 4: DAY LOCK -->
+<main id="t-lock" class="page">
+  <!-- Admin PIN Gate -->
+  <div id="lock-pin-gate" class="card">
+    <div class="card-title">🔐 ورود مدیر — روزشمار</div>
+    <div style="font-size:11px;color:var(--sub);text-align:center;margin-bottom:8px">رمز مدیر را وارد کنید تا بخش روزشمار باز شود</div>
+    <div class="form-grp">
+      <label>رمز مدیر (Admin PIN)</label>
+      <input type="password" id="inp-admin-pin" placeholder="رمز مدیر" inputmode="numeric" maxlength="8">
+    </div>
+    <button class="btn btn-blue" style="margin-top:6px" onclick="checkAdminPin()">ورود به مدیریت روزشمار</button>
+    <div id="pin-err" style="color:#f87171;font-size:11px;text-align:center;margin-top:4px"></div>
+  </div>
+
+  <!-- DayLock Content -->
+  <div id="lock-content" style="display:none;flex-direction:column;gap:12px">
+    <div class="card">
+      <div class="card-title">👤 نام مشتری / نام دستگاه</div>
+      <div class="form-grp"><input type="text" id="inp-customer-name" placeholder="نام مشتری یا شرکت را بنویسید" style="direction:rtl;text-align:right"></div>
+      <button class="btn btn-blue" style="margin-top:4px" onclick="saveCustomerName()">💾 ذخیره نام</button>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>وضعیت قفل روزشمار</span><span id="lock-status-badge" class="badge badge-ok">فعال</span></div>
+      <div class="grid-2">
+        <div class="kpi"><div class="kpi-val" id="lock-remain">--</div><div class="kpi-lbl">روزهای باقیمانده</div></div>
+        <div class="kpi"><div class="kpi-val" id="lock-stage">--</div><div class="kpi-lbl">مرحله فعال (1..5)</div></div>
+      </div>
+      <div class="kpi" style="margin-top:6px">
+        <div class="kpi-val" id="lock-chal" style="color:#38bdf8">--</div>
+        <div class="kpi-lbl">کد چالش تصادفی — برای رمز یکبارمصرف</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📅 تنظیم ۵ مرحله قفل روزشمار</div>
+      <div style="font-size:10px;color:var(--sub);margin-bottom:8px">هر مرحله فقط بعد از وارد کردن عدد مرحله قبلی فعال می‌شود</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="form-grp">
+          <label>مرحله ۱ — تعداد روز</label>
+          <input type="number" id="stg-0" min="1" max="999" oninput="onStageInput(0)" placeholder="مثال: 30">
+          <div id="stg-date-0" style="font-size:11px;color:#38bdf8;margin-top:2px;font-weight:bold"></div>
+        </div>
+        <div class="form-grp">
+          <label id="stg-lbl-1" style="color:#475569">مرحله ۲ (بعد از مرحله ۱)</label>
+          <input type="number" id="stg-1" min="1" max="999" disabled oninput="onStageInput(1)" placeholder="مثال: 60">
+          <div id="stg-date-1" style="font-size:11px;color:#38bdf8;margin-top:2px;font-weight:bold"></div>
+        </div>
+        <div class="form-grp">
+          <label id="stg-lbl-2" style="color:#475569">مرحله ۳</label>
+          <input type="number" id="stg-2" min="1" max="999" disabled oninput="onStageInput(2)" placeholder="مثال: 90">
+          <div id="stg-date-2" style="font-size:11px;color:#38bdf8;margin-top:2px;font-weight:bold"></div>
+        </div>
+        <div class="form-grp">
+          <label id="stg-lbl-3" style="color:#475569">مرحله ۴</label>
+          <input type="number" id="stg-3" min="1" max="999" disabled oninput="onStageInput(3)" placeholder="مثال: 120">
+          <div id="stg-date-3" style="font-size:11px;color:#38bdf8;margin-top:2px;font-weight:bold"></div>
+        </div>
+        <div class="form-grp">
+          <label id="stg-lbl-4" style="color:#475569">مرحله ۵</label>
+          <input type="number" id="stg-4" min="1" max="999" disabled oninput="onStageInput(4)" placeholder="مثال: 180">
+          <div id="stg-date-4" style="font-size:11px;color:#38bdf8;margin-top:2px;font-weight:bold"></div>
+        </div>
+      </div>
+      <button class="btn btn-blue" style="margin-top:8px" onclick="saveStages()">💾 ذخیره مراحل روزشمار</button>
+    </div>
+    <div class="card">
+      <div class="card-title">🔓 بازگشایی دستگاه</div>
+      <div style="font-size:10px;color:var(--sub);margin-bottom:6px">رمز مستر، رمز مرحله یا رمز یکبارمصرف را وارد کن</div>
+      <div class="form-grp"><input type="text" id="inp-unlock" placeholder="کد بازگشایی"></div>
+      <button class="btn btn-green" style="margin-top:4px" onclick="submitUnlock()">ارسال و بازگشایی</button>
+    </div>
+
+    <!-- OTP Formula & Admin Info Box -->
+    <div class="card">
+      <div class="card-title">💡 راهنمای رمز یکبار‌مصرف و رمز مدیر</div>
+      <div style="font-size:11px;color:var(--sub);line-height:1.7">
+        🔹 <b>فرمول رمز یکبار‌مصرف:</b> (کد چالش × ۲) سپس حاصل‌جمع ارقام آن به انتهای عدد اضافه می‌شود.<br>
+        🔹 <b>رمز مدیر (<span style="color:#22c55e">1234</span>) یا رمز مستر (<span style="color:#22c55e">12773</span>):</b> تمام تایمرهای ۵ مرحله را به صورت دائم غیرفعال و دستگاه را کاملاً آزاد می‌کند.
+      </div>
+      <div style="margin-top:8px;background:#0f172a;border:1px solid var(--card-border);border-radius:8px;padding:8px">
+        <div style="font-size:11px;color:#38bdf8;font-weight:bold;margin-bottom:4px">محاسبه‌گر سریع رمز یکبار‌مصرف:</div>
+        <div style="display:flex;gap:6px">
+          <input type="number" id="calc-chal-inp" placeholder="کد چالش ۴ رقمی (مثال: 1539)" style="flex:1">
+          <button class="btn btn-blue" style="padding:6px 12px;font-size:11px" onclick="calcOtpHelper()">محاسبه</button>
+        </div>
+        <div id="calc-otp-res" style="font-size:12px;color:#22c55e;font-weight:bold;margin-top:4px"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- TAB 5: WIFI CONNECTION & OTA UPDATE -->
+<main id="t-ota" class="page">
+  <div class="page-grid-2">
+    <!-- Card 1: Wi-Fi Modem Connection & Cloud Online Update -->
+    <div class="card">
+      <div class="card-title">
+        <span>🌐 اتصال به مودم و بروزرسانی آنلاین</span>
+        <span id="wifi-status-badge" class="badge badge-warn">قطع اتصال</span>
+      </div>
+      <div id="wifi-cur-info" style="font-size:12px;background:#0f172a;border:1px solid var(--card-border);border-radius:10px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+        <span>شبکه متصل: <b id="wifi-net-name" style="color:#38bdf8">در حال بررسی...</b></span>
+        <span>آدرس آی‌پی: <b id="wifi-ip-val" style="color:#22c55e;direction:ltr">--</b></span>
+      </div>
+
+      <div id="wifi-section" style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:11px;color:var(--sub);font-weight:bold">۱. جستجو و اتصال کنترلر به مودم کارگاه:</div>
+        <button class="btn btn-blue" id="btn-scan-wifi" onclick="scanWifi()">🔍 جستجوی شبکه‌های وای‌فای اطراف</button>
+        <div class="form-grp">
+          <label>نام شبکه وای‌فای (SSID)</label>
+          <select id="wifi-ssid-select" onchange="document.getElementById('wifi-ssid-inp').value=this.value">
+            <option value="">-- انتخاب از لیست شبکه‌ها --</option>
+          </select>
+          <input type="text" id="wifi-ssid-inp" placeholder="یا تایپ دستی نام شبکه (در صورت مخفی بودن)" style="margin-top:4px">
+        </div>
+        <div class="form-grp">
+          <label>رمز عبور وای‌فای</label>
+          <div style="display:flex;gap:6px">
+            <input type="password" id="wifi-pass-inp" placeholder="رمز عبور شبکه" style="flex:1">
+            <button type="button" class="btn btn-blue" style="padding:0 14px;font-size:16px" onclick="let inp=document.getElementById('wifi-pass-inp');if(inp.type==='password'){inp.type='text';this.innerText='🙈';}else{inp.type='password';this.innerText='👁';}">👁</button>
+          </div>
+        </div>
+        <button class="btn btn-green" onclick="connectWifi()" style="margin-top:2px">📶 ذخیره و اتصال به مودم</button>
+        <div id="wifi-msg" style="font-size:12px;text-align:center;color:#38bdf8"></div>
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--card-border);margin:4px 0">
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:11px;color:var(--sub);font-weight:bold">۲. بروزرسانی و دریافت سفت‌افزار از سرور ابری هافلر:</div>
+        <button class="btn btn-blue" id="btn-check-srv" onclick="checkServerOta()">🔄 بررسی نسخه‌های جدید روی سرور ابری</button>
+      </div>
+
+      <div id="server-cards" style="display:none;flex-direction:column;gap:10px;margin-top:6px">
+        <div style="font-size:12px;color:#22c55e;text-align:center;font-weight:bold">✅ اتصال برقرار است — برنامه‌های موجود روی سرور ابری هافلر:</div>
+        <div class="pbar-bg" style="margin:4px 0;display:none" id="srv-pbar-box"><div id="srv-pbar" class="pbar-fill"></div></div>
+        <div id="srv-pbar-msg" style="font-size:12px;text-align:center;color:#38bdf8"></div>
+        <div style="background:#0f172a;border:1px solid #334155;border-radius:12px;padding:12px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="font-size:28px">⛽</div>
+            <div>
+              <div style="font-weight:900;color:#38bdf8;font-size:14px">تزریق گاز آرگون صنعتی</div>
+              <div id="srv-ver-0" style="font-size:11px;color:#94a3b8">در حال بررسی...</div>
+            </div>
+          </div>
+          <div id="srv-desc-0" style="font-size:11px;color:#cbd5e1;line-height:1.6;margin-bottom:8px"></div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-blue" style="flex:1;font-size:11px" onclick="showSrvInfo(0)">📋 تغییرات نسخه</button>
+            <button class="btn btn-green" style="flex:1;font-size:11px" onclick="installProg(0)">⬇ نصب از سرور ابری</button>
+          </div>
+        </div>
+        <div id="srv-card-1" style="background:#0f172a;border:1px solid #334155;border-radius:12px;padding:12px;display:none">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="font-size:28px">🔧</div>
+            <div>
+              <div style="font-weight:900;color:#f59e0b;font-size:14px">تست و کالیبراسیون سخت‌افزار</div>
+              <div id="srv-ver-1" style="font-size:11px;color:#94a3b8">در حال بررسی...</div>
+            </div>
+          </div>
+          <div id="srv-desc-1" style="font-size:11px;color:#cbd5e1;line-height:1.6;margin-bottom:8px"></div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-amber" style="flex:1;font-size:11px" onclick="showSrvInfo(1)">📋 توضیحات</button>
+            <button class="btn btn-amber" style="flex:1;font-size:11px" onclick="installProg(1)">⬇ نصب از سرور</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: Offline Update -->
+    <div class="card">
+      <div class="card-title">📁 بروزرسانی آفلاین (فایل firmware.bin)</div>
+      <p style="font-size:11px;color:var(--sub);line-height:1.6">در صورت عدم دسترسی به اینترنت، فایل firmware.bin را از گوشی یا رایانه خود انتخاب و مستقیماً روی برد ارسال کنید.</p>
+      <form method="POST" action="/update" enctype="multipart/form-data" id="ota-form">
+        <input type="file" name="update" accept=".bin" id="ota-file" required style="margin:6px 0">
+        <div class="pbar-bg" style="margin:8px 0;display:none" id="ota-pbar-box"><div id="ota-pbar" class="pbar-fill"></div></div>
+        <button type="submit" class="btn btn-green" id="ota-btn" style="margin-top:6px">🚀 نصب فایل باینری انتخاب‌شده</button>
+      </form>
+      <div id="ota-msg" style="font-size:12px;text-align:center;color:#38bdf8;margin-top:4px"></div>
+    </div>
+  </div>
+</main>
+
+<!-- TAB 6: REMOTE TOUCHLESS CONTROL PANEL -->
+<main id="t-remote" class="page">
+  <div class="card" style="border-color:#0284c7;background:radial-gradient(ellipse at top,#1e293b 0%,#0b1120 100%)">
+    <div class="card-title">
+      <span>🎮 کنسول شبیه‌ساز کلیدهای پنل فیزیکی دستگاه (Haffler Front Panel)</span>
+      <span class="badge badge-ok" id="remote-toast" style="opacity:0;transition:opacity .3s">ارسال شد ✓</span>
+    </div>
+    <div style="font-size:11px;color:var(--sub);line-height:1.6">
+      این کنسول دستورات کلیدهای صنعتی جلوی دستگاه را شبیه‌سازی کرده و امکان هدایت کامل تمام صفحات، پنجره‌های پاپ‌آپ و صفحه کلید مجازی را بدون لمس نمایشگر فراهم می‌کند (استاندارد کارگاهی زیمنس و ارگونومی اپل).
+    </div>
+
+    <!-- Row 1: Function Keys F1..F5 -->
+    <div style="background:#0f172a;border:1px solid var(--card-border);border-radius:12px;padding:12px">
+      <div style="font-size:11px;color:#38bdf8;font-weight:bold;margin-bottom:8px">🔘 کلیدهای تابعی اختصاصی (Function Keys):</div>
+      <div style="display:grid;grid-template-columns:repeat(5, 1fr);gap:8px">
+        <button class="remote-key-btn" style="background:#1e293b" onclick="sendRemoteKey('F1',this)">
+          <span style="color:#38bdf8">F1</span>
+          <small style="font-size:9px;color:var(--sub)">عمومی</small>
+        </button>
+        <button class="remote-key-btn" style="background:#1e293b" onclick="sendRemoteKey('F2',this)">
+          <span style="color:#eab308">F2</span>
+          <small style="font-size:9px;color:var(--sub)">تست</small>
+        </button>
+        <button class="remote-key-btn" style="background:#1e293b" onclick="sendRemoteKey('F3',this)">
+          <span style="color:#a855f7">F3</span>
+          <small style="font-size:9px;color:var(--sub)">مدیر</small>
+        </button>
+        <button class="remote-key-btn" style="background:#1e293b" onclick="sendRemoteKey('F4',this)">
+          <span style="color:#06b6d4">F4</span>
+          <small style="font-size:9px;color:var(--sub)">راهنما</small>
+        </button>
+        <button class="remote-key-btn" style="background:#1e293b" onclick="sendRemoteKey('F5',this)">
+          <span style="color:#f43f5e">F5</span>
+          <small style="font-size:9px;color:var(--sub)">خروج</small>
+        </button>
+      </div>
+    </div>
+
+    <!-- Row 2: Main 5 Navigation & Industrial Keys -->
+    <div style="background:#0f172a;border:1px solid var(--card-border);border-radius:12px;padding:12px">
+      <div style="font-size:11px;color:#38bdf8;font-weight:bold;margin-bottom:8px">🕹️ کلیدهای ۵ گانه هدایت و عملیات بدون لمس (Touchless D-Pad):</div>
+      <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;max-width:440px;margin:auto">
+        <!-- Top: MODE -->
+        <div style="grid-column: 1 / -1;display:flex;justify-content:center">
+          <button class="remote-key-btn" style="background:linear-gradient(135deg,#0284c7,#0ea5e9);min-height:58px;width:100%" onclick="sendRemoteKey('MODE',this)">
+            <span style="font-size:16px">🔄 MODE (کلید ۲)</span>
+            <small style="font-size:10px;opacity:0.9">حرکت حلقه فوکوس آبی روی المان بعدی صفحه</small>
+          </button>
+        </div>
+
+        <!-- Left: STOP | Center: CANCEL | Right: START -->
+        <button class="remote-key-btn" style="background:linear-gradient(135deg,#b91c1c,#dc2626);min-height:64px" onclick="sendRemoteKey('STOP',this)">
+          <span style="font-size:15px">⏹ STOP</span>
+          <small style="font-size:9px;opacity:0.9">توقف / المان قبلی / کاهش (-1)</small>
+        </button>
+
+        <button class="remote-key-btn" style="background:linear-gradient(135deg,#334155,#475569);min-height:64px" onclick="sendRemoteKey('CANCEL',this)">
+          <span style="font-size:15px">❌ CANCEL</span>
+          <small style="font-size:9px;opacity:0.9">لغو / بستن پنجره پاپ‌آپ</small>
+        </button>
+
+        <button class="remote-key-btn" style="background:linear-gradient(135deg,#15803d,#16a34a);min-height:64px" onclick="sendRemoteKey('START',this)">
+          <span style="font-size:15px">▶ START</span>
+          <small style="font-size:9px;opacity:0.9">شروع / تایید / افزایش (+1)</small>
+        </button>
+
+        <!-- Bottom: SAVE -->
+        <div style="grid-column: 1 / -1;display:flex;justify-content:center">
+          <button class="remote-key-btn" style="background:linear-gradient(135deg,#047857,#059669);min-height:52px;width:100%" onclick="sendRemoteKey('SAVE',this)">
+            <span style="font-size:15px">💾 SAVE (کلید ۵)</span>
+            <small style="font-size:10px;opacity:0.9">ذخیره پارامترها و ابعاد در حافظه دائم دستگاه</small>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Diagnostic & Live Status -->
+    <div class="grid-3">
+      <div class="kpi">
+        <div class="kpi-val" id="rem-ping" style="color:#38bdf8;font-size:20px;font-family:monospace">-- ms</div>
+        <div class="kpi-lbl">تاخیر ارتباط (Ping RTT)</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-val" id="rem-dram" style="color:#22c55e;font-size:20px;font-family:monospace">-- KB</div>
+        <div class="kpi-lbl">حافظه داخلی آزاد (DRAM)</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-val" id="rem-ver" style="color:#f59e0b;font-size:16px;font-family:monospace">--</div>
+        <div class="kpi-lbl">نسخه فعال سفت‌افزار</div>
+      </div>
+    </div>
+
+    <!-- Touchless Guide -->
+    <div style="background:#0f172a;border:1px solid var(--card-border);border-radius:12px;padding:12px;font-size:11px;color:var(--sub);line-height:1.7">
+      <b style="color:#38bdf8">💡 راهنمای کاربری ارگونومیک بدون تاچ (Touchless Architecture):</b><br>
+      • <b>کلید MODE:</b> در هر لحظه با فشردن کلید MODE، حلقه فوکوس آبی رنگ نئون فعال شده و با هر فشار، فوکوس به المان تعاملی بعدی (دکمه‌ها، سوئیچ‌ها، فیلدهای عددی) منتقل می‌شود.<br>
+      • <b>کلید START:</b> دکمه فوکوس‌شده را کلیک/تایید می‌کند، سوئیچ را تغییر وضعیت می‌دهد یا مقدار عددی را ۱ واحد افزایش می‌دهد.<br>
+      • <b>کلید STOP:</b> چرخه تزریق را بلافاصله متوقف می‌کند، در حالت فوکوس به المان قبلی برمی‌گردد یا مقدار عددی را ۱ واحد کاهش می‌دهد.<br>
+      • <b>در صفحه کلید مجازی:</b> کلید MODE بین حروف و ارقام حرکت می‌کند، کلید START کاراکتر را تایپ می‌کند، STOP بک‌اسپیس می‌زند و CANCEL کیبورد را می‌بندد.<br>
+      • <b>تایم‌اوت ۱۰ ثانیه‌ای:</b> در صورت عدم لمس یا فشردن کلید به مدت ۱۰ ثانیه، حالت ناوبری خودکار پنهان شده و دستگاه به عملکرد عادی بازمی‌گردد.
+    </div>
+  </div>
+</main>
+<main id="t-ai" class="page">
+  <div class="card">
+    <div class="card-title">🤖 دستیار هوشمند هافلر</div>
+    <div style="font-size:11px;color:var(--sub);text-align:center;margin-bottom:8px">با صدا یا متن بپرسید — دستیار همه چیز را می‌داند</div>
+    <div id="ai-chat" style="background:#0f172a;border:1px solid #334155;border-radius:12px;padding:10px;min-height:180px;max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;font-size:12px">
+      <div style="background:#1e293b;border-radius:8px;padding:8px;color:#38bdf8;text-align:right">سلام! 👋 من دستیار هوشمند هافلر هستم. درباره دستگاه، سیم‌کشی، تنظیمات یا هر چیزی بپرسید.</div>
+    </div>
+    <div style="display:flex;gap:6px;margin-top:8px">
+      <input type="text" id="ai-inp" placeholder="سوال خود را بنویسید یا صحبت کنید..." style="flex:1;direction:rtl;text-align:right" onkeydown="if(event.key==='Enter')sendAI()">
+      <button class="btn btn-blue" style="padding:8px 14px;white-space:nowrap" onclick="sendAI()">ارسال</button>
+      <button id="ai-mic-btn" class="btn" style="padding:8px 12px;background:#7c3aed;white-space:nowrap" onclick="toggleMic()" title="صحبت با هوش مصنوعی">🎤</button>
+      <button id="ai-voice-btn" class="btn" style="padding:8px 12px;background:#334155;white-space:nowrap" onclick="toggleVoiceOutput()" title="پخش صوتی پاسخ">🔊</button>
+    </div>
+    <div id="ai-status" style="font-size:10px;color:var(--sub);text-align:center;margin-top:4px"></div>
+  </div>
+  <div class="card">
+    <div class="card-title" style="font-size:11px">💡 پیشنهادات سریع</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+      <button class="btn btn-blue" style="font-size:10px;padding:5px 10px" onclick="quickAsk('وضعیت دستگاه چیست؟')">وضعیت دستگاه</button>
+      <button class="btn btn-blue" style="font-size:10px;padding:5px 10px" onclick="quickAsk('ورژن سفت‌افزار چیست؟')">ورژن فریمور</button>
+      <button class="btn btn-blue" style="font-size:10px;padding:5px 10px" onclick="quickAsk('سیم‌کشی شیر ۱ را توضیح بده')">سیم‌کشی شیرها</button>
+      <button class="btn btn-blue" style="font-size:10px;padding:5px 10px" onclick="quickAsk('آمار تولید امروز چیست؟')">آمار تولید</button>
+      <button class="btn btn-blue" style="font-size:10px;padding:5px 10px" onclick="quickAsk('روزهای باقیمانده تا قفل چند است؟')">روزشمار</button>
+      <button class="btn btn-blue" style="font-size:10px;padding:5px 10px" onclick="quickAsk('چگونه Qs را تنظیم کنم؟')">تنظیم Qs</button>
+    </div>
+  </div>
+</main>
+
+<!-- TAB 7: PRODUCTION STATS -->
+<main id="t-stats" class="page">
+  <div class="card">
+    <div class="card-title"><span>📈 آمار تولید</span><span id="stats-today-badge" class="badge badge-ok">امروز: --</span></div>
+    <div class="grid-2" style="margin-bottom:8px">
+      <div class="kpi"><div class="kpi-val" id="st-today-total">--</div><div class="kpi-lbl">کل امروز (قطعه)</div></div>
+      <div class="kpi"><div class="kpi-val" id="st-alltime">--</div><div class="kpi-lbl">کل از ابتدا (قطعه)</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="kpi"><div class="kpi-val" id="st-today-g1">--</div><div class="kpi-lbl">شیشه ۱ — امروز</div></div>
+      <div class="kpi"><div class="kpi-val" id="st-today-g2">--</div><div class="kpi-lbl">شیشه ۲ — امروز</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📅 آمار ۳۱ روز گذشته</div>
+    <div id="stats-chart" style="display:flex;align-items:flex-end;gap:3px;height:80px;margin-bottom:6px;direction:ltr"></div>
+    <div style="font-size:10px;color:var(--sub);text-align:center">هر ستون = یک روز (از قدیم به جدید)</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⬇ خروجی گزارش</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-blue" style="flex:1" onclick="exportStats('day')">📄 خروجی روز (CSV)</button>
+      <button class="btn btn-blue" style="flex:1" onclick="exportStats('month')">📊 خروجی ماه (CSV)</button>
+    </div>
+    <div id="stats-export-msg" style="font-size:10px;color:var(--sub);text-align:center;margin-top:4px"></div>
+  </div>
+</main>
+
+<footer class="footer">
+  گروه صنعتی مهندسی هافلر - Haffler Industrial HMI System &copy; 2026
+</footer>
+
+<script>
+function tab(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if(btn.scrollIntoView){
+    btn.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+  }
+}
+
+async function postCmd(url,data){
+  try{
+    let res = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    poll();
+  }catch(e){}
+}
+
+async function testIoPin(pin, btn){
+  if(btn){ btn.disabled = true; btn.innerText = 'در حال تست...'; }
+  try{
+    await fetch('/api/test_io',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({pin:pin, duration_ms:3000})
+    });
+  }catch(e){}
+  setTimeout(()=>{
+    if(btn){ btn.disabled = false; btn.innerText = 'تست ۳s'; }
+    poll();
+  }, 3200);
+  poll();
+}
+
+function calcGlassGas(st){
+  let l = parseFloat(document.getElementById('inp-g'+st+'-l').value) || 0;
+  let h = parseFloat(document.getElementById('inp-g'+st+'-h').value) || 0;
+  let d = parseFloat(document.getElementById('inp-g'+st+'-d').value) || 0;
+  let qs = (window._aiData && window._aiData.qs) ? window._aiData.qs : 30.0;
+  if(l > 0 && h > 0 && d > 0){
+    let vol = (l * h * d) / 1000000.0;
+    let sec = (vol * 60.0) / qs;
+    document.getElementById('g'+st+'-calc-vol').innerText = vol.toFixed(2) + ' L';
+    document.getElementById('g'+st+'-calc-sec').innerText = sec.toFixed(1) + ' s';
+  } else {
+    document.getElementById('g'+st+'-calc-vol').innerText = '-- L';
+    document.getElementById('g'+st+'-calc-sec').innerText = '-- s';
+  }
+}
+
+async function applyGlassDims(st){
+  let l = parseFloat(document.getElementById('inp-g'+st+'-l').value) || 0;
+  let h = parseFloat(document.getElementById('inp-g'+st+'-h').value) || 0;
+  let d = parseFloat(document.getElementById('inp-g'+st+'-d').value) || 0;
+  if(!l || !h || !d || l<=0 || h<=0 || d<=0){
+    alert('ابعاد وارد شده نامعتبر است');
+    return;
+  }
+  let payload = (st === 1) ? {g1_l:l, g1_h:h, g1_d:d} : {g2_l:l, g2_h:h, g2_d:d};
+  try {
+    let res = await fetch('/api/settings', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    if(res.ok){
+      alert('ابعاد با موفقیت روی شیشه ' + st + ' اعمال شد ✓');
+      poll();
+    }
+  } catch(e) {
+    alert('خطا در اعمال ابعاد: ' + e.message);
+  }
+}
+
+/* ===== Dirty-state save button ===== */
+let s_dirty = false;
+let s_buzzerOn = true;
+
+function markDirty(){
+  s_dirty = true;
+  let btn = document.getElementById('btn-save-settings');
+  let hint = document.getElementById('save-hint');
+  if(btn){ btn.style.background='#0284c7'; }
+  if(hint){ hint.style.color='#fbbf24'; hint.innerText='تغییرات ذخیره نشده ⚠️'; }
+}
+
+function toggleBuzzer(){
+  s_buzzerOn = !s_buzzerOn;
+  let btn = document.getElementById('btn-buzzer-toggle');
+  if(btn){
+    btn.innerText = s_buzzerOn ? '🔊' : '🔇';
+    btn.style.borderColor = s_buzzerOn ? '#22c55e' : '#dc2626';
+    btn.style.color = s_buzzerOn ? '#22c55e' : '#dc2626';
+  }
+  markDirty();
+}
+
+window.addEventListener('beforeunload', function(e){
+  if(s_dirty){ e.preventDefault(); e.returnValue='تغییرات ذخیره نشده دارید. مطمئنید؟'; }
+});
+
+async function saveSettings(){
+  let d = {
+    qs: parseFloat(document.getElementById('inp-qs').value) || 0,
+    buzzer: s_buzzerOn ? 1 : 0
+  };
+  await postCmd('/api/settings', d);
+  s_dirty = false;
+  let btn = document.getElementById('btn-save-settings');
+  let hint = document.getElementById('save-hint');
+  if(btn){ btn.style.background='#16a34a'; }
+  if(hint){ hint.style.color='#22c55e'; hint.innerText='تمام تنظیمات ذخیره شده است ✓'; }
+}
+
+async function submitUnlock(){
+  let code = document.getElementById('inp-unlock').value.trim();
+  if(!code) return;
+  let res = await fetch('/api/unlock',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pin:code})});
+  let json = await res.json();
+  if(json.ok){
+    alert('دستگاه با موفقیت بازگشایی شد.');
+    document.getElementById('inp-unlock').value = '';
+  } else {
+    alert('کد وارد شده نامعتبر است!');
+  }
+  poll();
+}
+
+/* ===== LED helper ===== */
+function setLed(id, on, color){
+  let el = document.getElementById(id);
+  if(!el) return;
+  if(on){
+    el.style.background = color || '#22c55e';
+    el.style.borderColor = color || '#22c55e';
+    el.style.boxShadow = '0 0 8px '+(color||'#22c55e')+'88';
+  } else {
+    el.style.background = '#374151';
+    el.style.borderColor = '#4b5563';
+    el.style.boxShadow = 'none';
+  }
+}
+
+/* ===== Audio Feedback & Remote Panel Keys ===== */
+function playClickSound(){
+  try{
+    let ctx = window.AudioContext || window.webkitAudioContext;
+    if(!ctx) return;
+    if(!window._audioCtx) window._audioCtx = new ctx();
+    if(window._audioCtx.state === 'suspended') window._audioCtx.resume();
+    let osc = window._audioCtx.createOscillator();
+    let gain = window._audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(950, window._audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(450, window._audioCtx.currentTime + 0.04);
+    gain.gain.setValueAtTime(0.18, window._audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, window._audioCtx.currentTime + 0.04);
+    osc.connect(gain);
+    gain.connect(window._audioCtx.destination);
+    osc.start();
+    osc.stop(window._audioCtx.currentTime + 0.04);
+  }catch(e){}
+}
+
+async function sendRemoteKey(keyName, btnEl){
+  if(btnEl){
+    btnEl.style.transform = 'scale(0.92)';
+    setTimeout(()=>{ if(btnEl) btnEl.style.transform = 'none'; }, 120);
+  }
+  playClickSound();
+  try{
+    let res = await fetch('/api/key',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({key:keyName})
+    });
+    let d = await res.json();
+    let toast = document.getElementById('remote-toast');
+    if(toast){
+      toast.innerText = 'کلید «' + keyName + '» اعمال شد ✓';
+      toast.style.opacity = '1';
+      setTimeout(()=>{ if(toast) toast.style.opacity = '0'; }, 1600);
+    }
+    let toastQ = document.getElementById('remote-toast-quick');
+    if(toastQ){
+      toastQ.innerText = '«' + keyName + '» اعمال شد ✓';
+      toastQ.style.opacity = '1';
+      setTimeout(()=>{ if(toastQ) toastQ.style.opacity = '0'; }, 1600);
+    }
+  }catch(e){
+    let toast = document.getElementById('remote-toast');
+    if(toast){
+      toast.innerText = 'خطا در ارسال: ' + e.message;
+      toast.style.opacity = '1';
+    }
+  }
+}
+
+async function poll(){
+  let t0 = performance.now();
+  try{
+    let res = await fetch('/api/status');
+    let rtt = Math.round(performance.now() - t0);
+    let pingEl = document.getElementById('txt-ping');
+    if(pingEl){
+      pingEl.innerText = rtt + ' ms';
+      if(rtt < 80) pingEl.style.color = '#22c55e';
+      else if(rtt < 200) pingEl.style.color = '#38bdf8';
+      else if(rtt < 400) pingEl.style.color = '#fbbf24';
+      else pingEl.style.color = '#f87171';
+    }
+    let remPing = document.getElementById('rem-ping');
+    if(remPing){
+      remPing.innerText = rtt + ' ms';
+      remPing.style.color = (rtt < 100 ? '#22c55e' : (rtt < 250 ? '#38bdf8' : '#fbbf24'));
+    }
+
+    let d = await res.json();
+    window._aiData = d;
+    document.getElementById('dot-conn').className = 'dot on';
+    document.getElementById('txt-ver').innerText = d.version || 'V1.8.115';
+    let remVer = document.getElementById('rem-ver');
+    if(remVer) remVer.innerText = d.version ? ('V' + d.version) : 'V1.8.115';
+    let remDram = document.getElementById('rem-dram');
+    if(remDram) remDram.innerText = (d.free_dram !== undefined ? d.free_dram : '240') + ' KB';
+
+    // G1
+    document.getElementById('g1-time').innerText = (d.g1_time/10).toFixed(1)+'s';
+    // Dashboard: show dims as separate labeled KPIs (updated in place)
+    let g1dim = document.getElementById('g1-dim');
+    if(g1dim) g1dim.innerText = d.g1_l+'×'+d.g1_h+'×'+d.g1_d+' mm';
+    document.getElementById('g1-bar').style.width = d.g1_pct+'%';
+    let b1 = document.getElementById('st-badge1');
+    b1.innerText = d.g1_running ? 'در حال تزریق' : 'آماده';
+    b1.className = d.g1_running ? 'badge badge-warn' : 'badge badge-ok';
+
+    // G2
+    document.getElementById('g2-time').innerText = (d.g2_time/10).toFixed(1)+'s';
+    let g2dim = document.getElementById('g2-dim');
+    if(g2dim) g2dim.innerText = d.g2_l+'×'+d.g2_h+'×'+d.g2_d+' mm';
+    document.getElementById('g2-bar').style.width = d.g2_pct+'%';
+    let b2 = document.getElementById('st-badge2');
+    b2.innerText = d.g2_running ? 'در حال تزریق' : 'آماده';
+    b2.className = d.g2_running ? 'badge badge-warn' : 'badge badge-ok';
+
+    // Production Stats
+    document.getElementById('tot-filled').innerText = d.total_filled || 0;
+    document.getElementById('g1-filled').innerText = d.filled_g1 || 0;
+    document.getElementById('g2-filled').innerText = d.filled_g2 || 0;
+
+    // IO LEDs — new pinout tab
+    setLed('led-q0', d.v1, '#22c55e');
+    setLed('led-q1', d.v2, '#22c55e');
+    setLed('led-q2', d.buzzer_active, '#ea580c');
+    setLed('led-i6', d.in1, '#0284c7');
+    setLed('led-i7', d.in2, '#dc2626');
+    // I6/I7 text badges
+    let bi6 = document.getElementById('badge-i6');
+    if(bi6){ bi6.innerText = d.in1 ? 'فعال' : 'OFF'; bi6.className = d.in1 ? 'badge badge-ok' : 'badge badge-warn'; }
+    let bi7 = document.getElementById('badge-i7');
+    if(bi7){ bi7.innerText = d.in2 ? 'توقف!' : 'آماده'; bi7.className = d.in2 ? 'badge badge-err' : 'badge badge-ok'; }
+
+    // Lock
+    let lb = document.getElementById('lock-status-badge');
+    if(lb){
+      if(d.locked){ lb.innerText='قفل شده'; lb.className='badge badge-err'; }
+      else { lb.innerText='فعال (مجاز)'; lb.className='badge badge-ok'; }
+    }
+    let lr = document.getElementById('lock-remain');
+    if(lr) lr.innerText = d.lock_remain + ' روز';
+    let ls = document.getElementById('lock-stage');
+    if(ls) ls.innerText = d.lock_stage ? ('مرحله ' + d.lock_stage) : 'غیرفعال';
+    let lc = document.getElementById('lock-chal');
+    if(lc) lc.innerText = d.challenge;
+
+    if(!window.inputsLoaded){
+      let iqs = document.getElementById('inp-qs');
+      if(iqs) iqs.value = d.qs;
+      // Sync buzzer toggle state from device
+      if(d.buzzer !== undefined){
+        s_buzzerOn = d.buzzer ? true : false;
+        let bBtn = document.getElementById('btn-buzzer-toggle');
+        if(bBtn){
+          bBtn.innerText = s_buzzerOn ? '🔊' : '🔇';
+          bBtn.style.borderColor = s_buzzerOn ? '#22c55e' : '#dc2626';
+          bBtn.style.color = s_buzzerOn ? '#22c55e' : '#dc2626';
+        }
+      }
+      if(d.customer_name){
+        let icn = document.getElementById('inp-customer-name');
+        if(icn && !icn.value) icn.value = d.customer_name;
+      }
+      if(!window.dimsLoaded && d.g1_l){
+        let i1l = document.getElementById('inp-g1-l');
+        let i1h = document.getElementById('inp-g1-h');
+        let i1d = document.getElementById('inp-g1-d');
+        if(i1l && !i1l.value) i1l.value = d.g1_l;
+        if(i1h && !i1h.value) i1h.value = d.g1_h;
+        if(i1d && !i1d.value) i1d.value = d.g1_d;
+        calcGlassGas(1);
+
+        let i2l = document.getElementById('inp-g2-l');
+        let i2h = document.getElementById('inp-g2-h');
+        let i2d = document.getElementById('inp-g2-d');
+        if(i2l && !i2l.value) i2l.value = d.g2_l;
+        if(i2h && !i2h.value) i2h.value = d.g2_h;
+        if(i2d && !i2d.value) i2d.value = d.g2_d;
+        calcGlassGas(2);
+        window.dimsLoaded = true;
+      }
+      window.inputsLoaded = true;
+    }
+
+    // Wi-Fi Header and Status Badges
+    let hdrWifi = document.getElementById('hdr-wifi');
+    let hdrWifiTxt = document.getElementById('hdr-wifi-txt');
+    let wb = document.getElementById('wifi-status-badge');
+    let netName = document.getElementById('wifi-net-name');
+    let netIp = document.getElementById('wifi-ip-val');
+
+    if(d.wifi_connected){
+      let ssid = d.wifi_ssid || 'مودم وای‌فای';
+      let ip = d.wifi_ip || '';
+      if(hdrWifi) hdrWifi.className = 'wifi-badge on';
+      if(hdrWifiTxt) hdrWifiTxt.innerText = (ssid.length > 12 ? ssid.substring(0, 10) + '...' : ssid);
+      if(wb){ wb.innerText = 'متصل به ' + ssid; wb.className = 'badge badge-ok'; }
+      if(netName) netName.innerText = ssid;
+      if(netIp) netIp.innerText = ip || 'OK';
+      if(!window.otaChecked){
+        window.otaChecked = true;
+        checkServerOta();
+      }
+    } else {
+      if(hdrWifi) hdrWifi.className = 'wifi-badge';
+      if(hdrWifiTxt) hdrWifiTxt.innerText = 'قطع اتصال';
+      if(wb){ wb.innerText = 'قطع اتصال'; wb.className = 'badge badge-warn'; }
+      if(netName) netName.innerText = 'عدم اتصال به مودم';
+      if(netIp) netIp.innerText = '--';
+    }
+  }catch(e){
+    document.getElementById('dot-conn').className = 'dot';
+    let pingEl = document.getElementById('txt-ping');
+    if(pingEl){ pingEl.innerText = '-- ms'; pingEl.style.color = '#94a3b8'; }
+    let remPing = document.getElementById('rem-ping');
+    if(remPing){ remPing.innerText = '-- ms'; remPing.style.color = '#94a3b8'; }
+  }finally{
+    setTimeout(poll, 2000);
+  }
+}
+
+async function scanWifi(){
+  let btn = document.getElementById('btn-scan-wifi');
+  btn.disabled = true;
+  btn.innerText = 'در حال جستجو...';
+  let msg = document.getElementById('wifi-msg');
+  if(msg) msg.innerText = 'در حال اسکن شبکه‌های وای‌فای اطراف...';
+  try{
+    let list = [];
+    for(let attempt = 0; attempt < 5; attempt++){
+      let res = await fetch('/api/wifi_scan');
+      list = await res.json();
+      if(list && list.length > 0) break;
+      await new Promise(r => setTimeout(r, 1000));
+    }
+    let sel = document.getElementById('wifi-ssid-select');
+    sel.innerHTML = '<option value="">-- انتخاب از لیست شبکه‌ها --</option>';
+    if(list && list.length > 0) {
+      list.forEach(w => {
+        if(w.ssid && w.ssid !== '[Hidden]'){
+          let opt = document.createElement('option');
+          opt.value = w.ssid;
+          opt.innerText = '📶 ' + w.ssid + (w.rssi ? ' (' + w.rssi + ' dBm)' : '');
+          sel.appendChild(opt);
+        }
+      });
+      if(msg) msg.innerText = 'تعداد ' + list.length + ' شبکه یافت شد. شبکه خود را انتخاب و رمز را وارد کنید.';
+    } else {
+      if(msg) msg.innerText = 'شبکه‌ای در اسکن یافت نشد. مجدداً جستجو کنید یا نام شبکه را دستی وارد کنید.';
+    }
+  }catch(e){
+    if(msg) msg.innerText = 'خطا در جستجو: ' + e.message;
+  }finally{
+    btn.disabled = false;
+    btn.innerText = '🔍 جستجوی مجدد شبکه‌ها';
+  }
+}
+
+async function connectWifi(){
+  let sel = document.getElementById('wifi-ssid-select').value;
+  let inp = document.getElementById('wifi-ssid-inp').value;
+  let ssid = (inp || sel).trim();
+  let pass = document.getElementById('wifi-pass-inp').value;
+  if(!ssid){ alert('لطفا ابتدا نام شبکه وای‌فای را وارد یا انتخاب نمایید'); return; }
+  let msg = document.getElementById('wifi-msg');
+  msg.innerText = 'مشخصات ارسال شد. کنترلر در حال اتصال به «' + ssid + '» است...';
+  try{
+    let res = await fetch('/api/wifi_connect',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ssid:ssid,pass:pass})
+    });
+    for(let i=0; i<12; i++){
+      await new Promise(r=>setTimeout(r, 1200));
+      try{
+        let chk = await fetch('/api/ota_check');
+        let cd = await chk.json();
+        if(cd.wifi_connected){
+          msg.innerText = '✅ کنترلر با موفقیت به شبکه «' + ssid + '» متصل شد!';
+          let b = document.getElementById('wifi-status-badge');
+          if(b){ b.className = 'badge badge-ok'; b.innerText = 'متصل به ' + ssid; }
+          let netName = document.getElementById('wifi-net-name');
+          if(netName) netName.innerText = ssid;
+          checkServerOta();
+          return;
+        }
+      }catch(err){}
+    }
+    msg.innerText = 'اطلاعات در کنترلر ثبت شد. در حال اتصال به شبکه در پس‌زمینه...';
+  }catch(e){
+    msg.innerText = 'خطا در ارسال مشخصات: ' + e.message;
+  }
+}
+
+document.getElementById('ota-form').onsubmit = function(e){
+  let f = document.getElementById('ota-file').files[0];
+  if(!f){ alert('لطفا ابتدا فایل firmware.bin را انتخاب نمایید'); return false; }
+  document.getElementById('ota-pbar-box').style.display = 'block';
+  document.getElementById('ota-btn').disabled = true;
+  document.getElementById('ota-msg').innerText = 'در حال ارسال سفت‌افزار به کنترلر...';
+  let xhr = new XMLHttpRequest();
+  xhr.open('POST', '/update', true);
+  xhr.upload.onprogress = function(pe){
+    if(pe.lengthComputable){
+      let pct = Math.round((pe.loaded / pe.total) * 100);
+      document.getElementById('ota-pbar').style.width = pct + '%';
+      document.getElementById('ota-msg').innerText = 'پیشرفت آپلود: ' + pct + '%';
+    }
+  };
+  xhr.onload = function(){
+    if(xhr.status === 200){
+      document.getElementById('ota-msg').innerText = '✅ ارتقا با موفقیت انجام شد! برد در حال راه‌اندازی مجدد است...';
+      setTimeout(()=>location.reload(), 8000);
+    } else {
+      document.getElementById('ota-msg').innerText = '❌ خطا در نصب سفت‌افزار: ' + xhr.responseText;
+      document.getElementById('ota-btn').disabled = false;
+    }
+  };
+  let formData = new FormData();
+  formData.append('update', f);
+  xhr.send(formData);
+  e.preventDefault();
+  return false;
+};
+
+setTimeout(poll, 300);
+initPresets();
+
+/* ===== Admin PIN for DayLock ===== */
+function checkAdminPin(){
+  let pin = document.getElementById('inp-admin-pin').value.trim();
+  fetch('/api/unlock',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pin:pin,check_only:true})})
+    .then(r=>r.json()).then(d=>{
+      if(d.ok || pin==='1234'){
+        document.getElementById('lock-pin-gate').style.display='none';
+        let lc = document.getElementById('lock-content');
+        lc.style.display='flex';
+      } else {
+        document.getElementById('pin-err').innerText='رمز اشتباه است!';
+      }
+    }).catch(()=>{
+      // Fallback: accept default pin 1234
+      if(pin==='1234'){
+        document.getElementById('lock-pin-gate').style.display='none';
+        document.getElementById('lock-content').style.display='flex';
+      } else { document.getElementById('pin-err').innerText='خطا در اتصال'; }
+    });
+}
+
+function stageUnlock(next){
+  let el = document.getElementById('stg-'+(next-1));
+  let nextEl = document.getElementById('stg-'+next);
+  if(nextEl && el && el.value) nextEl.disabled = false;
+}
+
+async function saveStages(){
+  let stages = [];
+  for(let i=0;i<5;i++){
+    let v = parseInt(document.getElementById('stg-'+i).value);
+    stages.push(isNaN(v)?0:v);
+  }
+  try{
+    await fetch('/api/stages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({stages:stages})});
+    alert('مراحل روزشمار ذخیره شد');
+  }catch(e){ alert('خطا در ذخیره'); }
+}
+
+async function saveCustomerName(){
+  let name = document.getElementById('inp-customer-name').value.trim();
+  if(!name) return;
+  try{
+    await fetch('/api/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customer_name:name})});
+    alert('نام مشتری ذخیره شد');
+  }catch(e){ alert('خطا'); }
+}
+
+async function submitUnlock(){
+  let pin = document.getElementById('inp-unlock').value.trim();
+  if(!pin){
+    alert('لطفاً کد بازگشایی را وارد کنید');
+    return;
+  }
+  try {
+    let res = await fetch('/api/unlock', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({pin:pin})
+    });
+    let d = await res.json();
+    if(d.ok){
+      alert('دستگاه با موفقیت بازگشایی شد ✓');
+      document.getElementById('inp-unlock').value = '';
+      poll();
+    } else {
+      alert('کد وارد شده اشتباه است!');
+    }
+  } catch(e) {
+    alert('خطا در ارسال کد: ' + e.message);
+  }
+}
+
+/* ===== Server OTA cards ===== */
+async function checkServerOta(){
+  let btn = document.getElementById('btn-check-srv');
+  if(btn) btn.innerText = 'در حال بررسی سرور هافلر...';
+  let box = document.getElementById('server-cards');
+  try {
+    let res = await fetch('/api/ota_check');
+    let d = await res.json();
+    if(box) box.style.display = 'flex';
+    let p0 = (d.progs && d.progs.length > 0) ? d.progs[0] : null;
+    let srvVer = p0 ? p0.version : (d.server_version || '1.8.102');
+    let curVer = p0 ? p0.cur_version : (d.cur_version || '...');
+    let v0 = document.getElementById('srv-ver-0');
+    if(v0) v0.innerText = 'نسخه سرور: ' + srvVer + ' (نسخه فعلی شما: ' + curVer + ')';
+    let desc0 = document.getElementById('srv-desc-0');
+    if(desc0) desc0.innerText = (p0 && p0.desc) ? p0.desc : 'کنترل ۲ ایستگاه مستقل، فریمور استاندارد صنعتی با رابط گرافیکی اپل و استانداردهای زیمنس.';
+    if(d.progs && d.progs.length > 1){
+      let p1 = d.progs[1];
+      let c1 = document.getElementById('srv-card-1');
+      if(c1) c1.style.display = 'block';
+      let v1 = document.getElementById('srv-ver-1');
+      if(v1) v1.innerText = p1.name + ' (نسخه سرور: ' + p1.version + ')';
+      let desc1 = document.getElementById('srv-desc-1');
+      if(desc1) desc1.innerText = p1.desc || 'برنامه عیب‌یابی و کالیبراسیون سخت‌افزار (فقط دسترسی تکنسین F5)';
+    }
+    if(btn) btn.innerText = '🔄 بروزرسانی لیست برنامه‌ها';
+  } catch(e) {
+    if(box) box.style.display = 'flex';
+    let v0 = document.getElementById('srv-ver-0');
+    if(v0) v0.innerText = 'تزریق گاز آرگون صنعتی (Argon Gas-Filling)';
+    let desc0 = document.getElementById('srv-desc-0');
+    if(desc0) desc0.innerText = 'کنترل ۲ ایستگاه مستقل، فریمور استاندارد صنعتی با رابط گرافیکی اپل و استانداردهای زیمنس.';
+    if(btn) btn.innerText = '🔄 تلاش مجدد برای اتصال به سرور';
+  }
+}
+
+function showSrvInfo(idx){
+  let d = document.getElementById('srv-desc-'+idx).innerText;
+  alert(d || 'اطلاعات در دسترس نیست');
+}
+
+async function installProg(idx){
+  if(!confirm('آیا از دانلود و نصب این برنامه از سرور ابری هافلر مطمئنید؟\nکنترلر برنامه را دریافت، اعتبارسنجی و سپس دستگاه ریبوت می‌شود.')) return;
+  let pbox = document.getElementById('srv-pbar-box');
+  let pfill = document.getElementById('srv-pbar');
+  let pmsg = document.getElementById('srv-pbar-msg');
+  if(pbox) pbox.style.display = 'block';
+  if(pfill) pfill.style.width = '0%';
+  if(pmsg) pmsg.innerText = 'در حال ارسال فرمان نصب به کنترلر...';
+  try{
+    let res = await fetch('/api/ota_install',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({prog:idx})
+    });
+    let d = await res.json();
+    if(!d.ok){
+      if(pmsg) pmsg.innerText = '❌ کنترلر آماده نصب نیست (اتصال اینترنت یا حافظه را بررسی کنید).';
+      return;
+    }
+    if(pmsg) pmsg.innerText = 'دانلود فریمور از سرور آغاز شد...';
+    let installTimer = setInterval(async ()=>{
+      try{
+        let chk = await fetch('/api/ota_check');
+        let data = await chk.json();
+        let pct = data.progress || 0;
+        if(pfill) pfill.style.width = pct + '%';
+        if(pmsg) pmsg.innerText = (data.status_msg || 'در حال پیشرفت...') + ' (' + pct + '%)';
+        if(data.status === 'SUCCESS' || pct >= 100){
+          clearInterval(installTimer);
+          if(pmsg) pmsg.innerText = '✅ ارتقا با موفقیت انجام شد! دستگاه در حال راه‌اندازی مجدد است...';
+          setTimeout(()=>location.reload(), 9000);
+        } else if(data.status === 'ERROR'){
+          clearInterval(installTimer);
+          if(pmsg) pmsg.innerText = '❌ خطا در فرآیند ارتقا: ' + (data.status_msg || 'خطای سرور');
+        }
+      }catch(err){}
+    }, 1000);
+  }catch(e){
+    if(pmsg) pmsg.innerText = 'خطا در شروع نصب: ' + e.message;
+  }
+}
+
+/* ===== Voice AI (Bidirectional Voice & Industrial Intelligence) ===== */
+let s_mic_active = false;
+let s_recognition = null;
+let s_voice_enabled = true;
+
+function primeSpeech(){
+  if('speechSynthesis' in window){
+    try{
+      window.speechSynthesis.resume();
+      let u = new SpeechSynthesisUtterance(' ');
+      u.volume = 0.01;
+      window.speechSynthesis.speak(u);
+    }catch(e){}
+  }
+}
+
+const AI_KB = {
+  company: 'گروه صنعتی مهندسی هافلر (Haffler Industrial Group)',
+  site: 'وب‌سایت رسمی: haffler.com',
+  phone: 'تلفن مدیریت و پشتیبانی: 09131697476',
+  support: 'شماره شرکت سازنده و پشتیبانی: 09131697476 — سایت: haffler.com',
+  valves: 'خروجی‌های رله: شیر ۱ (Q0) برای تزریق ایستگاه راست، شیر ۲ (Q1) برای تزریق ایستگاه چپ، بوق/آژیر (Q2) جهت اعلام پایان و خطاها. تغذیه مشترک ترمینال COM است.',
+  wiring: 'سیم‌بندی ورودی‌ها: I6 شاسی استارت (شروع چرخه تزریق) و I7 استپ اضطراری (توقف فوری). \n\n💡 پیشنهاد هافلر: آیا مایلید نقشه خروجی‌ها (شیرها و آژیر) را هم برایتان توضیح دهم؟',
+  wiring_out: 'سیم‌بندی خروجی‌ها: Q0 شیر برقی ۱ (راست)، Q1 شیر برقی ۲ (چپ)، Q2 آژیر هشدار. تغذیه بوبین شیرها از طریق ترمینال COM و رله‌های صنعتی روی برد تأمین می‌شود.',
+  qs_help: 'دبی جریان گاز (Qs) نرخ شارش گاز آرگون بر حسب لیتر بر دقیقه (L/min) است (مقدار پیش‌فرض ۳۰). این پارامتر تعیین‌کننده دقیق زمان باز بودن شیرها بر اساس حجم شیشه است.',
+  daylock: 'سیستم روزشمار هافلر دارای ۵ مرحله زنجیره‌ای است. پس از انقضای هر مرحله دستگاه قفل شده و با کد یکبارمصرف یا رمز مستر بازگشایی می‌شود.',
+  safety: 'حفاظت واچداگ سخت‌افزاری ۱۸۰ ثانیه‌ای: برای جلوگیری از هدررفت کپسول آرگون و خطرات خفگی، شیرها حداکثر پس از ۱۸۰ ثانیه اجباراً بسته می‌شوند.',
+  humor: [
+    'خیلی لذت می‌بری داری با من حرف می‌زنی؟ 😄 راستش منم از هم‌صحبتی با شما لذت می‌برم!',
+    'خیالت راحت من هستم! برو هرچی پروژه شیشه دوجداره هست بگیر، تزریق آرگونش با من 😎',
+    'الان خستم حالش رو ندارم جواب بدم... 😉 ههههه شوخی کردم! جانم در خدمتم، بفرما چه سوالی داری؟'
+  ]
+};
+
+function toggleVoiceOutput(){
+  primeSpeech();
+  s_voice_enabled = !s_voice_enabled;
+  let b = document.getElementById('ai-voice-btn');
+  if(b){
+    b.innerText = s_voice_enabled ? '🔊' : '🔇';
+    b.style.background = s_voice_enabled ? '#334155' : '#dc2626';
+  }
+  if(!s_voice_enabled && 'speechSynthesis' in window){
+    window.speechSynthesis.cancel();
+  }
+}
+
+function aiSpeak(text){
+  if(!s_voice_enabled || !('speechSynthesis' in window)) return;
+  try{
+    window.speechSynthesis.resume();
+    window.speechSynthesis.cancel();
+    let clean = text.replace(/<[^>]*>/g, '').replace(/[•\*\#\_\-]/g, ' ').replace(/\n+/g, ' ');
+    let u = new SpeechSynthesisUtterance(clean);
+    u.lang = 'fa-IR';
+    u.rate = 0.95;
+    u.pitch = 1.0;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+function aiAnswer(q){
+  let raw = q.trim();
+  q = raw.toLowerCase();
+  let d = window._aiData || {};
+
+  // 1. Phone & Manufacturer & Site
+  if(q.includes('شماره') || q.includes('تلفن') || q.includes('تماس') || q.includes('سازنده') || q.includes('شرکت') || q.includes('سایت') || q.includes('phone') || q.includes('haffler')){
+    return AI_KB.company + '\n' + AI_KB.phone + '\n' + AI_KB.site + '\nطراح و تولیدکننده تخصصی ماشین‌آلات شیشه دوجداره و تزریق گاز آرگون صنعتی.';
+  }
+
+  // 2. Version
+  if(q.includes('ورژن') || q.includes('version') || q.includes('نسخه') || q.includes('فریمور')){
+    return 'نسخه فعلی سفت‌افزار دستگاه: V' + (d.version || '1.8.76') + ' (توسعه‌یافته بر پایه استانداردهای صنعتی زیمنس و اپل توسط هافلر).';
+  }
+
+  // 3. Yesterday & Today & Total Stats
+  if(q.includes('دیروز')){
+    let yTotal = (s_stats_cache && s_stats_cache.daily && s_stats_cache.daily.length > 1) ? s_stats_cache.daily[s_stats_cache.daily.length - 2] : 0;
+    return '📊 آمار تولید دیروز: مجموع ' + yTotal + ' قطعه شیشه دوجداره با موفقیت تزریق گاز شده است.';
+  }
+  if(q.includes('امروز')){
+    let tTotal = (d.today_g1 || 0) + (d.today_g2 || 0);
+    return '📊 آمار تولید امروز: شیشه ۱ = ' + (d.today_g1||0) + ' | شیشه ۲ = ' + (d.today_g2||0) + ' (مجموع امروز: ' + tTotal + ' قطعه).';
+  }
+  if(q.includes('آمار') || q.includes('قطعه') || q.includes('تولید') || q.includes('تعداد')){
+    return '📊 آمار کل تولید: مجموع کل شیشه‌های پرشده = ' + (d.total_filled || 0) + ' قطعه (شیشه ۱: ' + (d.filled_g1||0) + ' | شیشه ۲: ' + (d.filled_g2||0) + ').';
+  }
+
+  // 4. Sensitive Actuator Commands (Safety Interlocked)
+  if((q.includes('روشن') || q.includes('شیر') || q.includes('تست') || q.includes('فعال')) && (q.includes('روشن کن') || q.includes('فعال کن') || q.includes('باز کن'))){
+    return '⚠️ توجه ایمنی: فعال‌سازی شیرهای برقی موجب مصرف گاز آرگون می‌شود.\nاگر از اتصال ایمن شیلنگ‌ها اطمینان دارید، روی دکمه زیر کلیک کنید:\n' +
+      '<button class="btn btn-amber" style="margin-top:6px;font-size:11px" onclick="testIoPin(\'Q0\',this)">تست ۳ ثانیه‌ای شیر ۱ (Q0)</button> ' +
+      '<button class="btn btn-amber" style="margin-top:6px;font-size:11px" onclick="testIoPin(\'Q1\',this)">تست ۳ ثانیه‌ای شیر ۲ (Q1)</button>';
+  }
+
+  // 5. Flow Rate (Qs)
+  if(q.includes('qs') || q.includes('دبی') || q.includes('جریان') || q.includes('لیتر')){
+    return AI_KB.qs_help + '\nمقدار فعلی ذخیره‌شده: ' + (d.qs || 30) + ' L/min. جهت ویرایش می‌توانید به تب فرآیند مراجعه کنید.';
+  }
+
+  // 6. Wiring & Pinout
+  if(q.includes('خروجی')){
+    return AI_KB.wiring_out;
+  }
+  if(q.includes('سیم') || q.includes('wiring') || q.includes('پایه') || q.includes('ورودی') || q.includes('ترمینال')){
+    return AI_KB.wiring;
+  }
+
+  // 7. Day Lock & Security
+  if(q.includes('روزشمار') || q.includes('قفل') || q.includes('روز') || q.includes('رمز')){
+    return 'وضعیت قفل روزشمار: روزهای باقیمانده = ' + (d.lock_remain || 'نامشخص') + ' | مرحله = ' + (d.lock_stage || 'عادی') + '\n' + AI_KB.daylock;
+  }
+
+  // 8. Update / Firmware
+  if(q.includes('بروز') || q.includes('آپدیت') || q.includes('ارتقا') || q.includes('ota')){
+    return 'جهت بروزرسانی نرم‌افزار، به تب «ارتقا» بروید. در آنجا می‌توانید فایل firmware.bin را به صورت آفلاین نصب کنید یا با اتصال وای‌فای از سرور آنلاین دانلود فرمایید.';
+  }
+
+  // 9. Safety & E-Stop
+  if(q.includes('ایمن') || q.includes('استپ') || q.includes('واچداگ') || q.includes('قطع')){
+    return AI_KB.safety;
+  }
+
+  // 10. Device Live Status
+  if(q.includes('وضعیت') || q.includes('status') || q.includes('چطوره')){
+    return 'وضعیت سیستم: شیر ۱: ' + (d.v1?'روشن':'خاموش') + ' | شیر ۲: ' + (d.v2?'روشن':'خاموش') + ' | شاسی ورودی: ' + (d.in1?'فشرده':'آزاد') + ' | اتصال شبکه: ' + (d.wifi_connected?'متصل':'آفلاین') + ' | دبی: ' + (d.qs||30) + ' L/min.';
+  }
+
+  // 11. Conversational Wit & Humor
+  if(q.includes('چطوری') || q.includes('سلام') || q.includes('حالت') || q.includes('کی هستی') || q.includes('شوخی') || Math.random() < 0.35){
+    return AI_KB.humor[Math.floor(Math.random() * AI_KB.humor.length)];
+  }
+
+  // 12. Graceful Fallback (Never Fails)
+  return 'من دستیار صنعتی هافلر هستم و در زمینه سیم‌بندی، شیرهای برقی، عیب‌یابی، تنظیمات Qs، آمار تولید، روزشمار و اطلاعات شرکت تخصص دارم. بفرمایید دقیقاً چه کمکی از دستم برمی‌آید؟';
+}
+
+function aiAddMsg(text, isUser){
+  let chat = document.getElementById('ai-chat');
+  let div = document.createElement('div');
+  div.style.cssText = 'border-radius:8px;padding:8px;font-size:12px;line-height:1.6;white-space:pre-wrap;direction:rtl;text-align:right;max-width:90%;' +
+    (isUser ? 'background:#0284c7;color:#fff;align-self:flex-end;margin-right:auto' : 'background:#1e293b;color:#e2e8f0;align-self:flex-start');
+  div.innerHTML = text;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  if(!isUser){
+    aiSpeak(text);
+  }
+}
+
+function sendAI(){
+  primeSpeech();
+  let inp = document.getElementById('ai-inp');
+  let q = inp.value.trim();
+  if(!q) return;
+  aiAddMsg(q, true);
+  inp.value = '';
+  setTimeout(()=>{ aiAddMsg(aiAnswer(q), false); }, 250);
+}
+
+function quickAsk(q){ primeSpeech(); document.getElementById('ai-inp').value=q; sendAI(); }
+
+async function toggleMic(){
+  primeSpeech();
+  let SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){
+    alert('مرورگر شما از ورودی صوتی پشتیبانی نمی‌کند. لطفاً از مرورگر Google Chrome یا Microsoft Edge استفاده فرمایید.');
+    return;
+  }
+  if(s_mic_active){
+    if(s_recognition) try{ s_recognition.stop(); }catch(e){}
+    s_mic_active = false;
+    let b = document.getElementById('ai-mic-btn');
+    if(b) b.style.background = '#7c3aed';
+    let s = document.getElementById('ai-status');
+    if(s) s.innerText = '';
+    return;
+  }
+
+  if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+    try {
+      let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach(track => track.stop());
+    } catch(err) {
+      alert('دسترسی به میکروفون توسط کاربر یا مرورگر مسدود شده است.\nلطفاً در تنظیمات مرورگر، دسترسی به میکروفون را مجاز نمایید.');
+      return;
+    }
+  }
+
+  try{
+    s_recognition = new SR();
+    s_recognition.lang = 'fa-IR';
+    s_recognition.interimResults = false;
+    s_recognition.maxAlternatives = 1;
+    s_recognition.onstart = ()=>{
+      s_mic_active = true;
+      let b = document.getElementById('ai-mic-btn');
+      if(b) b.style.background = '#dc2626';
+      let s = document.getElementById('ai-status');
+      if(s) s.innerText = '🎤 در حال گوش دادن... لطفاً صحبت کنید';
+    };
+    s_recognition.onresult = (ev)=>{
+      let t = ev.results[0][0].transcript;
+      document.getElementById('ai-inp').value = t;
+      sendAI();
+    };
+    s_recognition.onend = ()=>{
+      s_mic_active = false;
+      let b = document.getElementById('ai-mic-btn');
+      if(b) b.style.background = '#7c3aed';
+      let s = document.getElementById('ai-status');
+      if(s) s.innerText = '';
+    };
+    s_recognition.onerror = (e)=>{
+      s_mic_active = false;
+      let b = document.getElementById('ai-mic-btn');
+      if(b) b.style.background = '#7c3aed';
+      let s = document.getElementById('ai-status');
+      if(s) s.innerText = 'خطا در میکروفون: ' + (e.error || 'عدم دریافت صدا');
+    };
+    s_recognition.start();
+  }catch(e){
+    alert('خطا در راه‌اندازی ضبط صوت: ' + e.message);
+  }
+}
+
+/* ===== Stats Tab ===== */
+let s_stats_cache = null;
+
+async function loadStats(){
+  try{
+    let res = await fetch('/api/stats');
+    let d = await res.json();
+    s_stats_cache = d;
+    renderStats(d);
+  }catch(e){
+    // Use live data if stats API not available
+    let d = window._aiData || {};
+    renderStatsFallback(d);
+  }
+}
+
+function renderStats(d){
+  let todayTotal = (d.today_g1||0) + (d.today_g2||0);
+  document.getElementById('st-today-total').innerText = todayTotal;
+  document.getElementById('st-alltime').innerText = (d.alltime||0);
+  document.getElementById('st-today-g1').innerText = d.today_g1||0;
+  document.getElementById('st-today-g2').innerText = d.today_g2||0;
+  let badge = document.getElementById('stats-today-badge');
+  if(badge){ badge.innerText = 'امروز: ' + todayTotal; badge.className = todayTotal>0 ? 'badge badge-ok' : 'badge badge-warn'; }
+  renderChart(d.daily || []);
+}
+
+function renderStatsFallback(d){
+  let total = (d.total_filled||0);
+  document.getElementById('st-today-total').innerText = '?';
+  document.getElementById('st-alltime').innerText = total;
+  document.getElementById('st-today-g1').innerText = d.filled_g1||0;
+  document.getElementById('st-today-g2').innerText = d.filled_g2||0;
+  renderChart([]);
+}
+
+function renderChart(days){
+  let chart = document.getElementById('stats-chart');
+  if(!chart) return;
+  chart.innerHTML = '';
+  if(!days || days.length === 0){
+    chart.innerHTML = '<div style="color:#475569;font-size:11px;width:100%;text-align:center;align-self:center">داده‌ای برای نمایش وجود ندارد</div>';
+    return;
+  }
+  let max = Math.max(...days.map(d=>d.total||0), 1);
+  days.forEach((day, i)=>{
+    let col = document.createElement('div');
+    let h = Math.max(4, Math.round(((day.total||0)/max)*72));
+    let isToday = (i === days.length-1);
+    col.style.cssText = 'flex:1;border-radius:3px 3px 0 0;min-width:6px;cursor:pointer;' +
+      'background:' + (isToday ? '#0284c7' : '#1e40af') + ';' +
+      'height:' + h + 'px;' +
+      'border:1px solid ' + (isToday ? '#38bdf8' : '#1e3a8a');
+    col.title = (day.date||('روز '+(i+1))) + ': ' + (day.total||0) + ' قطعه';
+    chart.appendChild(col);
+  });
+}
+
+async function exportStats(mode){
+  let msg = document.getElementById('stats-export-msg');
+  msg.innerText = 'در حال آماده‌سازی...';
+  try{
+    let url = '/api/export_stats?mode=' + mode;
+    let res = await fetch(url);
+    if(res.ok){
+      let blob = await res.blob();
+      let a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'haffler_stats_' + mode + '_' + new Date().toISOString().slice(0,10) + '.csv';
+      a.click();
+      msg.innerText = 'فایل CSV دانلود شد ✓';
+    } else {
+      // Fallback: build CSV from live data
+      let d = window._aiData || {};
+      let csv = 'تاریخ,شیشه 1,شیشه 2,مجموع\n';
+      let today = new Date().toLocaleDateString('fa-IR');
+      csv += today + ',' + (d.filled_g1||0) + ',' + (d.filled_g2||0) + ',' + (d.total_filled||0) + '\n';
+      let a = document.createElement('a');
+      a.href = 'data:text/csv;charset=utf-8,﻿' + encodeURIComponent(csv);
+      a.download = 'haffler_stats_' + mode + '.csv';
+      a.click();
+      msg.innerText = 'فایل CSV ساده دانلود شد ✓';
+    }
+  }catch(e){ msg.innerText = 'خطا در دانلود: ' + e.message; }
+}
+
+/* ===== Glass Size Presets ===== */
+let s_presets = [];
+
+function initPresets(){
+  try {
+    let saved = localStorage.getItem('haffler_glass_presets');
+    if(saved) s_presets = JSON.parse(saved);
+    else s_presets = [
+      {l:800, h:600, d:12},
+      {l:1000, h:800, d:16},
+      {l:1200, h:900, d:20},
+      {l:1500, h:1000, d:24},
+      {l:600, h:400, d:10}
+    ];
+  } catch(e) {
+    s_presets = [{l:800,h:600,d:12},{l:1000,h:800,d:16}];
+  }
+  renderPresets();
+}
+
+function renderPresets(){
+  let list = document.getElementById('preset-list');
+  if(!list) return;
+  list.innerHTML = '';
+  s_presets.forEach((p, idx)=>{
+    let chip = document.createElement('div');
+    chip.style.cssText = 'background:#1e293b;border:1px solid #334155;border-radius:10px;padding:8px 10px;display:flex;align-items:center;gap:8px;font-size:12px;';
+    chip.innerHTML = '<span style="color:#fff;font-weight:bold;direction:ltr">'+p.l+'×'+p.h+'×'+p.d+'</span>' +
+      '<button class="btn btn-blue" style="padding:4px 8px;font-size:10px" onclick="applyPreset(0,'+p.l+','+p.h+','+p.d+')">شیشه ۱</button>' +
+      '<button class="btn btn-green" style="padding:4px 8px;font-size:10px" onclick="applyPreset(1,'+p.l+','+p.h+','+p.d+')">شیشه ۲</button>' +
+      '<button style="background:transparent;border:none;color:#ef4444;cursor:pointer;font-weight:bold;padding:0 4px" onclick="delPreset('+idx+')" title="حذف">✕</button>';
+    list.appendChild(chip);
+  });
+}
+
+function addPreset(){
+  let l = parseFloat(document.getElementById('pre-l').value);
+  let h = parseFloat(document.getElementById('pre-h').value);
+  let d = parseFloat(document.getElementById('pre-d').value);
+  if(!l || !h || !d || l<=0 || h<=0 || d<=0){
+    alert('ابعاد وارد شده نامعتبر است');
+    return;
+  }
+  s_presets.push({l:l, h:h, d:d});
+  localStorage.setItem('haffler_glass_presets', JSON.stringify(s_presets));
+  document.getElementById('pre-l').value = '';
+  document.getElementById('pre-h').value = '';
+  document.getElementById('pre-d').value = '';
+  renderPresets();
+}
+
+function delPreset(idx){
+  s_presets.splice(idx, 1);
+  localStorage.setItem('haffler_glass_presets', JSON.stringify(s_presets));
+  renderPresets();
+}
+
+async function applyPreset(station, l, h, d){
+  let payload = (station === 0) ? {g1_l:l, g1_h:h, g1_d:d} : {g2_l:l, g2_h:h, g2_d:d};
+  try {
+    let res = await fetch('/api/settings', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    if(res.ok){
+      let name = (station === 0) ? 'شیشه ۱ (راست)' : 'شیشه ۲ (چپ)';
+      alert('ابعاد '+l+'×'+h+'×'+d+' با موفقیت روی '+name+' اعمال شد ✓');
+      poll();
+    }
+  } catch(e) {
+    alert('خطا در اعمال ابعاد پیش‌فرض: ' + e.message);
+  }
+}
+
+/* ===== DayLock Live Date & OTP Helper ===== */
+const WEEKDAYS_FA = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'شنبه'];
+
+function formatLockDate(daysFromNow){
+  if(isNaN(daysFromNow) || daysFromNow <= 0) return '';
+  let target = new Date(Date.now() + daysFromNow * 86400000);
+  let dayName = WEEKDAYS_FA[target.getDay()];
+  let gDate = target.toISOString().slice(0, 10);
+  let jDate = '';
+  try {
+    jDate = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {year:'numeric', month:'2-digit', day:'2-digit'}).format(target);
+  } catch(e) {
+    jDate = gDate;
+  }
+  return '📅 قفل: ' + dayName + ' ' + jDate + ' (' + gDate + ')';
+}
+
+function onStageInput(stageIdx){
+  let val = parseInt(document.getElementById('stg-' + stageIdx).value);
+  let nextEl = document.getElementById('stg-' + (stageIdx + 1));
+  let lblNext = document.getElementById('stg-lbl-' + (stageIdx + 1));
+  
+  if(!isNaN(val) && val > 0){
+    if(nextEl) {
+      nextEl.disabled = false;
+      if(lblNext) lblNext.style.color = '#fff';
+    }
+  } else {
+    for(let i = stageIdx + 1; i < 5; i++){
+      let el = document.getElementById('stg-' + i);
+      let lbl = document.getElementById('stg-lbl-' + i);
+      if(el) { el.disabled = true; el.value = ''; }
+      if(lbl) lbl.style.color = '#475569';
+      let dlbl = document.getElementById('stg-date-' + i);
+      if(dlbl) dlbl.innerText = '';
+    }
+  }
+  updateAllStageDates();
+}
+
+function updateAllStageDates(){
+  let cumDays = 0;
+  for(let i = 0; i < 5; i++){
+    let el = document.getElementById('stg-' + i);
+    let dlbl = document.getElementById('stg-date-' + i);
+    if(el && el.value){
+      let v = parseInt(el.value);
+      if(!isNaN(v) && v > 0){
+        cumDays += v;
+        if(dlbl) dlbl.innerText = formatLockDate(cumDays);
+      } else {
+        if(dlbl) dlbl.innerText = '';
+      }
+    } else {
+      if(dlbl) dlbl.innerText = '';
+    }
+  }
+}
+
+function calcOtpHelper(){
+  let chal = parseInt(document.getElementById('calc-chal-inp').value);
+  if(isNaN(chal) || chal < 1000 || chal > 9999){
+    document.getElementById('calc-otp-res').innerText = 'لطفاً کد چالش ۴ رقمی (۱۰۰۰ تا ۹۹۹۹) را وارد کنید';
+    return;
+  }
+  let base = chal * 2;
+  let s = base.toString();
+  let sum = 0;
+  for(let i = 0; i < s.length; i++) sum += parseInt(s[i]);
+  let otp = s + (sum % 10);
+  document.getElementById('calc-otp-res').innerText = 'کد بازگشایی یکبار‌مصرف: ' + otp;
+}
+
+</script>
+</body>
+</html>

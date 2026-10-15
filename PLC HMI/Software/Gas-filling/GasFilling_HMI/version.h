@@ -1,0 +1,8 @@
+#ifndef GASFILLING_VERSION_H
+#define GASFILLING_VERSION_H
+#define FW_VERSION_MAJOR 1
+#define FW_VERSION_MINOR 8
+#define FW_VERSION_PATCH 120
+#define FW_VERSION       "1.8.120"
+#define FW_VERSION_LABEL "v1.8.120"
+#endif

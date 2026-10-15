@@ -1,0 +1,560 @@
+{
+  "schema_version": "mimosa-task-review/v2",
+  "run_id": "20260823T150206307Z-3712-5160ba2dcb50",
+  "run_status": "inconclusive",
+  "errors": [
+    {
+      "stage": "baseline-read",
+      "target": "include/drivers/screenshot.h",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    },
+    {
+      "stage": "baseline-read",
+      "target": "include/app/fw_changelog.h",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    },
+    {
+      "stage": "scan",
+      "target": "src/hwtest.cpp",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "src/t_screens.c",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "include/drivers/screenshot.h",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "include/app/actions.h",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "include/app/defines.h",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "include/app/fw_changelog.h",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "include/app/screens.c",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "include/app/screens.h",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "include/app/tasks.h",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    }
+  ],
+  "coverage": {
+    "schema_version": "mimosa-hook-coverage/v1",
+    "status": "partial",
+    "scope": "hook_observed_diff",
+    "baseline": {
+      "complete": true,
+      "captured_files": 1598,
+      "candidate_limit": 5000,
+      "truncated": false,
+      "enumeration_error_count": 0,
+      "snapshot_error_count": 0,
+      "compensated_target_count": 7
+    },
+    "change_tracking": {
+      "touched_observed": 0,
+      "touched_retained": 0,
+      "truncated": false,
+      "bash_mutation": true,
+      "bash_discovered": 9,
+      "bash_discovery_limit": 80,
+      "bash_discovery_truncated": false
+    },
+    "candidates": {
+      "eligible_files": 9,
+      "selected_files": 9,
+      "limit": 20,
+      "truncated": false
+    },
+    "scanning": {
+      "required_files": 9,
+      "scanned_files": 0,
+      "skipped_files": 0,
+      "failed_files": 9,
+      "project_checks_required": 0,
+      "project_checks_completed": 0
+    },
+    "notification": {
+      "eligible_findings": 0,
+      "detailed_findings": 0,
+      "detail_limit": 3,
+      "truncated": false
+    },
+    "reason_counts": {
+      "baseline_snapshot_unreadable": 2,
+      "scanner_failed": 9,
+      "project_check_failed": 11
+    },
+    "reasons": [
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "include/drivers/screenshot.h",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "include/app/fw_changelog.h",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "src/hwtest.cpp",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "src/t_screens.c",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "include/drivers/screenshot.h",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "include/app/actions.h",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "include/app/defines.h",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "include/app/fw_changelog.h",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "include/app/screens.c",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "include/app/screens.h",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "include/app/tasks.h",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "include/drivers/screenshot.h",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "include/app/fw_changelog.h",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "src/hwtest.cpp",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "src/t_screens.c",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "include/drivers/screenshot.h",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "include/app/actions.h",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "include/app/defines.h",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "include/app/fw_changelog.h",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "include/app/screens.c",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "include/app/screens.h",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "include/app/tasks.h",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      }
+    ],
+    "reasons_truncated": false
+  },
+  "generated_at": "2026-08-23T15:02:06.307Z",
+  "session_id": "sess_77cf7ef4-521e-4e30-bf8d-40fa39b6a687",
+  "target": ".",
+  "revision": "1f561097f8b1ab8bc51838666a12307fdf0665c0",
+  "rules_version": "unavailable",
+  "diff_hash": "45f32c3d4b7cbed68a19081fc84f8aa9ea1d69b657bac78a104bab489cd3b146",
+  "diff": {
+    "algorithm": "sha256",
+    "changed_file_count": 9,
+    "changed_files": [
+      {
+        "file": "include/app/actions.h",
+        "ranges": [
+          {
+            "start": 21,
+            "end": 22
+          }
+        ],
+        "before_hash": "8ccee6f97c4788ebe46a923b128a8b401f30b5f2d93d18339a5d449cb7885792",
+        "after_hash": "a662dcc2bf27d10afa83f6d00cb901a663c51291b05e0204d51de9d53bf69908"
+      },
+      {
+        "file": "include/app/defines.h",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 1
+          }
+        ],
+        "before_hash": "9e2288b348770c1b014d4066663a47671f6a4f03a20e03e59e624e0edbe2e319",
+        "after_hash": "d341733f6729a502636495182b2b8113bd9cf9ac0acd47d8fbf4bf76cc08c085"
+      },
+      {
+        "file": "include/app/fw_changelog.h",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 27
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "cc54557af4790df5ff49c4fe5cb12176774f156509337038cad32a0ed7a182da"
+      },
+      {
+        "file": "include/app/screens.c",
+        "ranges": [
+          {
+            "start": 11,
+            "end": 11
+          },
+          {
+            "start": 1156,
+            "end": 1157
+          },
+          {
+            "start": 1177,
+            "end": 1185
+          },
+          {
+            "start": 1310,
+            "end": 1310
+          },
+          {
+            "start": 1401,
+            "end": 1409
+          },
+          {
+            "start": 1439,
+            "end": 1532
+          },
+          {
+            "start": 1555,
+            "end": 1555
+          },
+          {
+            "start": 1564,
+            "end": 1564
+          },
+          {
+            "start": 1647,
+            "end": 1647
+          },
+          {
+            "start": 1658,
+            "end": 1659
+          },
+          {
+            "start": 1726,
+            "end": 1726
+          },
+          {
+            "start": 1731,
+            "end": 1736
+          },
+          {
+            "start": 1742,
+            "end": 1772
+          },
+          {
+            "start": 1774,
+            "end": 1793
+          },
+          {
+            "start": 1796,
+            "end": 1807
+          },
+          {
+            "start": 1810,
+            "end": 1810
+          },
+          {
+            "start": 1878,
+            "end": 1881
+          }
+        ],
+        "before_hash": "e14ebc0c96c3b534e51dcc3b90421689c21fc83c53f89928dc5367e794ac7682",
+        "after_hash": "e347233e9af7527812efbbac11762f4284a2ab32748d0788067b9762ddc8f92b"
+      },
+      {
+        "file": "include/app/screens.h",
+        "ranges": [
+          {
+            "start": 105,
+            "end": 109
+          }
+        ],
+        "before_hash": "8de30e8a6c379ef2344e70942b873111d295507cb4191ca8035992e0b0ad99ad",
+        "after_hash": "2a164a02a14da29e80dedc7a1938f4db63abdd6da5582c8deaea1bcc3412dba7"
+      },
+      {
+        "file": "include/app/tasks.h",
+        "ranges": [
+          {
+            "start": 70,
+            "end": 73
+          },
+          {
+            "start": 102,
+            "end": 112
+          },
+          {
+            "start": 114,
+            "end": 177
+          },
+          {
+            "start": 184,
+            "end": 187
+          },
+          {
+            "start": 189,
+            "end": 204
+          },
+          {
+            "start": 314,
+            "end": 336
+          },
+          {
+            "start": 344,
+            "end": 354
+          },
+          {
+            "start": 718,
+            "end": 720
+          },
+          {
+            "start": 914,
+            "end": 914
+          },
+          {
+            "start": 978,
+            "end": 980
+          }
+        ],
+        "before_hash": "bc03fb652e1910305816c70f70ac6d93fd7b44764eab09011bbe7b0c6f526564",
+        "after_hash": "1272d0efea2a8018b35a328f39b88c84cbfba4ef43aa0487b233e9382a9192b6"
+      },
+      {
+        "file": "include/drivers/screenshot.h",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 157
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "bd4bbc2b22dacb976f07a3db054bdd3ef8596ce4ff500af0a1b386ad02d42037"
+      },
+      {
+        "file": "src/hwtest.cpp",
+        "ranges": [
+          {
+            "start": 179,
+            "end": 180
+          },
+          {
+            "start": 720,
+            "end": 721
+          },
+          {
+            "start": 723,
+            "end": 724
+          },
+          {
+            "start": 733,
+            "end": 736
+          },
+          {
+            "start": 761,
+            "end": 764
+          },
+          {
+            "start": 767,
+            "end": 767
+          }
+        ],
+        "before_hash": "d9e810312997e83ee08c17f6859552f8c57cc55cd88be5073aa17283d7f7957d",
+        "after_hash": "58ee837cbcb2f738b0f0f52ecb6bcc8b147a6f4cc906afef1826a3391b0b2f4f"
+      },
+      {
+        "file": "src/t_screens.c",
+        "ranges": [
+          {
+            "start": 934,
+            "end": 934
+          },
+          {
+            "start": 943,
+            "end": 943
+          },
+          {
+            "start": 1048,
+            "end": 1048
+          },
+          {
+            "start": 1057,
+            "end": 1057
+          }
+        ],
+        "before_hash": "72c217ad4563660e1e1c113ae7a25f900cdcb2ba0f5a55f429e329a8634480f9",
+        "after_hash": "800d388de7dba3a3cebd0ed3830c245f4dbdab2f93dfb9ae71b98b7ff1823a93"
+      }
+    ]
+  },
+  "timing": {
+    "started_at": "2026-08-23T15:02:03.789Z",
+    "completed_at": "2026-08-23T15:02:06.307Z",
+    "duration_ms": 2518,
+    "measurement": "hook_wall_clock"
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "model_calls": 0,
+    "measurement": "known-zero"
+  },
+  "telemetry": {
+    "schemaVersion": "mimosa-gate-telemetry/v1",
+    "profile": "gate",
+    "operation": "Stop",
+    "outcome": "partial/INCONCLUSIVE",
+    "latencyMs": 2518,
+    "peakMemoryBytes": 102772736,
+    "memoryMeasurement": "max-observed-process-rss",
+    "scannedFiles": 0,
+    "cache": {
+      "hits": 0,
+      "misses": 0,
+      "measurement": "not-applicable"
+    },
+    "denyCount": 0,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "total": 0,
+      "modelCalls": 0,
+      "measurement": "known-zero"
+    }
+  },
+  "finding_count": 0,
+  "rewake_finding_count": 0,
+  "evidence_boundary": {
+    "scan": "candidate",
+    "static_fix_verification": "observed_static_only",
+    "runtime_verification": "not_performed"
+  },
+  "finding_events": [],
+  "findings": [],
+  "artifacts": {
+    "immutable_report": ".mimosa/reports/task-review-sess_77cf7ef4-521e-4e30-bf8d-40fa39b6a687-20260823T150206307Z-3712-5160ba2dcb50.json",
+    "latest_report": ".mimosa/reports/task-review-sess_77cf7ef4-521e-4e30-bf8d-40fa39b6a687.json",
+    "history_summary": ".mimosa/history/run-20260823T150206307Z-3712-5160ba2dcb50.json"
+  }
+}

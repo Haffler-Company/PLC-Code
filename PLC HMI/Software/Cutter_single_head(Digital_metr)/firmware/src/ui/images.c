@@ -1,0 +1,27 @@
+#include "images.h"
+
+const ext_img_desc_t images[23] = {
+    { "gear", &img_gear },
+    { "plus_silver", &img_plus_silver },
+    { "b", &img_b },
+    { "bb", &img_bb },
+    { "f", &img_f },
+    { "ff", &img_ff },
+    { "keypad", &img_keypad },
+    { "ret", &img_ret },
+    { "unmute", &img_unmute },
+    { "mute", &img_mute },
+    { "insert_row", &img_insert_row },
+    { "delete_row", &img_delete_row },
+    { "edit_pen", &img_edit_pen },
+    { "add", &img_add },
+    { "remove", &img_remove },
+    { "newf", &img_newf },
+    { "newff", &img_newff },
+    { "newb", &img_newb },
+    { "newbb", &img_newbb },
+    { "EMG", &img_emg },
+    { "normally open", &img_normally_open },
+    { "normally closed", &img_normally_closed },
+    { "printer", &img_printer },
+};

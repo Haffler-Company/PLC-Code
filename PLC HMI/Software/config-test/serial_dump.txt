@@ -1,0 +1,45 @@
+I (837) esp_image: segment 1: paddr=00ae0888 vaddr=3fc94d40 size=072a8h ( 29352) load
+I (844) esp_image: segment 2: paddr=00ae7b38 vaddr=40374000 size=084e0h ( 34016) load
+I (852) esp_image: segment 3: paddr=00af0020 vaddr=42000020 size=167010h (1470480) map
+I (1121) esp_image: segment 4: paddr=00c57038 vaddr=4037c4e0 size=0885ch ( 34908) load
+I (1137) boot: Loaded app from partition at offset 0x710000
+I (1137) boot: Disabling RNG early entropy source...
+E (1156) esp_core_dump_flash: No core dump partition found!
+E (1156) esp_core_dump_flash: No core dump partition found!
+[UIRESÇˇˇª åˆB¸(Ô£Fâˆ;ﬂBFÊcYãv`qg¥tt^HB.∆BBBd CA…√CCK E‚AEbCCCÀCGAK√KBJ9B§CGCB¬ ±BiDFB•ÅpC†ÏhGKC≈%e+{Kh@IX…C«(YB…E≈K§,—FÂIB˚)˛BWJ9-vE‰•ÌN)zKA/vGÍ≠-	+jO¥=ˆG)CkKA=UF•§O†-÷E]A«KC=WFJ-j£ÃB@BJKO˘A¨MKºTÏÓ'Ÿ|'!À~¸„0«ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0xc (RTC_SW_CPU_RST),boot:0x28 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x42160db2
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x14f0
+load:0x403c8700,len:0xd24
+load:0x403cb700,len:0x2eec
+entry 0x403c8924
+I (29) boot: ESP-IDF v5.5.5-dirty 2nd stage bootloader
+I (29) boot: compile time Sep  5 2026 15:35:34
+I (29) boot: Multicore bootloader
+I (30) boot: chip revision: v0.2
+I (33) boot: efuse block revision: v1.3
+I (36) boot.esp32s3: Boot SPI Speed : 80MHz
+I (40) boot.esp32s3: SPI Mode       : DIO
+I (44) boot.esp32s3: SPI Flash Size : 16MB
+I (48) boot: Enabling RNG early entropy source...
+I (52) boot: Partition Table:
+I (55) boot: ## Label            Usage          Type ST Offset   Length
+I (61) boot:  0 nvs              WiFi data        01 02 00009000 00005000
+I (68) boot:  1 otadata          OTA data         01 00 0000e000 00002000
+I (74) boot:  2 ota_0            OTA app          00 10 00010000 00700000
+I (81) boot:  3 ota_1            OTA app          00 11 00710000 00700000
+I (87) boot:  4 storage          Unknown data     01 82 00e10000 001e0000
+I (94) boot: End of partition table
+I (97) esp_image: segment 0: paddr=00710020 vaddr=3c170020 size=3d0860h (3999840) map
+I (837) esp_image: segment 1: paddr=00ae0888 vaddr=3fc94d40 size=072a8h ( 29352) load
+I (844) esp_image: segment 2: paddr=00ae7b38 vaddr=40374000 size=084e0h ( 34016) load
+I (852) esp_image: segment 3: paddr=00af0020 vaddr=42000020 size=167010h (1470480) map
+I (1121) esp_image: segment 4: paddr=00c57038 vaddr=4037c4e0 size=0885ch ( 34908) load
+I (1137) boot: Loaded app from partition at offset 0x710000
+I (1137) boot: Disabling RNG early entropy source...
+E (1156) esp_core_dump_flash: No core dump partition found!
+E (1156) esp_core_dump_flash: No core dump partition found!
+[

@@ -1,0 +1,306 @@
+#ifndef EEZ_LVGL_UI_SCREENS_H
+#define EEZ_LVGL_UI_SCREENS_H
+
+#include <lvgl.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct _objects_t {
+    lv_obj_t *main_0;
+    lv_obj_t *main_1;
+    lv_obj_t *main_2;
+    lv_obj_t *main_3;
+    lv_obj_t *obj0;
+    lv_obj_t *btn0_1;
+    lv_obj_t *lablef0_1;
+    lv_obj_t *lablee0_1;
+    lv_obj_t *btn0_2;
+    lv_obj_t *panel0_1;
+    lv_obj_t *btn0_4;
+    lv_obj_t *lablef0_4;
+    lv_obj_t *lablee0_4;
+    lv_obj_t *btn0_5;
+    lv_obj_t *lablef0_5;
+    lv_obj_t *lablee0_5;
+    lv_obj_t *btn0_3;
+    lv_obj_t *lablee0_3;
+    lv_obj_t *lablef0_3;
+    lv_obj_t *spinner0_1;
+    lv_obj_t *emg;
+    lv_obj_t *obj1;
+    lv_obj_t *arc1_1;
+    lv_obj_t *lable1_3;
+    lv_obj_t *panel1_2;
+    lv_obj_t *lable1_1;
+    lv_obj_t *lable1_2;
+    lv_obj_t *btn1_2;
+    lv_obj_t *btn1_1;
+    lv_obj_t *obj2;
+    lv_obj_t *obj3;
+    lv_obj_t *obj4;
+    lv_obj_t *label_version_1;
+    lv_obj_t *anim1_1;
+    lv_obj_t *anim1_2;
+    lv_obj_t *panel1_1;
+    lv_obj_t *btn1_4;
+    lv_obj_t *lablef1_2;
+    lv_obj_t *lablee1_2;
+    lv_obj_t *btn1_5;
+    lv_obj_t *lablef1_3;
+    lv_obj_t *lablee1_3;
+    lv_obj_t *btn1_3;
+    lv_obj_t *lablee1_1;
+    lv_obj_t *lablef1_1;
+    lv_obj_t *panel1_3;
+    lv_obj_t *btn1_6;
+    lv_obj_t *btn1_7;
+    lv_obj_t *bar1_1;
+    lv_obj_t *lbl_bar1_1;
+    lv_obj_t *lbl_spd2_1;
+    lv_obj_t *lbl_spd2_2;
+    lv_obj_t *lablef1_4;
+    lv_obj_t *lablee1_4;
+    lv_obj_t *lablee1_6;
+    lv_obj_t *lablef1_6;
+    lv_obj_t *led1_1;
+    lv_obj_t *tabview2_1;
+    lv_obj_t *obj5;
+    lv_obj_t *lablef2_1;
+    lv_obj_t *lablee2_1;
+    lv_obj_t *roller2_1;
+    lv_obj_t *img2_2;
+    lv_obj_t *img2_1;
+    lv_obj_t *normally_closed;
+    lv_obj_t *st_bt_co;
+    lv_obj_t *normally_open;
+    lv_obj_t *panel_no;
+    lv_obj_t *panel_nc;
+    lv_obj_t *obj6;
+    lv_obj_t *obj7;
+    lv_obj_t *lablef2_2;
+    lv_obj_t *lablee2_2;
+    lv_obj_t *slider2_1;
+    lv_obj_t *slider2_2;
+    lv_obj_t *lablef2_6;
+    lv_obj_t *lablef2_7;
+    lv_obj_t *lablee2_6;
+    lv_obj_t *lablee2_7;
+    lv_obj_t *obj8;
+    lv_obj_t *obj9;
+    lv_obj_t *lable2_2;
+    lv_obj_t *obj10;
+    lv_obj_t *lable2_3;
+    lv_obj_t *btn2_3;
+    lv_obj_t *lablef2_8;
+    lv_obj_t *lablee2_8;
+    lv_obj_t *btn2_4;
+    lv_obj_t *lablef2_9;
+    lv_obj_t *lablee2_9;
+    lv_obj_t *obj11;
+    lv_obj_t *obj12;
+    lv_obj_t *lable2_5;
+    lv_obj_t *btn2_8;
+    lv_obj_t *lablef2_25;
+    lv_obj_t *lablee2_25;
+    lv_obj_t *panel2_1;
+    lv_obj_t *btn2_5;
+    lv_obj_t *lablef2_10;
+    lv_obj_t *lablee2_10;
+    lv_obj_t *btn2_6;
+    lv_obj_t *lablef2_11;
+    lv_obj_t *lablee2_11;
+    lv_obj_t *btn2_7;
+    lv_obj_t *lablee2_12;
+    lv_obj_t *lablef2_12;
+    lv_obj_t *obj13;
+    lv_obj_t *obj14;
+    lv_obj_t *lablef2_3;
+    lv_obj_t *lablee2_3;
+    lv_obj_t *btn2_3_2;
+    lv_obj_t *lablef2_13;
+    lv_obj_t *lablee2_13;
+    lv_obj_t *btn2_3_4;
+    lv_obj_t *lablef2_15;
+    lv_obj_t *lablee2_15;
+    lv_obj_t *btn2_3_6;
+    lv_obj_t *lablef2_17;
+    lv_obj_t *lablee2_17;
+    lv_obj_t *btn2_3_1;
+    lv_obj_t *lablef2_14;
+    lv_obj_t *lablee2_14;
+    lv_obj_t *btn2_3_3;
+    lv_obj_t *lablef2_16;
+    lv_obj_t *lablee2_16;
+    lv_obj_t *btn2_3_5;
+    lv_obj_t *lablef2_18;
+    lv_obj_t *lablee2_18;
+    lv_obj_t *lablef2_19;
+    lv_obj_t *lablee2_19;
+    lv_obj_t *led2_3_1;
+    lv_obj_t *lablef2_20;
+    lv_obj_t *lablee2_20;
+    lv_obj_t *led2_3_2;
+    lv_obj_t *lablef2_21;
+    lv_obj_t *lablee2_21;
+    lv_obj_t *led2_3_3;
+    lv_obj_t *lablef2_28;
+    lv_obj_t *lablee2_28;
+    lv_obj_t *led2_3_7;
+    lv_obj_t *lablef2_22;
+    lv_obj_t *lablee2_22;
+    lv_obj_t *led2_3_4;
+    lv_obj_t *lablef2_23;
+    lv_obj_t *lablef2_26;
+    lv_obj_t *lablee2_23;
+    lv_obj_t *lablee2_26;
+    lv_obj_t *led2_3_6;
+    lv_obj_t *led2_3_5;
+    lv_obj_t *lablef2_29;
+    lv_obj_t *lablee2_29;
+    lv_obj_t *led2_3_8;
+    lv_obj_t *obj15;
+    lv_obj_t *obj16;
+    lv_obj_t *lablef2_4;
+    lv_obj_t *lablee2_4;
+    lv_obj_t *obj17;
+    lv_obj_t *roller2_2;
+    lv_obj_t *lablee2_24;
+    lv_obj_t *lablef2_24;
+    lv_obj_t *obj18;
+    lv_obj_t *lablee2_27;
+    lv_obj_t *lablef2_27;
+    lv_obj_t *sw2_1;
+    lv_obj_t *btn_dir_rast;
+    lv_obj_t *btn_dir_chap;
+    lv_obj_t *obj19;
+    lv_obj_t *obj20;
+    lv_obj_t *lablef2_5;
+    lv_obj_t *lablee2_5;
+    lv_obj_t *btn2_1;
+    lv_obj_t *btn_save;
+    lv_obj_t *obj21;
+    lv_obj_t *obj22;
+    lv_obj_t *btn3_1;
+    lv_obj_t *lablef3_1;
+    lv_obj_t *lablee3_1;
+    lv_obj_t *lablef3_2;
+    lv_obj_t *lablee3_2;
+    lv_obj_t *panel3_1;
+    lv_obj_t *panel3_1_1;
+    lv_obj_t *lable3_1_1;
+    lv_obj_t *lable3_2_1;
+    lv_obj_t *panel3_2_1;
+    lv_obj_t *obj23;
+    lv_obj_t *btn3_1_1;
+    lv_obj_t *obj24;
+    lv_obj_t *panel3_1_2;
+    lv_obj_t *lable3_1_2;
+    lv_obj_t *lable3_2_2;
+    lv_obj_t *panel3_2_2;
+    lv_obj_t *obj25;
+    lv_obj_t *btn3_1_2;
+    lv_obj_t *obj26;
+    lv_obj_t *panel3_1_3;
+    lv_obj_t *lable3_1_3;
+    lv_obj_t *lable3_2_3;
+    lv_obj_t *panel3_2_3;
+    lv_obj_t *obj27;
+    lv_obj_t *btn3_1_3;
+    lv_obj_t *obj28;
+    lv_obj_t *panel3_1_4;
+    lv_obj_t *lable3_1_4;
+    lv_obj_t *lable3_2_4;
+    lv_obj_t *panel3_2_4;
+    lv_obj_t *obj29;
+    lv_obj_t *btn3_1_4;
+    lv_obj_t *obj30;
+    lv_obj_t *panel3_1_5;
+    lv_obj_t *lable3_1_5;
+    lv_obj_t *lable3_2_5;
+    lv_obj_t *panel3_2_5;
+    lv_obj_t *obj31;
+    lv_obj_t *btn3_1_5;
+    lv_obj_t *obj32;
+    lv_obj_t *panel3_1_6;
+    lv_obj_t *lable3_1_6;
+    lv_obj_t *lable3_2_6;
+    lv_obj_t *panel3_2_6;
+    lv_obj_t *obj33;
+    lv_obj_t *btn3_1_6;
+    lv_obj_t *obj34;
+    lv_obj_t *panel3_1_7;
+    lv_obj_t *lable3_1_7;
+    lv_obj_t *lable3_2_7;
+    lv_obj_t *panel3_2_7;
+    lv_obj_t *obj35;
+    lv_obj_t *btn3_1_7;
+    lv_obj_t *obj36;
+    lv_obj_t *panel3_1_8;
+    lv_obj_t *lable3_1_8;
+    lv_obj_t *lable3_2_8;
+    lv_obj_t *panel3_2_8;
+    lv_obj_t *obj37;
+    lv_obj_t *btn3_1_8;
+    lv_obj_t *obj38;
+    lv_obj_t *panel3_1_9;
+    lv_obj_t *lable3_1_9;
+    lv_obj_t *lable3_2_9;
+    lv_obj_t *panel3_2_9;
+    lv_obj_t *obj39;
+    lv_obj_t *btn3_1_9;
+    lv_obj_t *obj40;
+    lv_obj_t *panel3_1_10;
+    lv_obj_t *lable3_1_10;
+    lv_obj_t *lable3_2_10;
+    lv_obj_t *panel3_2_10;
+    lv_obj_t *obj41;
+    lv_obj_t *btn3_1_10;
+    lv_obj_t *obj42;
+    lv_obj_t *btn3_2;
+    lv_obj_t *btn3_3;
+    lv_obj_t *lablef3_0;
+    lv_obj_t *lablee3_0;
+    lv_obj_t *lablef_save;
+    lv_obj_t *lablee_save;
+    lv_obj_t *lablef_print;
+    lv_obj_t *lablee_print;
+    lv_obj_t *lablef_dir_rast;
+    lv_obj_t *lablee_dir_rast;
+    lv_obj_t *lablef_dir_chap;
+    lv_obj_t *lablee_dir_chap;
+} objects_t;
+
+extern objects_t objects;
+
+enum ScreensEnum {
+    SCREEN_ID_MAIN_0 = 1,
+    SCREEN_ID_MAIN_1 = 2,
+    SCREEN_ID_MAIN_2 = 3,
+    SCREEN_ID_MAIN_3 = 4,
+};
+
+void create_screen_main_0();
+void tick_screen_main_0();
+
+void create_screen_main_1();
+void tick_screen_main_1();
+
+void create_screen_main_2();
+void tick_screen_main_2();
+
+void create_screen_main_3();
+void tick_screen_main_3();
+
+void tick_screen_by_id(enum ScreensEnum screenId);
+void tick_screen(int screen_index);
+
+void create_screens();
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /*EEZ_LVGL_UI_SCREENS_H*/

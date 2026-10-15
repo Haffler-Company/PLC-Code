@@ -1,0 +1,219 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Scenario Lab — Metr &amp; Cutter</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0f1115;color:#e8eaed;font-family:Tahoma,Segoe UI,sans-serif}
+.wrap{max-width:1200px;margin:0 auto;padding:12px 16px 28px}
+.warn{background:#3a2208;border:1px solid #FF9500;color:#ffd8a8;padding:10px 12px;border-radius:10px;font-size:12px;line-height:1.55;margin-bottom:12px}
+h1{font-size:16px;margin:0 0 6px} .sub{color:#9aa0a6;font-size:12px;margin:0 0 12px}
+.grid{display:grid;grid-template-columns:280px 1fr 300px;gap:12px}
+@media(max-width:1000px){.grid{grid-template-columns:1fr}}
+.panel{background:#1a1d24;border:1px solid #2c313c;border-radius:12px;padding:10px;min-height:420px}
+.panel h2{font-size:13px;margin:0 0 8px;color:#9aa0a6;font-weight:700}
+.sc{display:block;width:100%;text-align:right;border:0;border-radius:8px;padding:8px 10px;margin:0 0 6px;background:#252a33;color:#e8eaed;cursor:pointer;font:600 12px Tahoma}
+.sc:hover{background:#30363f}.sc.on{background:#0A84FF}.sc.pass{outline:1px solid #34C759}.sc.fail{outline:1px solid #FF3B30}
+.fn{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.btn{border:0;border-radius:8px;padding:8px 10px;background:#30363f;color:#fff;font:700 12px Tahoma;cursor:pointer}
+.btn.ok{background:#1C9B67}.btn.danger{background:#B90000}.btn.pri{background:#0A84FF}.btn.warn{background:#FF9500;color:#111}
+.kv{font:12px/1.5 Consolas,monospace;background:#0d0f13;border-radius:8px;padding:10px;white-space:pre-wrap;max-height:360px;overflow:auto;direction:ltr;text-align:left}
+.log{font:11px/1.45 Consolas,monospace;background:#0d0f13;border-radius:8px;padding:8px;max-height:280px;overflow:auto;direction:ltr;text-align:left}
+.log div{color:#9cdcfe}.log .bad{color:#FF3B30}.log .ok{color:#34C759}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+a{color:#0A84FF}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;background:#252a33;font-size:11px;margin-left:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="warn">
+    صادقانه: این ابزار <b>منطق و سناریو</b> است (رفرنس، لقی ۵mm، لیست، FFD، برش، گیت تنظیمات، E-stop).
+    ظاهر پیکسلی مانیتور تو فقط با <b>SHOT برد</b> تأیید می‌شود — hub عکس قدیمی شبیه‌ساز واقعی نیست.
+    وقتی کد فریمور عوض می‌شود، باید سناریوی مربوط همین‌جا یا در <code>machine_sim.py</code> به‌روز شود.
+  </div>
+  <h1>آزمایشگاه سناریو <span class="badge" id="ver">V.1.6.50</span></h1>
+  <p class="sub">گردش‌کار اپراتور + مرجع <code>docs/REFERENCE.md</code> · هم‌تراز <code>tools/machine_sim.py</code> ·
+    CLI: <code>python tools/machine_sim.py --test</code>
+  </p>
+  <div class="bar">
+    <button class="btn ok" id="runAll" type="button">اجرای همه سناریوها</button>
+    <button class="btn pri" id="runOne" type="button">اجرای انتخاب‌شده</button>
+    <button class="btn" id="reset" type="button">ریست ماشین</button>
+    <button class="btn danger" id="estop" type="button">E-STOP</button>
+    <span id="sum" style="font:700 13px Tahoma;margin-inline-start:8px"></span>
+  </div>
+  <div id="guide" class="fn" style="margin-bottom:10px"></div>
+  <div style="display:flex;justify-content:center;margin:0 0 12px">
+    <div id="lcd" style="width:480px;height:320px;max-width:100%;background:#C8CCD0;border-radius:10px;position:relative;overflow:hidden;border:2px solid #3a3f48;box-shadow:0 8px 24px rgba(0,0,0,.4)"></div>
+  </div>
+  <div class="grid">
+    <div class="panel">
+      <h2>سناریوها (<span id="scount">0</span>)</h2>
+      <div id="slist"></div>
+    </div>
+    <div class="panel">
+      <h2>توابع دستی (گروه‌بندی)</h2>
+      <div id="fns"></div>
+      <h2>نتیجه سناریو</h2>
+      <div class="kv" id="result">گردش‌کار را برو، سناریو انتخاب کن، یا Run All بزن.</div>
+    </div>
+    <div class="panel">
+      <h2>State</h2>
+      <div class="kv" id="state"></div>
+      <h2 style="margin-top:10px">Log</h2>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var BACKLASH=5, LIST_MAX=100, ROWS=5;
+  function Machine(){
+    this.scr="home"; this.referenced=false; this.pos_mm=0; this.pos_before_ref=0;
+    this.sp_mm=60; this.in_pos=false; this.fine=false; this.jogging=false; this.moving=false;
+    this.count="--"; this.selected=-1; this.user_cuts=0; this.stock=6000; this.kerf=3; this.trim=0;
+    this.list_vis=5; this.list_page=0;
+    this.list_sp=[2000,1500,580,860,1200].concat(Array(95).fill(0));
+    this.list_cnt=[6,10,20,8,6].concat(Array(95).fill(0));
+    this.opt_packs=[]; this.opt_idx=0; this.opt_waste=0; this.opt_mode=false;
+    this.sensor_modal=false; this.sensor_lock=false; this.ref_fail=false;
+    this.cutting=false; this.saw_on=false; this.clamp_free=true; this.motor_idle=true;
+    this.log=[]; this.last_toast=""; this.last_print="";
+  }
+  Machine.prototype.note=function(m){this.log.push(m);};
+  Machine.prototype.toast=function(m){this.last_toast=m;this.note("toast:"+m);};
+  Machine.prototype.can_enter_settings=function(){return !this.cutting&&!this.saw_on&&this.clamp_free&&this.motor_idle&&!this.moving;};
+  Machine.prototype.goto=function(s){if(["f1","f2","f3","f4","f5"].indexOf(s)>=0&&!this.can_enter_settings()){this.toast("settings blocked");return false;}this.scr=s;this.note("scr="+s);return true;};
+  Machine.prototype.boot=function(){this.scr="home";this.referenced=false;this.note("boot splash -> home");};
+  Machine.prototype.ref_start=function(){this.pos_before_ref=this.pos_mm;this.note("ref stage1");this.note("ref stage2");this.referenced=true;this.pos_mm=0;this.ref_fail=false;this.scr="main";this.note("ref OK");return true;};
+  Machine.prototype.ref_fail_timeout=function(){this.ref_fail=true;this.referenced=false;this.pos_mm=this.pos_before_ref;this.toast("ref fail");};
+  Machine.prototype.ref_wrong_dir=function(){this.ref_fail=true;this.referenced=false;this.pos_mm=this.pos_before_ref;this.toast("wrong motor dir");};
+  Machine.prototype.plan_move=function(t){if(t<this.pos_mm)return[[t-BACKLASH,"left_overshoot"],[t,"return_to_target"]];return[[t,t>this.pos_mm?"direct_right":"already"]];};
+  Machine.prototype.move_to_sp=function(){if(!this.referenced){this.toast("not referenced");return false;}if(this.sensor_lock){this.toast("sensor lock");return false;}if(this.jogging){this.toast("jogging");return false;}var legs=this.plan_move(this.sp_mm);for(var i=0;i<legs.length;i++){this.note("move->"+legs[i][0]+" ("+legs[i][1]+")");this.pos_mm=legs[i][0];}this.motor_idle=true;this.moving=false;this.in_pos=Math.abs(this.pos_mm-this.sp_mm)<0.05;return true;};
+  Machine.prototype.set_sp=function(v,lo,hi){lo=lo||0;hi=(hi==null?this.stock:hi);if(v<lo||v>hi){this.toast("sp out of range");this.sp_mm=Math.max(lo,Math.min(hi,v));return false;}this.sp_mm=v;this.in_pos=Math.abs(this.pos_mm-this.sp_mm)<0.05;return true;};
+  Machine.prototype.single_start=function(){if(this.jogging){this.stop_jog();return true;}return this.move_to_sp();};
+  Machine.prototype.jog=function(d){if(!this.referenced){this.toast("not referenced");return false;}if(this.sensor_lock){this.toast("sensor lock");return false;}this.jogging=true;this.motor_idle=false;this.pos_mm+=d*(this.fine?1/6:1);this.in_pos=false;this.note("jog");return true;};
+  Machine.prototype.stop_jog=function(){this.jogging=false;this.motor_idle=true;this.note("stopJog");};
+  Machine.prototype.hit_limit=function(w){this.sensor_modal=true;this.sensor_lock=true;this.jogging=false;this.moving=false;this.motor_idle=true;this.toast("limit "+w);};
+  Machine.prototype.ack_sensor=function(){this.sensor_modal=false;this.sensor_lock=false;};
+  Machine.prototype.max_top=function(){return this.list_vis<=ROWS?0:this.list_vis-ROWS;};
+  Machine.prototype.page_change=function(d){var n=this.list_page+d;if(n<0||n>this.max_top())return false;this.list_page=n;return true;};
+  Machine.prototype.add_row=function(){if(this.list_vis>=LIST_MAX)return false;var i=this.list_vis;this.list_sp[i]=0;this.list_cnt[i]=0;this.list_vis++;this.list_page=Math.max(0,this.list_vis-ROWS);return true;};
+  Machine.prototype.rem_row=function(){if(this.list_vis<=0)return false;this.list_vis--;this.list_page=Math.min(this.list_page,this.max_top());return true;};
+  Machine.prototype.clear_counts=function(){if(this.cutting||this.opt_mode){this.toast("busy");return;}for(var i=0;i<LIST_MAX;i++)this.list_cnt[i]=0;this.toast("counts cleared");};
+  Machine.prototype.select_row=function(i){if(i<0||i>=this.list_vis)return false;this.selected=i;this.sp_mm=this.list_sp[i];this.count=String(this.list_cnt[i]);this.in_pos=false;this.scr="main";return true;};
+  Machine.prototype.next_row=function(){var start=this.selected<0?0:this.selected+1,i;for(i=start;i<this.list_vis;i++)if(this.list_cnt[i]>0)return this.select_row(i);this.toast("list end");return false;};
+  Machine.prototype.run_ffd=function(){var pieces=[],useful=this.stock-this.trim,i,k;for(i=0;i<this.list_vis;i++){var L=this.list_sp[i],C=this.list_cnt[i];if(L<=0||C<=0)continue;if(L>useful){this.toast("row "+(i+1)+" > stock");return false;}for(k=0;k<C;k++)pieces.push({L:L,src:i});}if(!pieces.length){this.toast("empty list");return false;}pieces.sort(function(a,b){return b.L-a.L;});var branches=[],p,b,placed,need;for(p=0;p<pieces.length;p++){placed=false;need=pieces[p].L+this.kerf;for(b=0;b<branches.length;b++){if(branches[b].left>=need){branches[b].left-=need;branches[b].items.push(pieces[p]);placed=true;break;}}if(!placed){if(pieces[p].L>useful){this.toast("too long");return false;}branches.push({left:useful-pieces[p].L-this.kerf,items:[pieces[p]]});}}this.opt_packs=branches;this.opt_idx=0;this.opt_waste=Math.round(branches.reduce(function(s,x){return s+Math.max(0,x.left);},0));this.opt_mode=true;this.scr="opt";this.note("FFD B="+branches.length);return true;};
+  Machine.prototype.opt_move=function(){if(!this.opt_packs.length)return false;var b=this.opt_packs[this.opt_idx];if(!b.items.length){this.toast("empty branch");return false;}this.sp_mm=b.items[0].L;this.in_pos=false;return this.move_to_sp();};
+  Machine.prototype.opt_skip=function(){if(!this.opt_packs.length)return;var b=this.opt_packs[this.opt_idx];if(b.items.length)b.items.shift();if(!b.items.length&&this.opt_idx<this.opt_packs.length-1)this.opt_idx++;};
+  Machine.prototype.confirm_cut=function(){var i,j;if(this.selected<0){for(i=0;i<this.list_vis;i++)if(this.list_cnt[i]>0){this.selected=i;break;}}if(this.selected<0){this.toast("no row");return false;}i=this.selected;if(this.list_cnt[i]<=0){this.toast("qty 0");return false;}this.list_cnt[i]--;this.user_cuts++;this.count=String(this.list_cnt[i]);this.last_print=this.opt_mode?(Math.round(this.sp_mm)+" B"+(this.opt_idx+1)):String(Math.round(this.sp_mm));this.note("cut "+this.last_print);if(this.list_cnt[i]<=0){for(j=i+1;j<this.list_vis;j++)if(this.list_cnt[j]>0){this.select_row(j);return true;}for(j=0;j<i;j++)if(this.list_cnt[j]>0){this.select_row(j);return true;}this.toast("list done");this.selected=-1;}return true;};
+  Machine.prototype.estop=function(){this.cutting=false;this.saw_on=false;this.jogging=false;this.moving=false;this.motor_idle=true;this.note("E-STOP");};
+  Machine.prototype.snap=function(){return {scr:this.scr,ref:this.referenced,pos:this.pos_mm,sp:this.sp_mm,in_pos:this.in_pos,fine:this.fine,jog:this.jogging,count:this.count,sel:this.selected,cuts:this.user_cuts,stock:this.stock,kerf:this.kerf,trim:this.trim,list_vis:this.list_vis,page:this.list_page,optB:this.opt_packs.length,optIdx:this.opt_idx,waste:this.opt_waste,opt:this.opt_mode,sensor_lock:this.sensor_lock,cutting:this.cutting,saw:this.saw_on,toast:this.last_toast,print:this.last_print};};
+
+  function assert(c,m){if(!c)throw new Error(m);}
+  var SCENARIOS=[
+    {id:"1.3",title:"بوت → خانه → رفرنس → اصلی",run:function(m){m.boot();assert(m.scr==="home"&&!m.referenced,"home");m.ref_start();assert(m.scr==="main"&&m.referenced,"main");}},
+    {id:"2.1",title:"رفرنس ۲ مرحله موفق",run:function(m){m.pos_mm=120;m.ref_start();assert(m.referenced&&m.pos_mm===0&&m.scr==="main","ref");}},
+    {id:"2.2",title:"شکست رفرنس → بازگردانی موقعیت",run:function(m){m.pos_mm=120;m.pos_before_ref=120;m.ref_fail_timeout();assert(m.pos_mm===120&&!m.referenced,"restore");}},
+    {id:"2.2b",title:"جهت اشتباه موتور",run:function(m){m.pos_mm=80;m.pos_before_ref=80;m.ref_wrong_dir();assert(m.pos_mm===80&&m.last_toast.indexOf("wrong")>=0,"dir");}},
+    {id:"3.2",title:"حرکت چپ با لقی ۵mm",run:function(m){m.referenced=true;m.pos_mm=500;m.sp_mm=100;var L=m.plan_move(100);assert(L.length===2&&L[0][0]===95,"bl");m.move_to_sp();assert(m.in_pos&&m.pos_mm===100,"arr");}},
+    {id:"3.2r",title:"حرکت راست مستقیم",run:function(m){m.referenced=true;m.pos_mm=100;m.sp_mm=500;assert(m.plan_move(500)[0][1]==="direct_right","r");}},
+    {id:"3.2c",title:"SP خارج محدوده → توست+clamp",run:function(m){m.referenced=true;m.stock=6000;assert(!m.set_sp(9000)&&m.sp_mm===6000,"hi");assert(m.set_sp(1200)&&m.sp_mm===1200,"ok");}},
+    {id:"3.3",title:"جاگ فاین ÷۶ و Stop",run:function(m){m.referenced=true;m.pos_mm=0;m.fine=true;m.jog(1);assert(Math.abs(m.pos_mm-1/6)<1e-6,"fine");m.stop_jog();assert(!m.jogging&&m.motor_idle,"stop");}},
+    {id:"3.3b",title:"استارت تکی=Enter یا StopJog",run:function(m){m.referenced=true;m.pos_mm=0;m.sp_mm=200;assert(m.single_start()&&m.in_pos,"move");m.jog(1);assert(m.jogging,"jog");m.single_start();assert(!m.jogging&&m.motor_idle,"stop");}},
+    {id:"3.4",title:"مودال سنسور تا ACK قفل",run:function(m){m.referenced=true;m.sp_mm=200;m.hit_limit("home");assert(m.sensor_lock&&!m.move_to_sp(),"lock");m.ack_sensor();assert(!m.sensor_lock,"unlock");}},
+    {id:"3.5",title:"ردیف بعد با تعداد",run:function(m){m.select_row(0);assert(m.next_row()&&m.selected===1,"next");m.selected=4;m.list_cnt=Array(LIST_MAX).fill(0);assert(!m.next_row()&&m.last_toast.indexOf("end")>=0,"end");}},
+    {id:"4.1",title:"صفحه‌بندی لیست top-index",run:function(m){m.list_vis=6;m.list_page=0;assert(m.page_change(1)&&m.list_page===1,"p");assert(!m.page_change(1),"end");}},
+    {id:"4.2",title:"ردیف جدید صفر + LIST_MAX",run:function(m){m.list_vis=0;assert(m.add_row()&&m.list_sp[0]===0,"new");m.list_vis=LIST_MAX;assert(!m.add_row(),"full");}},
+    {id:"4.4",title:"انتخاب ردیف → اصلی",run:function(m){m.select_row(1);assert(m.scr==="main"&&m.sp_mm===1500&&m.count==="10","load");}},
+    {id:"4.5",title:"تأیید برش و auto-next",run:function(m){m.select_row(0);var b=m.list_cnt[0];m.confirm_cut();assert(m.list_cnt[0]===b-1,"dec");m.list_cnt[0]=1;m.confirm_cut();assert(m.selected===1,"next");}},
+    {id:"4.6",title:"سطل فقط تعداد را صفر می‌کند",run:function(m){var sp=m.list_sp[0];m.clear_counts();assert(m.list_cnt[0]===0&&m.list_sp[0]===sp,"trash");}},
+    {id:"5.1",title:"FFD بسته‌بندی شاخه",run:function(m){assert(m.run_ffd()&&m.opt_packs.length>=1,"ffd");}},
+    {id:"5.4",title:"Move بهینه نیاز به رفرنس",run:function(m){m.run_ffd();m.referenced=false;assert(!m.opt_move(),"need");m.referenced=true;assert(m.opt_move()&&m.in_pos,"ok");}},
+    {id:"5.6a",title:"FFD لیست خالی",run:function(m){m.list_cnt=Array(LIST_MAX).fill(0);assert(!m.run_ffd()&&m.last_toast.indexOf("empty")>=0,"empty");}},
+    {id:"5.6b",title:"FFD ردیف بلندتر از شاخه",run:function(m){m.stock=1000;m.trim=0;m.list_sp[0]=2000;m.list_cnt[0]=1;assert(!m.run_ffd()&&m.last_toast.indexOf("row")>=0,"long");}},
+    {id:"5.9",title:"پرینت لیبل طول Bn",run:function(m){m.referenced=true;m.run_ffd();m.select_row(0);m.opt_mode=true;m.opt_idx=2;m.confirm_cut();assert(/B3$/.test(m.last_print),m.last_print);}},
+    {id:"6.3",title:"E-STOP ایمن",run:function(m){m.cutting=true;m.saw_on=true;m.jogging=true;m.estop();assert(!m.cutting&&!m.saw_on&&!m.jogging&&m.motor_idle,"safe");}},
+    {id:"7.1",title:"گیت ورود تنظیمات (برش)",run:function(m){m.cutting=true;assert(!m.goto("f1"),"block");m.cutting=false;m.saw_on=false;m.clamp_free=true;m.motor_idle=true;assert(m.goto("f1"),"allow");}},
+    {id:"7.1b",title:"گیت تنظیمات (اره روشن)",run:function(m){m.saw_on=true;assert(!m.goto("f2"),"block");}}
+  ];
+
+  var GUIDE=[
+    {t:"۱ بوت",fn:function(m){m.boot();}},
+    {t:"۲ رفرنس",fn:function(m){m.ref_start();}},
+    {t:"۳ حرکت",fn:function(m){m.sp_mm=1200;m.move_to_sp();}},
+    {t:"۴ لیست",fn:function(m){m.select_row(0);}},
+    {t:"۵ برش",fn:function(m){m.confirm_cut();}},
+    {t:"۶ بهینه",fn:function(m){m.run_ffd();}},
+    {t:"۷ E-STOP",fn:function(m){m.estop();}}
+  ];
+
+  var m=new Machine(), cur=0, status={}, gcur=-1;
+  var slist=document.getElementById("slist"), result=document.getElementById("result"), stateEl=document.getElementById("state"), logEl=document.getElementById("log");
+  var lcd=document.getElementById("lcd"), sum=document.getElementById("sum");
+  document.getElementById("scount").textContent=String(SCENARIOS.length);
+
+  function paintLcd(){
+    var s=m.scr, html="", i, base=m.list_page;
+    function shell(body){return '<div style="position:absolute;inset:0;padding:10px;font-family:Tahoma,sans-serif">'+body+'</div>';}
+    if(s==="home") html=shell('<div style="font-weight:700;color:#111">موقعیت‌یابی</div><div style="font:700 40px Consolas;text-align:center;margin:50px 0;color:#333">REF?</div>');
+    else if(s==="list"){html='<div style="font-weight:700;color:#111;margin-bottom:6px">لیست برش · top='+m.list_page+'</div>';for(i=0;i<ROWS;i++){var g=base+i;if(g>=m.list_vis)break;html+='<div style="background:#fff;border-radius:8px;padding:6px 8px;margin:4px 0;display:flex;justify-content:space-between;font:12px Consolas;outline:'+(m.selected===g?'2px solid #0A84FF':'none')+'"><span>#'+(g+1)+'</span><span>'+m.list_sp[g]+' × '+m.list_cnt[g]+'</span></div>';}html=shell(html);}
+    else if(s==="opt") html=shell('<div style="font-weight:700;color:#111">بهینه FFD</div><div style="margin-top:40px;text-align:center;font:700 18px Consolas;color:#0A84FF">شاخه '+m.opt_packs.length+' · پرت '+m.opt_waste+'</div>');
+    else if(s.indexOf("f")===0) html=shell('<div style="font-weight:700;color:#111">تنظیمات '+s.toUpperCase()+'</div><div style="margin-top:30px;font:14px Consolas">stock '+m.stock+' / kerf '+m.kerf+' / trim '+m.trim+'</div>');
+    else html=shell('<div style="font-weight:700;color:#111">صفحه اصلی</div><div style="text-align:center;color:#0A84FF;font:700 16px Consolas;margin-top:8px">SP '+Math.round(m.sp_mm)+'</div><div style="text-align:center;font:700 48px Consolas;color:'+(m.in_pos?'#1C9B67':'#B90000')+';margin:20px 0">'+Math.round(m.pos_mm)+'</div><div style="position:absolute;left:10px;right:10px;bottom:10px;display:flex;justify-content:space-between;font:12px Tahoma;color:#333"><span>PCS '+m.count+' · shift '+m.user_cuts+'</span><span>'+(m.referenced?'REF':'NO REF')+(m.jogging?' · JOG':'')+'</span></div>');
+    if(m.last_toast) html+='<div style="position:absolute;left:50%;bottom:42px;transform:translateX(-50%);background:#212121;color:#fff;padding:6px 12px;border-radius:8px;font:700 12px Tahoma">'+m.last_toast+'</div>';
+    if(m.sensor_modal) html+='<div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff;border-radius:12px;padding:14px;width:260px;box-shadow:0 10px 30px rgba(0,0,0,.3)"><b style="color:#111">سنسور حد</b><div style="margin:8px 0;font-size:12px;color:#333">تا تأیید قفل است</div><button type="button" id="lcdAck" style="border:0;border-radius:8px;padding:8px 12px;background:#1C9B67;color:#fff;font:700 12px Tahoma;cursor:pointer">تأیید</button></div>';
+    lcd.innerHTML=html;
+    var ack=document.getElementById("lcdAck"); if(ack) ack.onclick=function(){m.ack_sensor();paint();};
+  }
+
+  function paint(){
+    stateEl.textContent=JSON.stringify(m.snap(),null,2);
+    logEl.innerHTML=m.log.slice(-24).map(function(x){return "<div>"+x+"</div>";}).join("");
+    Array.prototype.forEach.call(slist.children,function(b,i){b.classList.toggle("on",i===cur);b.classList.toggle("pass",status[SCENARIOS[i].id]==="pass");b.classList.toggle("fail",status[SCENARIOS[i].id]==="fail");});
+    Array.prototype.forEach.call(document.getElementById("guide").children,function(b,i){b.style.outline=i===gcur?"2px solid #0A84FF":(i<gcur?"1px solid #34C759":"none");});
+    paintLcd();
+  }
+  function runAt(i){
+    var s=SCENARIOS[i], mm=new Machine();
+    try{s.run(mm);status[s.id]="pass";result.textContent="PASS "+s.id+" — "+s.title+"\n\n"+JSON.stringify(mm.snap(),null,2);m=mm;return true;}
+    catch(e){status[s.id]="fail";result.textContent="FAIL "+s.id+" — "+s.title+"\n"+e.message;m=mm;return false;}
+  }
+
+  SCENARIOS.forEach(function(s,i){
+    var b=document.createElement("button");b.type="button";b.className="sc";b.textContent=s.id+"  "+s.title;
+    b.onclick=function(){cur=i;paint();};slist.appendChild(b);
+  });
+
+  GUIDE.forEach(function(g,i){
+    var b=document.createElement("button");b.type="button";b.className="btn pri";b.textContent=g.t;
+    b.onclick=function(){gcur=i;g.fn(m);result.textContent="Guide: "+g.t;paint();};
+    document.getElementById("guide").appendChild(b);
+  });
+
+  var groups=[
+    ["رفرنس/بوت",[["بوت",function(){m.boot();},""],["رفرنس OK",function(){m.ref_start();},"ok"],["رفرنس FAIL",function(){m.pos_before_ref=m.pos_mm;m.ref_fail_timeout();},"danger"],["جهت غلط",function(){m.pos_before_ref=m.pos_mm;m.ref_wrong_dir();},"danger"]]],
+    ["حرکت",[["SP=1200",function(){m.set_sp(1200);},"pri"],["حرکت به SP",function(){m.move_to_sp();},"pri"],["Enter/استارت",function(){m.single_start();},"ok"],["Jog L",function(){m.jog(-1);},""],["Jog R",function(){m.jog(1);},""],["Stop Jog",function(){m.stop_jog();},"warn"],["Fine",function(){m.fine=!m.fine;},""]]],
+    ["ایمنی",[["سنسور",function(){m.hit_limit("home");},"danger"],["ACK سنسور",function(){m.ack_sensor();},"ok"],["برش=busy",function(){m.cutting=!m.cutting;},"warn"],["اره ON",function(){m.saw_on=!m.saw_on;},"warn"]]],
+    ["لیست",[["برو لیست",function(){m.scr="list";},""],["لیست+",function(){m.add_row();m.scr="list";},""],["صفحه+",function(){m.page_change(1);},""],["ردیف۱",function(){m.select_row(0);},"pri"],["ردیف بعد",function(){m.next_row();},"pri"],["سطل",function(){m.clear_counts();},"danger"],["Cut OK",function(){m.confirm_cut();},"ok"]]],
+    ["بهینه/تنظیمات",[["FFD",function(){m.run_ffd();},"warn"],["Opt Move",function(){m.opt_move();},"ok"],["Opt Skip",function(){m.opt_skip();},""],["F1",function(){m.goto("f1");},""],["F3",function(){m.goto("f3");},""],["اصلی",function(){m.scr="main";},""]]]
+  ];
+  var fnBox=document.getElementById("fns");
+  groups.forEach(function(g){
+    var lab=document.createElement("div");lab.style.cssText="font-size:11px;color:#8E8E93;margin:6px 0 4px";lab.textContent=g[0];fnBox.appendChild(lab);
+    var row=document.createElement("div");row.className="fn";
+    g[1].forEach(function(f){var b=document.createElement("button");b.type="button";b.className="btn "+(f[2]||"");b.textContent=f[0];b.onclick=function(){f[1]();paint();};row.appendChild(b);});
+    fnBox.appendChild(row);
+  });
+
+  document.getElementById("runOne").onclick=function(){runAt(cur);paint();};
+  document.getElementById("runAll").onclick=function(){var ok=0,bad=0,lines=[];for(var i=0;i<SCENARIOS.length;i++){if(runAt(i))ok++;else bad++;lines.push((status[SCENARIOS[i].id]==="pass"?"OK ":"FAIL ")+SCENARIOS[i].id);}sum.textContent=ok+" pass / "+bad+" fail";sum.style.color=bad?"#FF3B30":"#34C759";result.textContent="All: "+ok+" pass / "+bad+" fail\n\n"+lines.join("\n");paint();};
+  document.getElementById("reset").onclick=function(){m=new Machine();gcur=-1;result.textContent="reset";sum.textContent="";paint();};
+  document.getElementById("estop").onclick=function(){m.estop();paint();};
+  paint();
+})();
+</script>
+</body>
+</html>

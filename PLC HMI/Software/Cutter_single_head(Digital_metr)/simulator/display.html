@@ -1,0 +1,169 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Display Twin — ناوبری کامل</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0c0e12;color:#e8eaed;font-family:Tahoma,"Segoe UI",sans-serif}
+.wrap{max-width:1280px;margin:0 auto;padding:12px 14px 24px}
+h1{font-size:15px;margin:0 0 4px}
+.note{font-size:12px;color:#9aa0a6;margin:0 0 10px;line-height:1.5}
+.note b{color:#FFD60A} code{background:#1c212b;padding:1px 5px;border-radius:4px}
+.layout{display:grid;grid-template-columns:200px 1fr 260px;gap:12px}
+@media(max-width:1100px){.layout{grid-template-columns:1fr}}
+.nav,.logbox{background:#151922;border:1px solid #2a3140;border-radius:12px;padding:10px}
+.nav h2,.logbox h2{font-size:11px;color:#8e8e93;margin:0 0 8px}
+.g{margin:0 0 10px}
+.g label{display:block;font-size:10px;color:#6b7280;margin:0 0 4px}
+.btn{display:block;width:100%;text-align:right;border:0;border-radius:8px;padding:9px 10px;margin:0 0 5px;
+  background:#232936;color:#eee;font:700 12px Tahoma;cursor:pointer}
+.btn:hover{background:#2d3545}.btn.on{background:#0A84FF;color:#fff}
+.btn.sub{padding:7px 10px;font-size:11px;background:#1a2030}
+.tools{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tbtn{border:0;border-radius:8px;padding:8px 12px;background:#30363f;color:#fff;font:700 12px Tahoma;cursor:pointer}
+.tbtn.on{background:#1C9B67}
+.stage-wrap{display:flex;flex-direction:column;align-items:center}
+#frame{border-radius:6px;overflow:hidden;box-shadow:0 14px 48px rgba(0,0,0,.6);background:#000;position:relative}
+#screen{position:relative;width:960px;height:640px;transform-origin:top center}
+#screen.z1{width:480px;height:320px}
+#bg{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}
+#hits{position:absolute;inset:0}
+.hit{position:absolute;border:0;padding:0;background:transparent;cursor:pointer}
+.hit.debug{background:rgba(10,132,255,.28);outline:1px dashed rgba(10,132,255,.85)}
+.crumb{font-size:12px;color:#9aa0a6;margin:0 0 8px;align-self:stretch}
+.crumb b{color:#fff}
+.log{height:520px;overflow:auto;font:11px/1.45 Consolas,monospace;direction:ltr;text-align:left;color:#9cdcfe}
+.log .ok{color:#34C759}.log .bad{color:#FF3B30}.log .info{color:#FFD60A}
+.badge{display:inline-block;background:#1C9B67;color:#fff;font:700 10px Tahoma;padding:2px 7px;border-radius:999px;margin-right:6px}
+.miss{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.72);color:#fff;font:700 16px Tahoma;text-align:center;padding:20px}
+.miss.on{display:flex}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>شبیه‌ساز نمایشگر <span class="badge">SHOT واقعی + ناوبری</span></h1>
+  <p class="note">روی صفحه <b>کلیک کن</b> مثل دستگاه جابه‌جا شو. کیفیت: زوم ۲× پیکسل‌تیز.
+    تازه کردن: <code>python tools/refresh_display_refs.py --port COM8</code></p>
+  <div class="tools">
+    <button class="tbtn on" type="button" id="z2">کیفیت ۲×</button>
+    <button class="tbtn" type="button" id="z1">اندازه واقعی ۱×</button>
+    <button class="tbtn" type="button" id="btnHits">نقاط لمس</button>
+  </div>
+  <div class="layout">
+    <aside class="nav">
+      <h2>بخش‌های برنامه</h2>
+      <div class="g"><label>کار روزمره</label>
+        <button class="btn on" data-scr="main" type="button">۱. صفحه اصلی</button>
+        <button class="btn" data-scr="list" type="button">۲. لیست برش</button>
+        <button class="btn" data-scr="opt" type="button">۳. بهینه برش</button>
+      </div>
+      <div class="g"><label>تنظیمات (ورود از چرخ‌دنده)</label>
+        <button class="btn sub" data-scr="f1" type="button">F1 عمومی</button>
+        <button class="btn sub" data-scr="f2" type="button">F2 سرعت/حدود</button>
+        <button class="btn sub" data-scr="f3" type="button">F3 تست دستی</button>
+        <button class="btn sub" data-scr="f4" type="button">F4</button>
+        <button class="btn sub" data-scr="f5" type="button">F5 سرویس</button>
+      </div>
+      <div class="g"><label>سایر</label>
+        <button class="btn" data-scr="home" type="button">موقعیت‌یابی / Home</button>
+      </div>
+    </aside>
+    <div class="stage-wrap">
+      <div class="crumb">مسیر: <b id="crumb">اصلی</b></div>
+      <div id="frame"><div id="screen">
+        <img id="bg" alt="lcd"/>
+        <div id="hits"></div>
+        <div class="miss" id="miss">این صفحه هنوز SHOT ندارد.<br/>refresh_display_refs را دوباره بزن.</div>
+      </div></div>
+    </div>
+    <aside class="logbox">
+      <h2>لاگ ناوبری</h2>
+      <div class="log" id="log"></div>
+    </aside>
+  </div>
+</div>
+<script>
+(function(){
+  var SCALE=2;
+  var NAMES={main:"صفحه اصلی",list:"لیست برش",opt:"بهینه برش",f1:"F1 تنظیمات عمومی",f2:"F2 سرعت/حدود",f3:"F3 تست دستی",f4:"F4",f5:"F5 سرویس",home:"موقعیت‌یابی"};
+  var REF={
+    main:"refs/hi/ref_main.png",
+    list:"refs/hi/ref_list.png",
+    opt:"refs/hi/ref_opt.png",
+    f1:"refs/hi/ref_f1_idle.png",
+    f2:"refs/hi/ref_f2.png",
+    f3:"refs/hi/ref_f3.png",
+    f4:"refs/hi/ref_f4.png",
+    f5:"refs/hi/ref_f5.png",
+    home:"refs/hi/ref_home.png"
+  };
+  var REF1={};
+  Object.keys(REF).forEach(function(k){REF1[k]=REF[k].replace("refs/hi/","refs/");});
+  // firmware coords @ 480x320 — scaled in render
+  var HITS={
+    main:[[3,2,46,46,"goto:list"],[428,6,44,44,"goto:f1"],[140,55,90,36,"note:حالت دستی"],[150,70,180,40,"note:ویرایش setpoint"],[100,110,280,100,"note:حرکت/موقعیت"]],
+    list:[[3,2,44,39,"goto:main"],[55,2,44,39,"note:راهنما"],[321,2,44,39,"note:ردیف+"],[373,2,44,39,"note:ردیف-"],[425,2,44,39,"goto:opt"],
+      [7,91,456,40,"goto:main"],[7,135,456,40,"goto:main"],[7,179,456,40,"goto:main"],[7,223,456,40,"goto:main"],[7,267,456,40,"goto:main"]],
+    opt:[[8,6,44,39,"goto:list"],[56,6,44,39,"note:راهنما"]],
+    f1:[[6,6,44,39,"goto:main"],[55,6,44,39,"note:راهنما"],[316,6,44,39,"note:زبان"],[364,6,44,39,"note:ذخیره"],
+      [84,67,136,46,"note:طول شاخه"],[232,67,132,46,"note:عرض تیغه"],
+      [424,8,48,52,"goto:f1"],[424,64,48,52,"goto:f2"],[424,120,48,52,"goto:f3"],[424,176,48,52,"goto:f4"],[424,232,48,52,"goto:f5"]],
+    f2:[[6,6,44,39,"goto:main"],[424,8,48,52,"goto:f1"],[424,64,48,52,"goto:f2"],[424,120,48,52,"goto:f3"],[424,176,48,52,"goto:f4"],[424,232,48,52,"goto:f5"]],
+    f3:[[6,6,44,39,"goto:main"],[424,8,48,52,"goto:f1"],[424,64,48,52,"goto:f2"],[424,120,48,52,"goto:f3"],[424,176,48,52,"goto:f4"],[424,232,48,52,"goto:f5"]],
+    f4:[[6,6,44,39,"goto:main"],[424,8,48,52,"goto:f1"],[424,64,48,52,"goto:f2"],[424,120,48,52,"goto:f3"],[424,176,48,52,"goto:f4"],[424,232,48,52,"goto:f5"]],
+    f5:[[6,6,44,39,"goto:main"],[424,8,48,52,"goto:f1"],[424,64,48,52,"goto:f2"],[424,120,48,52,"goto:f3"],[424,176,48,52,"goto:f4"],[424,232,48,52,"goto:f5"]],
+    home:[[170,200,140,56,"goto:main"]]
+  };
+  var scr="main", debug=false, useHi=true;
+  var bg=document.getElementById("bg"), hits=document.getElementById("hits"), logEl=document.getElementById("log");
+  var screen=document.getElementById("screen"), miss=document.getElementById("miss"), crumb=document.getElementById("crumb");
+  function log(m,c){var d=document.createElement("div");d.className=c||"info";d.textContent="["+new Date().toLocaleTimeString("en-GB",{hour12:false})+"] "+m;logEl.prepend(d);}
+  function setScr(s){
+    if(!REF[s]) {log("صفحه نامعتبر","bad");return;}
+    scr=s; crumb.textContent=NAMES[s]||s;
+    document.querySelectorAll("[data-scr]").forEach(function(b){b.classList.toggle("on",b.dataset.scr===s);});
+    var src=(useHi?REF:REF1)[s]+"?t="+Date.now();
+    miss.classList.remove("on");
+    bg.onerror=function(){ miss.classList.add("on"); log("SHOT موجود نیست: "+s,"bad"); };
+    bg.onload=function(){ miss.classList.remove("on"); };
+    bg.src=src;
+    renderHits();
+    log("رفت به → "+(NAMES[s]||s),"ok");
+  }
+  function renderHits(){
+    var list=HITS[scr]||[], html="", sc=useHi?SCALE:1;
+    for(var i=0;i<list.length;i++){
+      var h=list[i];
+      html+='<button type="button" class="hit'+(debug?" debug":"")+'" data-act="'+h[4]+'" style="left:'+(h[0]*sc)+'px;top:'+(h[1]*sc)+'px;width:'+(h[2]*sc)+'px;height:'+(h[3]*sc)+'px" title="'+h[4]+'"></button>';
+    }
+    hits.innerHTML=html;
+  }
+  document.getElementById("screen").addEventListener("click",function(ev){
+    var el=ev.target.closest("[data-act]"); if(!el) return;
+    var a=el.getAttribute("data-act");
+    if(a.indexOf("goto:")===0){setScr(a.slice(5));return;}
+    if(a.indexOf("note:")===0){log(a.slice(5));return;}
+    log(a);
+  });
+  document.querySelectorAll("[data-scr]").forEach(function(b){
+    b.addEventListener("click",function(){setScr(b.dataset.scr);});
+  });
+  document.getElementById("btnHits").onclick=function(){debug=!debug;this.classList.toggle("on",debug);renderHits();};
+  document.getElementById("z2").onclick=function(){
+    useHi=true; SCALE=2; screen.classList.remove("z1");
+    document.getElementById("z2").classList.add("on"); document.getElementById("z1").classList.remove("on");
+    setScr(scr);
+  };
+  document.getElementById("z1").onclick=function(){
+    useHi=false; SCALE=1; screen.classList.add("z1");
+    document.getElementById("z1").classList.add("on"); document.getElementById("z2").classList.remove("on");
+    setScr(scr);
+  };
+  window.__displayTwin={goto:setScr};
+  setScr("main");
+})();
+</script>
+</body>
+</html>

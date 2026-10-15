@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "mimosa-finding-history/v1",
+  "runId": "20260822T175032524Z-11992-95bd0bf35351",
+  "runStatus": "inconclusive",
+  "errors": [
+    "baseline-read:C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h: baseline_snapshot_unreadable: file is missing from task baseline",
+    "baseline-read:C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/GUI_Func.h: baseline_snapshot_unreadable: file is missing from task baseline"
+  ],
+  "target": ".",
+  "revision": "a0d686a54c2bdf0084794807db7d154b1b21fb4e",
+  "diffHash": "b9c90c9572ff2f7bb149e31e83405622599adc7535bf8cfa4cc6b6f3e79d5762",
+  "rulesVersion": "unavailable",
+  "recordedAt": "2026-08-22T17:50:32.524Z",
+  "timing": {
+    "startedAt": "2026-08-22T17:50:30.082Z",
+    "completedAt": "2026-08-22T17:50:32.524Z",
+    "durationMs": 2442
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "modelCalls": 0,
+    "measurement": "known-zero"
+  },
+  "findings": {
+    "total": 2,
+    "bySeverity": {
+      "high": 1,
+      "medium": 1
+    },
+    "byStatus": {
+      "blocked": 1,
+      "candidate": 1
+    }
+  },
+  "coverage": {
+    "status": "partial",
+    "reasonCounts": {
+      "baseline_snapshot_unreadable": 2,
+      "project_check_failed": 2
+    }
+  },
+  "evidenceBoundary": "static_only",
+  "immutableReport": ".mimosa/reports/task-review-sess_32b16ca6-1fa6-4b09-b06a-b0d836b08a50-20260822T175032524Z-11992-95bd0bf35351.json"
+}

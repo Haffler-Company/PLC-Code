@@ -1,0 +1,806 @@
+{
+  "schema_version": "mimosa-task-review/v2",
+  "run_id": "20260822T171356607Z-13668-12c1c350d0db",
+  "run_status": "inconclusive",
+  "errors": [
+    {
+      "stage": "baseline-read",
+      "target": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    },
+    {
+      "stage": "baseline-read",
+      "target": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/fw_changelog.h",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    }
+  ],
+  "coverage": {
+    "schema_version": "mimosa-hook-coverage/v1",
+    "status": "partial",
+    "scope": "hook_observed_diff",
+    "baseline": {
+      "complete": true,
+      "captured_files": 1554,
+      "candidate_limit": 5000,
+      "truncated": false,
+      "enumeration_error_count": 0,
+      "snapshot_error_count": 0,
+      "compensated_target_count": 3
+    },
+    "change_tracking": {
+      "touched_observed": 2,
+      "touched_retained": 2,
+      "truncated": false,
+      "bash_mutation": true,
+      "bash_discovered": 3,
+      "bash_discovery_limit": 80,
+      "bash_discovery_truncated": false
+    },
+    "candidates": {
+      "eligible_files": 5,
+      "selected_files": 5,
+      "limit": 20,
+      "truncated": false
+    },
+    "scanning": {
+      "required_files": 5,
+      "scanned_files": 5,
+      "skipped_files": 0,
+      "failed_files": 0,
+      "project_checks_required": 0,
+      "project_checks_completed": 0
+    },
+    "notification": {
+      "eligible_findings": 13,
+      "detailed_findings": 3,
+      "detail_limit": 3,
+      "truncated": true
+    },
+    "reason_counts": {
+      "baseline_snapshot_unreadable": 2,
+      "project_check_failed": 2
+    },
+    "reasons": [
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/fw_changelog.h",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/fw_changelog.h",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      }
+    ],
+    "reasons_truncated": false
+  },
+  "generated_at": "2026-08-22T17:13:56.607Z",
+  "session_id": "sess_32b16ca6-1fa6-4b09-b06a-b0d836b08a50",
+  "target": ".",
+  "revision": "a0d686a54c2bdf0084794807db7d154b1b21fb4e",
+  "rules_version": "unavailable",
+  "diff_hash": "033a386d4b6eaaf3ba41d38738929fe06ab3a91022dde612eead2c838649db85",
+  "diff": {
+    "algorithm": "sha256",
+    "changed_file_count": 5,
+    "changed_files": [
+      {
+        "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/fw_changelog.h",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 23
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "7b8832b4c094fe76c7a83ff4e59fb8b0b86f2a444f4a7de4b35c392086aa0562"
+      },
+      {
+        "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 11596
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "c52a0cc4d811dad03f20f9fbd112a6214cb3d4ca7331a2660df873b2ce766637"
+      },
+      {
+        "file": "include/app/fw_changelog.h",
+        "ranges": [
+          {
+            "start": 4,
+            "end": 4
+          },
+          {
+            "start": 8,
+            "end": 11
+          },
+          {
+            "start": 13,
+            "end": 13
+          },
+          {
+            "start": 17,
+            "end": 17
+          }
+        ],
+        "before_hash": "784d7a668dc8c7fe0ddff99305dbb3fba43287abada7c45227422c249bec2d24",
+        "after_hash": "7b8832b4c094fe76c7a83ff4e59fb8b0b86f2a444f4a7de4b35c392086aa0562"
+      },
+      {
+        "file": "include/app/ui_extras.h",
+        "ranges": [
+          {
+            "start": 3748,
+            "end": 3753
+          },
+          {
+            "start": 3795,
+            "end": 3812
+          }
+        ],
+        "before_hash": "584a19722373a62247d98797aff9618bd2b727c976c32230bf48997add465088",
+        "after_hash": "c52a0cc4d811dad03f20f9fbd112a6214cb3d4ca7331a2660df873b2ce766637"
+      },
+      {
+        "file": "include/version.h",
+        "ranges": [
+          {
+            "start": 6,
+            "end": 6
+          },
+          {
+            "start": 8,
+            "end": 8
+          }
+        ],
+        "before_hash": "7cd2ea811bb60c5946ac0329da43875cba78eef0072a197d778bc4133ae4e643",
+        "after_hash": "b1e222309726d9a3dd83ebbebf94afd14a09e86e891be083ac97d8ea5b33ad97"
+      }
+    ]
+  },
+  "timing": {
+    "started_at": "2026-08-22T17:13:54.142Z",
+    "completed_at": "2026-08-22T17:13:56.607Z",
+    "duration_ms": 2465,
+    "measurement": "hook_wall_clock"
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "model_calls": 0,
+    "measurement": "known-zero"
+  },
+  "telemetry": {
+    "schemaVersion": "mimosa-gate-telemetry/v1",
+    "profile": "gate",
+    "operation": "Stop",
+    "outcome": "partial/INCONCLUSIVE",
+    "latencyMs": 2465,
+    "peakMemoryBytes": 215748608,
+    "memoryMeasurement": "max-observed-process-rss",
+    "scannedFiles": 5,
+    "cache": {
+      "hits": 0,
+      "misses": 0,
+      "measurement": "not-applicable"
+    },
+    "denyCount": 0,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "total": 0,
+      "modelCalls": 0,
+      "measurement": "known-zero"
+    }
+  },
+  "finding_count": 13,
+  "rewake_finding_count": 1,
+  "evidence_boundary": {
+    "scan": "candidate",
+    "static_fix_verification": "observed_static_only",
+    "runtime_verification": "not_performed"
+  },
+  "finding_events": [
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 636,
+      "severity": "high",
+      "category": "安全风险",
+      "status": "blocked",
+      "decision": "stop_rewake",
+      "at": "2026-08-22T17:13:56.607Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 641,
+      "severity": "high",
+      "category": "安全风险",
+      "status": "blocked",
+      "decision": "stop_rewake",
+      "at": "2026-08-22T17:13:56.607Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 649,
+      "severity": "high",
+      "category": "安全风险",
+      "status": "blocked",
+      "decision": "stop_rewake",
+      "at": "2026-08-22T17:13:56.607Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 656,
+      "severity": "high",
+      "category": "安全风险",
+      "status": "blocked",
+      "decision": "stop_rewake",
+      "at": "2026-08-22T17:13:56.607Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 666,
+      "severity": "high",
+      "category": "安全风险",
+      "status": "blocked",
+      "decision": "stop_rewake",
+      "at": "2026-08-22T17:13:56.607Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 671,
+      "severity": "high",
+      "category": "安全风险",
+      "status": "blocked",
+      "decision": "stop_rewake",
+      "at": "2026-08-22T17:13:56.607Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 679,
+      "severity": "high",
+      "category": "安全风险",
+      "status": "blocked",
+      "decision": "stop_rewake",
+      "at": "2026-08-22T17:13:56.607Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 685,
+      "severity": "high",
+      "category": "安全风险",
+      "status": "blocked",
+      "decision": "stop_rewake",
+      "at": "2026-08-22T17:13:56.607Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 693,
+      "severity": "high",
+      "category": "安全风险",
+      "status": "blocked",
+      "decision": "stop_rewake",
+      "at": "2026-08-22T17:13:56.607Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 698,
+      "severity": "high",
+      "category": "安全风险",
+      "status": "blocked",
+      "decision": "stop_rewake",
+      "at": "2026-08-22T17:13:56.607Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 705,
+      "severity": "high",
+      "category": "安全风险",
+      "status": "blocked",
+      "decision": "stop_rewake",
+      "at": "2026-08-22T17:13:56.607Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 710,
+      "severity": "high",
+      "category": "安全风险",
+      "status": "blocked",
+      "decision": "stop_rewake",
+      "at": "2026-08-22T17:13:56.607Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-bdbb9bbe9f00b2181d446903",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 6194,
+      "severity": "medium",
+      "category": "内存边界风险",
+      "status": "candidate",
+      "decision": "observe",
+      "at": "2026-08-22T17:13:56.607Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "451639564a7629e0722e2dce5b8b201abeeada87c8a7e43a25e17df7fd02913e",
+        "runtime_oracle": false
+      }
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 636,
+      "end_line": 636,
+      "severity": "high",
+      "category": "安全风险",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "blocked",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+          "line": 636,
+          "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": true
+    },
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 641,
+      "end_line": 641,
+      "severity": "high",
+      "category": "安全风险",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "blocked",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+          "line": 641,
+          "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": true
+    },
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 649,
+      "end_line": 649,
+      "severity": "high",
+      "category": "安全风险",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "blocked",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+          "line": 649,
+          "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": true
+    },
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 656,
+      "end_line": 656,
+      "severity": "high",
+      "category": "安全风险",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "blocked",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+          "line": 656,
+          "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": true
+    },
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 666,
+      "end_line": 666,
+      "severity": "high",
+      "category": "安全风险",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "blocked",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+          "line": 666,
+          "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": true
+    },
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 671,
+      "end_line": 671,
+      "severity": "high",
+      "category": "安全风险",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "blocked",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+          "line": 671,
+          "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": true
+    },
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 679,
+      "end_line": 679,
+      "severity": "high",
+      "category": "安全风险",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "blocked",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+          "line": 679,
+          "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": true
+    },
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 685,
+      "end_line": 685,
+      "severity": "high",
+      "category": "安全风险",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "blocked",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+          "line": 685,
+          "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": true
+    },
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 693,
+      "end_line": 693,
+      "severity": "high",
+      "category": "安全风险",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "blocked",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+          "line": 693,
+          "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": true
+    },
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 698,
+      "end_line": 698,
+      "severity": "high",
+      "category": "安全风险",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "blocked",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+          "line": 698,
+          "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": true
+    },
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 705,
+      "end_line": 705,
+      "severity": "high",
+      "category": "安全风险",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "blocked",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+          "line": 705,
+          "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": true
+    },
+    {
+      "finding_id": "mimosa-13be73ba18f390af0be72bcc",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 710,
+      "end_line": 710,
+      "severity": "high",
+      "category": "安全风险",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "blocked",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+          "line": 710,
+          "evidence_hash": "ef0bca82d1216f522c5913891ae428c2b1e066bd8a9f5c57ad822a68383a95f8",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": true
+    },
+    {
+      "finding_id": "mimosa-bdbb9bbe9f00b2181d446903",
+      "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+      "line": 6194,
+      "end_line": 6194,
+      "severity": "medium",
+      "category": "内存边界风险",
+      "kind": "semgrep",
+      "advisory": true,
+      "status": "candidate",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "C:/Users/Haffler/Documents/Haffler/PLC/PLC HMI/Software/Cutter_single_head(Digital_metr)/firmware/include/app/ui_extras.h",
+          "line": 6194,
+          "evidence_hash": "451639564a7629e0722e2dce5b8b201abeeada87c8a7e43a25e17df7fd02913e",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": false
+    }
+  ],
+  "artifacts": {
+    "immutable_report": ".mimosa/reports/task-review-sess_32b16ca6-1fa6-4b09-b06a-b0d836b08a50-20260822T171356607Z-13668-12c1c350d0db.json",
+    "latest_report": ".mimosa/reports/task-review-sess_32b16ca6-1fa6-4b09-b06a-b0d836b08a50.json",
+    "history_summary": ".mimosa/history/run-20260822T171356607Z-13668-12c1c350d0db.json"
+  }
+}
