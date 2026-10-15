@@ -1,7 +1,0 @@
-﻿Hello! Ready to build new industrial project: [PROJECT_NAME]
-
-Machine Scenario:
-[Briefly outline actuators, sensors, cycle speed, temperatures, or special requirements here]
-
-Please take 100% autonomous ownership per 00_AUTONOMOUS_PROJECT_LEAD_DIRECTIVE.md and AGENTS.md.
-Autonomously research fleet standards, architect the Siemens PackML FSM, design the Apple HIG HMI, configure safety interlocks, integrate the 5-stage Day-Lock, WebPortal, and factory test suite, run automated tests, and deliver the production package. Zero user friction required.

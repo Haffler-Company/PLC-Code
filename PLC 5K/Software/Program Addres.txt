@@ -1,4 +1,0 @@
-Bootloder  0x1000
-partion  0x8000
-ino  0x10000
-data  0x00290000
